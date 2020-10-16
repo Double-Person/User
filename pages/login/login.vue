@@ -74,18 +74,52 @@
 		},
 	
 		
-		onLoad() {
+		mounted() {
 			// uni.clearStorageSync()
-			// 获取本地存储登录信息
+			// 获取本地存储登录信息 
 			uni.getStorage({
 				key: 'name',
 				success: (data) => {
-					var data = JSON.parse(data.data);
-					this.phone = data.phone;
-					this.pwd = data.pwd;
+					let that = this;
+					let { PHONE, PASSWORD, openId = '', nickName = '' } = JSON.parse(data.data);
+					this.phone =PHONE;
+					this.pwd = PASSWORD;
 					this.phoneState = true;
 					this.pwdState = true;
 					this.loginState();
+					login({ PHONE, PASSWORD, openId, nickName }).then(res => {
+						uni.showToast({
+							title: res.errMsg,
+							duration: 2000
+						})
+						if (res.returnMsg.status == '00') {
+							uni.redirectTo({
+								url: '/pages/index/index'
+							})
+						} else if (res.returnMsg.status == '01') {
+							uni.showToast({
+								title: '账号不存在!',
+								icon: 'none'
+							})
+						} else if (res.returnMsg.status == '02') {
+							uni.showToast({
+								title: '密码错误!',
+								icon: 'none'
+							})
+						} else if (res.returnMsg.status == '03') {
+							uni.showToast({
+								title: '不合法注册!',
+								icon: 'none'
+							})
+						} else {
+							uni.showToast({
+								title: '系统错误!',
+								icon: 'none'
+							})
+						}
+					}).catch(err =>{
+						console.log(JSON.stringify('登录错误--',JSON.stringify(err)))
+					})
 				}
 			})
 		},
@@ -118,6 +152,7 @@
 				// if (this.phoneState && this.pwdState) {
 				if (this.pwd.length === 6 && this.phone.length === 11) {
 					this.btnState = false;
+					
 					this.$forceUpdate()
 				} else {
 					this.btnState = true;
@@ -143,9 +178,14 @@
 				}
 
 
+				this.loginSendData()
+
+			},
+			loginSendData() {
+				let that = this;
 				// 登录请求
 				login(that.saveObj).then(res => {
-
+					
 					console.log('登录响应', JSON.stringify(res));
 					uni.showToast({
 						title: res.errMsg,
@@ -158,23 +198,18 @@
 							data: res.returnMsg.USERINFO_ID
 						});
 						that.rememberPwdHide = false;
-						uni.redirectTo({
-							url: '/pages/index/index'
-						})
+					
+						
 						// alert('登录-')
 						uni.getStorage({
 							key: 'saveStata',
 							success: (res) => {
 								console.log('缓存', res)
 								if (res.data == "true") {
-									
-									// uni.redirectTo({
-									// 	url:'/pages/index/index'
-									// })
 									uni.redirectTo({
 										url: '/pages/index/index'
 									})
-
+				
 								} else {
 									// 提示保存密码
 									that.rememberPwdHide = false;
@@ -185,6 +220,11 @@
 								that.rememberPwdHide = false;
 							}
 						})
+						// uni.redirectTo({
+						// 	url: '/pages/index/index'
+						// })
+					
+					
 					} else if (res.returnMsg.status == '01') {
 						uni.showToast({
 							title: '账号不存在!',
@@ -209,11 +249,6 @@
 				}).catch(err =>{
 					console.log(JSON.stringify('登录错误--',JSON.stringify(err)))
 				})
-
-
-
-
-
 			},
 
 

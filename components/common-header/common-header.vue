@@ -82,6 +82,10 @@
 			gengduoHide: {
 				type: String,
 				default: ""
+			},
+			currentUrl: {
+				type: String,
+				default: '/pages/index/index'
 			}
 		},
 		data() {
@@ -136,15 +140,23 @@
 			},
 			// 分享
 			// #ifdef APP-PLUS
-			shareDemo(platform, type, typeNum) {
+			shareDemo(platform, type, typeNum = 0) {
+				console.log('+++++++++', typeNum)
 				uni.share({
 					provider: platform,
 					scene: type,
 					type: typeNum,
-					href: "http://uniapp.dcloud.io/",
-					title: "uni-app分享",
+					// href: "http://uniapp.dcloud.io/",
+					href: this.currentUrl,
+					title: "趣分利 分享",
 					summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
 					imageUrl: "../../static/images/youhui.png",
+					miniProgram: {
+						id: 'wx9a062afb3e6ff487',
+						path: 'pages/index/index',
+						type: 0,
+						webUrl: 'http://uniapp.dcloud.io'
+					},
 					success: function(res) {
 						console.log("success:" + JSON.stringify(res));
 					},

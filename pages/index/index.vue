@@ -492,7 +492,7 @@
 			},
 			// 前往店铺
 			goShopPage(id, e) {
-				console.log(id, e)
+				console.log(JSON.stringify(id), e)
 				if (e === 0) {
 					uni.navigateTo({
 						url: "../shopPage/shopPage?shopId=" + id

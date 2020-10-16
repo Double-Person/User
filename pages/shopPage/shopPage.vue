@@ -38,11 +38,7 @@
 					地址：{{vendor.CITY+vendor.FULLADD}}
 					<text class="iconfont icon-yiliaohangyedeICON-" @tap="goMap"></text>
 				</view>
-				<block v-if="open">
-					<view class="tips">
-						<text>简介: {{ vendor.MEANS }}</text>
-					</view>
-				</block>
+				
 				<view class="tips">
 					<text class="notice">公告：{{vendor.NOTICE}}</text>
 					<text @click="getMoreInfo" v-if="!open">查看更多></text>
@@ -108,6 +104,7 @@
 				<view class="text" v-if="titleAll">共{{goodNum}}件商品总计 ￥{{titleAll}}</view>
 				<view class="text" v-if="!titleAll">未选购商品</view>
 			</view>
+			<view class="shopPage-footer-right add-card" @tap="addToCard">加入购物车</view>
 			<view class="shopPage-footer-right" @tap="goSettlement">去结算</view>
 		</view>
 		<!-- 购物车蒙层 -->
@@ -227,7 +224,8 @@
 		shopList,
 		collectionShop,
 		getMoreShopInfo,
-		setCarts
+		setCarts,
+		addCarts
 	} from "@/common/apis.js";
 	export default {
 		name: 'ShopPage',
@@ -291,6 +289,42 @@
 			// #endif
 		},
 		methods: {
+			// 添加到购物车
+			addToCard() {
+				let list = this.selectArr.map(item => item.list);
+				let arr = [].concat(...list);
+				let arrJson = JSON.parse(JSON.stringify(arr));
+				let filterArr = arrJson.filter( item => item.num )
+				let obj = {};
+				let cardList = filterArr.map(ele => {
+					return {
+						GOODS_ID: ele.goodsId,
+						COUNTS: ele.num,
+						USERINFO_ID: uni.getStorageSync('USERINFO_ID')
+					}
+				}).reduce(function(item, next) {
+					obj[next.GOODS_ID] ? '' : obj[next.GOODS_ID] = true && item.push(next);
+					return item;
+				}, []).forEach(send => {
+					this.saveCard(send)
+				})
+				
+			},
+			// 发送请求添加到购物车
+			saveCard(data) {
+				addCarts(data).then(({msgType}) => {
+					console.log(msgType)
+					if(msgType == 0) {
+						uni.showToast({
+							title:'添加购物车成功'
+						})
+					}else{
+						uni.showToast({
+							title:'添加购物车失败'
+						})
+					}
+				})
+			},
 			getMoreInfo() {
 				// uni.navigateTo({
 				// 	url: '../shopDetails/shopDetails?id=' + this.shopId
@@ -836,7 +870,7 @@
 
 					.notice {
 						box-sizing: border-box;
-						height: 100rpx;
+						height: 140rpx;
 						overflow: scroll;
 					}
 
@@ -852,6 +886,7 @@
 			display: flex;
 			margin-top: 30rpx;
 			height: 66%;
+			padding-bottom: 100rpx;
 
 			.shopPage-content-left {
 				view {
@@ -1037,6 +1072,9 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
+			}
+			.add-card{
+				background: #ff8777;
 			}
 		}
 

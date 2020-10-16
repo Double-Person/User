@@ -78,7 +78,8 @@
 				allChecked: false,
 				userId: '',
 				quancheckde: false,
-				goodsindex: 0
+				goodsindex: 0,
+				
 			};
 		},
 		components: {
