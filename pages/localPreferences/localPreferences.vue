@@ -1,0 +1,261 @@
+<template>
+	<view class="localPreferences">
+		<!-- header -->
+		<commonHeader headerTitl="本地优惠"></commonHeader>
+		<!-- 内容 -->
+		<view class="localPreferences-content">
+			<!-- banner -->
+			<view class="localPreferences-content-banner">
+				<special-banner :banner-list="bannerList" :swiper-config="swiperConfig"></special-banner>
+			</view>
+			<!-- 热门推荐 -->
+			<view class="localPreferences-content-hot">
+				<view class="localPreferences-content-hot-title">
+					<text class="iconfont icon-dian"></text>热门推荐
+				</view>
+				<view @click="goShop(item.shopId)" class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id">
+					<view class="left">
+						<image :src="item.img" mode=""></image>
+					</view>
+					<view class="right">
+						<view class="right-title">
+							<text>{{item.name}}</text>
+							<view>
+								<text class="iconfont icon-youjiantou"></text>
+							</view>
+						</view>
+						<view class="right-text">
+							{{item.details}}
+						</view>
+						<!-- 评分 -->
+						<view class="right-score">
+							<!-- 不可点击状态 -->
+							<uni-rate disabled="true" :value="item.score" active-color="#FF5D06" size="18"></uni-rate>
+							<text>{{item.score}}分</text>
+						</view>
+						<!-- 时间 -->
+						<view class="right-date">
+							{{item.createtime}}
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<!-- tabbar -->
+		<tabbar></tabbar>
+	</view>
+</template>
+
+<script>
+	import commonHeader from "@/components/common-header/common-header";
+	import tabbar from "@/components/common-tabbar/common-tabbar";
+	// banner
+	import specialBanner from '../../components/specialBanner.vue'
+	// 评分组件
+	import uniRate from '@/components/uni-rate/uni-rate.vue'
+	import {
+		pushShop,
+		getBanner,
+		getPush
+	} from "@/common/apis.js";
+	export default {
+		data() {
+			return {
+				bannerList: [],
+				swiperConfig: {
+					indicatorDots: true,
+					indicatorColor: 'rgba(255, 255, 255, .4)',
+					indicatorActiveColor: 'rgba(255, 255, 255, 1)',
+					autoplay: false,
+					interval: 3000,
+					duration: 300,
+					circular: true,
+					previousMargin: '58rpx',
+					nextMargin: '58rpx'
+				},
+				hotLIst: []
+			};
+		},
+		components: {
+			commonHeader,
+			specialBanner,
+			tabbar,
+			uniRate
+		},
+		methods: {
+			goShop(id) {
+				console.log(id)
+				uni.navigateTo({
+					url: "../shopPage/shopPage?shopId=" + id
+				});
+			}
+		},
+		onLoad(e) {
+			console.log(e)
+			var obj = {
+				longitude: e.longitude,
+				latitude: e.latitude,
+				AREA: e.area,
+				kilometers:'300', 
+				NAME:'' // 不填就是综合
+			}
+			console.log('obj', obj)
+			// 本地优惠
+			getPush(obj).then(res => {
+				console.log('本地优惠', res)
+				this.hotLIst = res.returnMsg.shop
+			})
+			this.getBannerList();
+			//根据用户位置推送最近商家
+			//     pushShop(obj).then(res=>{
+			//     	console.log('res',res.returnMsg)
+			//         if(res.returnMsg.status == '00'){
+			// this.hotLIst = res.returnMsg.shop
+			//             // this.hotLIst = res.varList
+			//             // res.varList.map(item => {
+			//             //     this.hotLIst.push(item.GoodsImg[0])
+			//             // })
+			//             console.log('优惠', this.hotLIst)
+			//         }else{
+			//             uni.showToast({
+			//                 title:'数据获取失败!',
+			//                 icon:'none',
+			//                 duration:2000
+			//             })
+			//         }
+			//     }).catch(err=>{
+			//     	uni.showToast({
+			//     		title:'获取数据失败！',
+			//     		icon:'none'
+			//     	})
+			//     })
+		},
+		methods: {
+			// 获取banner
+			getBannerList() {
+				var data = {
+					area: '东城区',
+					category: '本地优惠'
+				}
+				getBanner(data).then(res => {
+					console.log('获取banner', res)
+
+					this.bannerList = res.returnMsg.banner.map(item => {
+						return {
+							picture: item.IMG,
+							title: '',
+							description: '',
+							path: item.URL
+						}
+					})
+				})
+			},
+		}
+	}
+</script>
+
+<style lang="less" scoped>
+	.localPreferences {
+		background: #f7f7f7;
+		min-height: 100%;
+		color: #333;
+		padding: 120rpx 0;
+		/* #ifdef APP-PLUS */
+		padding-top: 160rpx;
+		/* #endif */
+		/* #ifdef MP-WEIXIN */
+		padding-top: 160rpx;
+
+		/* #endif */
+		.localPreferences-content {
+			.localPreferences-content-hot {
+				margin-top: 20rpx;
+
+				.localPreferences-content-hot-title {
+					font-size: 32rpx;
+					display: flex;
+					align-items: center;
+
+					text {
+						color: #FF5D06;
+						margin-left: 10rpx;
+						font-size: 40rpx;
+					}
+				}
+
+				.localPreferences-content-hot-item {
+					display: flex;
+					background: #fff;
+					padding: 20rpx;
+					width: 90%;
+					border-radius: 20rpx;
+					margin: 20rpx auto 0;
+					box-shadow: 0 8rpx 20rpx #999;
+
+					.left {
+						width: 213rpx;
+						height: 181rpx;
+						border-radius: 20rpx;
+
+						image {
+							width: 100%;
+							height: 100%;
+						}
+
+						margin-right: 20rpx;
+					}
+
+					.right {
+						flex: 1;
+
+						.right-title {
+							font-size: 30rpx;
+							font-weight: bold;
+							display: flex;
+							justify-content: space-between;
+
+							view {
+								width: 45rpx;
+								height: 45rpx;
+								border-radius: 50%;
+								color: #fff;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+								background: linear-gradient(205deg, rgba(251, 151, 72, 1) 0%, rgba(254, 120, 52, 1) 100%);
+							}
+						}
+
+						.right-text {
+							font-size: 24rpx;
+							color: #666;
+							width: 400rpx;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							margin-top: 10rpx;
+						}
+
+						.right-score {
+							margin-top: 30rpx;
+							display: flex;
+							font-size: 24rpx;
+
+							text {
+								margin-top: -15rpx;
+								margin-left: 15rpx;
+							}
+						}
+
+						.right-date {
+							font-size: 24rpx;
+							color: #666;
+							margin-top: 10rpx;
+						}
+					}
+				}
+			}
+		}
+	}
+</style>

@@ -1,0 +1,888 @@
+<template>
+	<view class="index" ref="index">
+		<!-- 顶部 -->
+		<view class="index-top">
+			<view class="index_mid">
+				<!-- 定位 -->
+				<pickerAddress class="index-top-address" @change="setCity">
+					<text class="iconfont icon-dingwei"></text>
+					{{ newCity }}
+					<text class="iconfont icon-jiantou-xia"></text>
+				</pickerAddress>
+				<!-- 搜索 -->
+				<view class="index-top-search" @tap="goSearch">
+					<text class="iconfont icon-sousuo"></text>
+					<text class="input-text">请输入商家名称或商品名</text>
+					<!-- <input type="text" @tap="showHistory" @confirm="search" value="" placeholder="请输入商家名称或商品名" placeholder-style="fontSize:24rpx" style="font-size: 30rpx;"/> -->
+				</view>
+				<!-- 扫描 -->
+				<text class="iconfont icon-saomiao" @tap="scanCode"></text>
+			</view>
+		</view>
+
+		<!-- 广告 -->
+		<view @click="goPreferencesPage" class="index-poster">
+			<specialBanner :banner-list="bannerList" :swiper-config="swiperConfig"></specialBanner>
+			<!-- <image src="../../static/images/banner.png" mode=""></image> -->
+		</view>
+		<!-- 分类 -->
+		<view class="index-item">
+			<view @click="goLocalPre" class="index-item-left">
+				<view class="index-item-left-top">
+					<text>本地优惠活动</text>
+					<view><text class="iconfont icon-youjiantou"></text></view>
+				</view>
+			</view>
+			<view class="index-item-right">
+				<view @tap="getItemClick(index + 1)" v-for="(item, index) in itemList" :key="index">
+					<text>{{ item.NAME }}</text>
+					<image :src="'../../static/images/item0' + (3 + index) + '.png'" mode=""></image>
+				</view>
+			</view>
+		</view>
+		<!-- 推荐内容 -->
+
+		<view v-if="menuList.length > 0">
+			<view class="index-content" v-for="(item, index) in menuList" :key="index">
+				<view class="index-content-title">
+					<text>{{ item.SHOP_NAME }}</text>
+					<view @tap="goShopPage(item.SHOP_ID,0)">进店逛逛</view>
+				</view>
+				<view class="index-content-msg">
+					<text>累计{{ item.PAID_COUNT }}人购买</text>
+					<view>{{item.CITY + item.AREA}} 距离{{ item.distance }}KM</view>
+				</view>
+				<view class="index-content-product">
+					<view class="index-content-product-msg" v-for="(item1, index1) in item.GoodsImg" :key="index1" @tap="goShopPage(item1.GOODS_ID,1)">
+						<image :src="item1.img" mode=""></image>
+						<text>{{ item1.name }}</text>
+						<view class="msg">
+							<text>￥{{ item1.price || 0 }}</text>
+							{{ item1.sales || 0 }}人购买
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view v-else style="text-align: center;font-size: 30rpx;color: #999;padding-top: 50rpx;">暂无商家数据！</view>
+		<!-- tabbar -->
+		<tabbar active="1"></tabbar>
+
+		<!-- 搜索蒙层 -->
+		<view class="index-mask" :class="maskHide ? 'maskHide' : ''">
+			<p class="index-mask-item">豆浆油条先生</p>
+		</view>
+		<!-- <web-view v-if="stroingCity==true" src="../../common/location.html"></web-view> -->
+		<view id="output" style="width: 50upx;height: 50upx;display: none;" ref="output"></view>
+	</view>
+</template>
+
+<!-- <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d"></script> -->
+<!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=DD279b2a90afdf0ae7a3796787a0742e"></script> -->
+<script>
+	// banner
+	// 318dfe4e09e51453d11d2c31cde26534
+	import specialBanner from '../../components/specialBanner.vue'
+	//引入tabbar
+	import tabbar from '@/components/common-tabbar/common-tabbar';
+	//引入高德地图
+	import amap from '@/components/amap-wx.js';
+	import amapPlugin from '@/components/initMap.js';
+	// 城市选择
+	import pickerAddress from '@/components/pickerAddress/pickerAddress.vue';
+	// 引入请求接口
+	import {
+		pushShop,
+		getItem,
+		getShopPay,
+		getBanner
+	} from '@/common/apis.js';
+
+
+	export default {
+		components: {
+			tabbar,
+			pickerAddress,
+			specialBanner
+		},
+		data() {
+			return {
+			
+				stroingCity: true,
+				title: '',
+				newCity: '', //当前城市
+				area: '', //当前地区
+				maskHide: true,
+				menuList: '',
+				itemType: 1,
+				// 定位信息        
+				longitude: '104.031341',
+				latitude: '30.698437',
+				kilometers: '',
+				swiperConfig: {
+					indicatorDots: true,
+					indicatorColor: 'rgba(255, 255, 255, .4)',
+					indicatorActiveColor: 'rgba(255, 255, 255, 1)',
+					autoplay: false,
+					interval: 3000,
+					duration: 300,
+					circular: true,
+					previousMargin: '58rpx',
+					nextMargin: '58rpx'
+				},
+				bannerList: [],
+				itemList: [] //分类列表
+			};
+		},
+
+		created() {
+			// #ifdef APP-PLUS
+			// plus 获取经纬度
+
+			uni.getLocation({
+				type: 'wgs84',
+				geocode: true, //设置该参数为true可直接获取经纬度及城市信息
+				success: async (res) => {
+					this.longitude = res.longitude
+					this.latitude = res.latitude
+					console.log(JSON.stringify(res))
+				
+
+					await uni.setStorageSync('locationPoint', JSON.stringify(res));
+					await this.conversionPoint(res)
+					// 位置转换
+					await uni.request({
+						url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+						method: 'GET',
+						data: {
+							key: 'f0d8604522a34fea7af419d353f98e8f',
+							location: `${res.longitude}, ${res.latitude}`
+						},
+						success: (data) => {
+					
+							getApp().globalData.city = [];
+							this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
+							getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
+								.district);
+							// console.log(this.newCity) // 注意就是data.data！！！
+						},
+						fail(err) {
+							uni.showToast({
+								title: "定位失败！手动选择",
+								icon: 'none'
+							})
+						}
+					})
+					//  获取轮播
+				await	uni.request({
+						url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
+						header: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+						},
+						data: { // 92.895400    34.759231   103.980318   经度  30.759185  维度
+							LONGITUDE: this.longitude || '103.980318', // '103.980318', //
+							LATITUDE: this.latitude || '30.759185', // '30.759185', //
+							// kilometers: '300',
+							showCount: 10,
+							currentPage: 1,
+							AREA: this.area, // '金牛区', //
+							NAME: this.itemType // 不填就是综合
+						},
+						method: 'POST',
+						success: (res) => {
+							if (res.data.status != '00') {
+								uni.showToast({
+									title: '请手动设置地区!',
+									icon: 'none',
+									duration: 2000
+								});
+							} else {
+								res.data.varList.map(item => {
+									item.distance = Math.round(item.distance);
+								});
+								this.menuList = res.data.varList;
+
+							}
+						},
+						fail: () => {
+							uni.showToast({
+								title: '获取数据失败！',
+								icon: 'none'
+							});
+						}
+					})
+
+				},
+				fail(err) {
+					console.log(JSON.stringify(err))
+				}
+			});
+
+			// this.getLocationPlus()
+			// #endif
+			this.getPoint()
+
+			// 定位 
+			// #ifdef MP-WEIXIN
+			amapPlugin.getRegeo({
+				success: (data) => {
+					// getApp().globalData.city = [];
+					this.area = data[0].regeocodeData.addressComponent.district
+					this.newCity = data[0].regeocodeData.addressComponent.city + data[0].regeocodeData.addressComponent.district;
+				},
+				fail: (err) => {
+					console.log('微信定位', err);
+					uni.showToast({
+						title: "定位失败！手动选择",
+						icon: 'none'
+					})
+				}
+			})
+			// #endif
+
+			// #ifdef H5
+			uni.getLocation({
+				// type: 'wgs84',
+				type: 'gcj02',
+				geocode: true,
+				altitude: true, // 高精确度
+				success: (res) => {
+					// this.latitude = res.latitude;
+					// this.longitude = res.longitude;
+					uni.request({
+						url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+						method: 'GET',
+						data: {
+							key: 'f0d8604522a34fea7af419d353f98e8f',
+							// key:'6a827b40e5822fcbde20f50916a59522',
+							location: `${res.longitude}, ${res.latitude}`
+						},
+						success: (data) => {
+							console.log('位置解析成功', data.data.regeocode.addressComponent)
+							//getApp().globalData.city = [];
+							this.area = data.data.regeocode.addressComponent.district;
+							console.log('位置解析成功', this.area)
+							// this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
+							let {
+								province,
+								city,
+								district
+							} = data.data.regeocode.addressComponent
+							this.newCity = province + city + district
+							this.getPositonData(this.latitude, this.longitude, this.area)
+
+							// getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
+							// 	.district);
+							// console.log(getApp().globalData.city) // 注意就是data.data！！！
+						},
+						fail(err) {
+							console.log('位置解析失败', err)
+							uni.showToast({
+								title: "定位不成功",
+								icon: 'none'
+							})
+						},
+						complete() {
+							console.log('完毕')
+						}
+					})
+				},
+				fail: function(err) {
+					console.log('定位失败', err);
+					uni.showToast({
+						title: "定位失败！手动选择",
+						icon: 'none'
+					})
+				}
+			})
+			// #endif
+
+
+
+			// 获取分类
+			getItem().then(res => {
+				this.itemList = res.returnMsg && res.returnMsg.varList;
+			});
+			this.getBannerList();
+			this.$forceUpdate()
+
+
+		},
+
+		methods: {
+			//   金纬度转位置
+			conversionPoint(res) {
+				uni.request({
+					url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+					method: 'GET',
+					data: {
+						key: 'f0d8604522a34fea7af419d353f98e8f',
+						location: `${res.longitude}, ${res.latitude}`
+					},
+
+					success: (data) => {
+						this.area = data.data.regeocode.addressComponent.district;
+						console.log('位置解析成功', data.data.regeocode)
+						uni.setStorageSync('locationAddress', JSON.stringify(data.data.regeocode.addressComponent));
+						let {
+							province,
+							city,
+							district
+						} = data.data.regeocode.addressComponent
+						this.newCity = province + city + district
+						this.getPositonData(this.latitude, this.longitude, this.area)
+					},
+					fail: err => {
+						uni.showToast({
+							title: "定位失败",
+							icon: 'none'
+						})
+					},
+					complete() {
+						console.log('完毕')
+					}
+				})
+			},
+			getPoint() {
+				uni.getLocation({
+					type: 'wgs84',
+					success: (res) => {
+
+						this.longitude = res.longitude
+						this.latitude = res.latitude
+
+						uni.setStorageSync('locationPoint', JSON.stringify(res));
+						this.conversionPoint(res)
+
+					}
+				})
+			},
+			// 获取经纬度 
+			getLocationPlus() {
+
+				this.$refs.index.addEventListener("plusready", () => {
+					plus.geolocation.getCurrentPosition((res) => {
+						map_click(res.coords.longitude, res.coords.latitude);
+					}, e => {
+						alert("获取定位位置信息失败，请打开GPS定位功能！" + e.message);
+					}, {
+						geocode: true
+					});
+				}, false);
+
+				function map_click(lng, lat) {
+					setUserPosition(lng, lat);
+					var map = new BMap.Map('output');
+					var point = new BMap.Point(lng, lat);
+					map.centerAndZoom(point, 12);
+					var geoc = new BMap.Geocoder();
+					geoc.getLocation(point, function(rs) {
+						var addComp = rs.addressComponents;
+						console.log('app定位', addComp);
+						this.newCity(addComp.city);
+						setCityLocation(addComp.city);
+					});
+				}
+			},
+
+			// 前往本地优惠
+			goLocalPre() {
+				uni.navigateTo({
+					url: '../localPreferences/localPreferences?longitude=' + this.longitude + '&latitude=' + this.latitude +
+						'&area=' + this.area
+				});
+			},
+			// banner跳转
+			goPreferencesPage() {
+				uni.navigateTo({
+					url: '../preferencesPage/preferencesPage'
+				});
+			},
+			// 根据定位请求数据
+			getPositonData(longitude, latitude, area) {
+				// var obj = {
+				// 	LONGITUDE: longitude,
+				// 	LATITUDE: latitude,
+				// 	// kilometers: '300',
+				// 	AREA: "金牛区",
+				// 	// NAME: this.itemType // 不填就是综合
+				// };
+
+				uni.request({
+					url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
+					header: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					data: {
+						LONGITUDE: longitude,
+						LATITUDE: latitude,
+						// kilometers: '300',
+						AREA: area,
+						// NAME: this.itemType // 不填就是综合
+					},
+					method: 'POST',
+					success: (res) => {
+						// console.log(res)
+						if (res.data.status != '00') {
+							uni.showToast({
+								title: '请手动设置地区!',
+								icon: 'none',
+								duration: 2000
+							});
+						} else {
+							res.data.varList.map(item => {
+								item.distance = Math.round(item.distance);
+							});
+							this.menuList = res.data.varList;
+						}
+					},
+					fail: () => {
+						uni.showToast({
+							title: '获取数据失败！',
+							icon: 'none'
+						});
+					}
+				})
+
+			},
+			// 手动设置城市
+			setCity(data) {
+				this.newCity = data.data.slice(1, 3).join('');
+				// 存入全局变量
+				getApp().globalData.city = data.data.slice(1);
+				// 地址转换为经纬度
+				uni.request({
+					method: 'GET',
+					url: 'http://restapi.amap.com/v3/geocode/geo?key=60ca6302ddbfc1545c05fed7e8fff834&s=rsv3&city=35&address=' +
+						this.newCity,
+					success: res => {
+						var arr = res.data.geocodes[0].location.split(',');
+						getApp().globalData.longitude = arr[0];
+						getApp().globalData.latitude = arr[1];
+
+						this.area = res.data.geocodes[0].district
+						this.longitude = arr[0];
+						this.latitude = arr[1];
+						this.getPositonData(this.longitude, this.latitude, this.area);
+					}
+				});
+			},
+			// 分类筛选
+			getItemClick(item) {
+				this.itemType = item;
+				this.getPositonData(this.longitude, this.latitude, this.area);
+			},
+			// 获取banner
+			getBannerList() {
+				var data = {
+					area: this.area,
+					category: '首页轮播'
+				};
+				getBanner(data).then(res => {
+					this.bannerList = res.returnMsg.banner.map(item => {
+						return {
+							picture: item.IMG,
+							title: '',
+							description: '',
+							path: item.URL
+						}
+					})
+
+				});
+			},
+			// 前往店铺
+			goShopPage(id, e) {
+				console.log(id, e)
+				if (e === 0) {
+					uni.navigateTo({
+						url: "../shopPage/shopPage?shopId=" + id
+					});
+				} else if (e === 1) {
+					uni.navigateTo({
+						url: "../goodsDetails/goodsDetails?shopId=" + id
+					});
+				}
+			},
+
+			// 扫描二维码
+			scanCode() {
+				// 允许从相机和相册扫码
+				// #ifdef APP-PLUS
+				uni.scanCode({
+					success: res => {
+						// console.log('条码类型：' + res.scanType);
+						// console.log('条码内容：' + res.result);
+						var shopId = res.result;
+						getShopPay({
+							SHOP_ID: res.result
+						}).then(res => {
+							console.log(res);
+							if (res.returnMsg.status == '00') {
+								uni.navigateTo({
+									url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
+								});
+							} else {
+								uni.showToast({
+									title: '条码错误!',
+									icon: 'none',
+									duration: 2000,
+									mask: true
+								});
+							}
+						});
+					}
+				});
+				// #endif
+				// #ifdef H5
+				this.jweixin.read(() => {
+					this.jweixin.scanQRCode({
+						needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+						scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
+						success: function(res) {
+							var shopId = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+							getShopPay({
+								SHOP_ID: res.result
+							}).then(res => {
+								// console.log(res);
+								if (res.returnMsg.status == '00') {
+									uni.navigateTo({
+										url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
+									});
+								} else {
+									uni.showToast({
+										title: '条码错误!',
+										icon: 'none',
+										duration: 2000,
+										mask: true
+									});
+								}
+							});
+						}
+					});
+				});
+				// #endif
+			},
+			// 搜索
+			// search(e){
+			// 	this.maskHide = true;
+			// 	console.log(e.detail.value)
+			// },
+			// showHistory(){
+			// 	this.maskHide = false;
+			// }
+			goSearch() {
+				uni.navigateTo({
+					url: '../search/search'
+				});
+			}
+		},
+
+	};
+</script>
+
+<style lang="less" scoped>
+	.index {
+		min-height: 100%;
+		background: #f7f4f8;
+		color: #333;
+		padding-bottom: 120rpx;
+		position: relative;
+
+		// 顶部
+		.index-top {
+			background: url(../../static/images/bg1.jpg) no-repeat;
+			background-size: cover;
+			color: #fff;
+			height: 220rpx;
+			width: 100%;
+			z-index: 100;
+
+			>view {
+				display: flex;
+				align-items: center;
+				font-size: 28rpx;
+				position: fixed;
+				top: 0;
+				width: 100%;
+				z-index: 900;
+				padding: 30rpx 0;
+				background: url(../../static/images/bg1.jpg) no-repeat;
+				background-size: cover;
+				/* #ifdef APP-PLUS */
+				padding-top: 70rpx;
+				/* #endif */
+				/* #ifdef MP-WEIXIN */
+				padding-top: 70rpx;
+
+				/* #endif */
+				.index-top-address {
+					.iconfont:first-child {
+						font-size: 38rpx;
+						margin: 0 10rpx 0 20rpx;
+					}
+
+					.iconfont:last-child {
+						font-size: 20rpx;
+						margin: 0 20rpx 0 10rpx;
+					}
+				}
+
+				.index-top-search {
+					flex: 1;
+					height: 64rpx;
+					background: #fff;
+					font-size: 24rpx;
+					border-radius: 32rpx;
+					color: rgba(153, 153, 153, 1);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					.iconfont {
+						font-weight: bold;
+						margin-right: 15rpx;
+					}
+
+					.input-text {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				>.iconfont {
+					font-size: 50rpx;
+					margin: 0 20rpx;
+				}
+			}
+		}
+
+
+		// 广告
+		.index-poster {
+			height: 330rpx;
+			width: 95%;
+			margin: -100rpx auto 0;
+			/* #ifdef APP-PLUS */
+			margin: -55rpx auto 0;
+			/* #endif */
+			/* #ifdef MP-WEIXIN */
+			margin: -55rpx auto 0;
+			/* #endif */
+			position: relative;
+			z-index: 800;
+			border-radius: 20rpx;
+			overflow: hidden;
+			box-shadow: 2rpx 4rpx 30rpx #4e4e4e;
+
+			image {
+				width: 100%;
+				height: 100%;
+			}
+		}
+
+		// 分类
+		.index-item {
+			height: 324rpx;
+			width: 95%;
+			background: #fff;
+			margin: 50rpx auto 0;
+			border-radius: 20rpx;
+			display: flex;
+			color: #333333;
+			font-size: 30rpx;
+
+			.index-item-left {
+				width: 40%;
+				background: url(../../static/images/item01.png) no-repeat;
+				background-position: 0 60rpx;
+				border-right: 1px solid #eae8e9;
+
+				.index-item-left-top {
+					padding-top: 30rpx;
+					display: flex;
+					font-weight: bold;
+					justify-content: center;
+					align-items: center;
+					letter-spacing: 4rpx;
+
+					view {
+						width: 32rpx;
+						height: 32rpx;
+						line-height: 32rpx;
+						color: #fff;
+						font-size: 20rpx;
+						background: #fe8c02;
+						border-radius: 50%;
+						background-size: 100%;
+						text-align: center;
+
+						.iconfont {
+							font-size: 24rpx;
+							margin-left: 5rpx;
+						}
+					}
+				}
+			}
+
+			.index-item-right {
+				width: 60%;
+				height: 100%;
+				display: flex;
+				flex-wrap: wrap;
+
+				>view {
+					width: 49%;
+					height: 50%;
+					display: flex;
+					justify-content: space-around;
+
+					text {
+						padding: 20rpx 0 0 10rpx;
+					}
+
+					image {
+						width: 78rpx;
+						height: 78rpx;
+						margin-top: 60rpx;
+						margin-right: 5rpx;
+					}
+				}
+
+				view:nth-child(1) {
+					border-bottom: 1px solid #eae8e9;
+					border-right: 1px solid #eae8e9;
+				}
+
+				view:nth-child(2) {
+					border-bottom: 1px solid #eae8e9;
+				}
+
+				view:nth-child(3) {
+					border-right: 1px solid #eae8e9;
+				}
+			}
+		}
+
+		// 推荐内容
+		.index-content {
+			height: 400rpx;
+			width: 90%;
+			margin: 30rpx auto 0;
+			background: #fff;
+			border-radius: 20rpx;
+			padding: 30rpx 20rpx;
+
+			.index-content-title,
+			.index-content-msg {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.index-content-title {
+				font-size: 34rpx;
+				letter-spacing: 4rpx;
+
+				text {
+					font-weight: 600;
+				}
+
+				view {
+					width: 132rpx;
+					height: 50rpx;
+					font-size: 24rpx;
+					color: #fff;
+					background: linear-gradient(231deg, rgba(255, 178, 10, 1) 0%, rgba(255, 127, 4, 1) 60%, rgba(255, 89, 4, 1) 100%);
+					border-radius: 50rpx;
+					text-align: center;
+					line-height: 50rpx;
+				}
+			}
+
+			.index-content-msg {
+				align-items: center;
+				padding: 10rpx 0;
+
+				text {
+					height: 32rpx;
+					font-size: 24rpx;
+					padding: 3rpx 20rpx;
+					background: #ffedec;
+					color: #ff403a;
+					border-radius: 17px;
+				}
+
+				view {
+					color: #999999;
+					font-size: 20rpx;
+				}
+			}
+
+			.index-content-product {
+				display: flex;
+
+				// justify-content: space-between;
+				.index-content-product-msg {
+					margin-top: 20rpx;
+					width: 31%;
+					font-size: 26rpx;
+					margin-left: 20rpx;
+
+					image {
+						width: 210rpx;
+						height: 178rpx;
+						background: rgba(216, 216, 216, 1);
+						border-radius: 10rpx;
+					}
+
+					>text {
+						display: inline-block;
+						font-weight: bold;
+						margin-top: 10rpx;
+						font-size: 24rpx;
+					}
+
+					view {
+						margin-top: 10rpx;
+						color: #999;
+						font-size: 24rpx;
+
+						text {
+							color: #ff403a;
+							font-weight: bold;
+							margin-right: 10rpx;
+						}
+					}
+				}
+
+				.index-content-product-msg:first-child {
+					margin-left: 0;
+				}
+			}
+		}
+
+		// 搜索蒙层
+		.maskHide {
+			display: none;
+		}
+
+		.index-mask {
+			width: 100%;
+			height: 100%;
+			background: rgba(1, 1, 1, 0.5);
+			position: fixed;
+			z-index: 899;
+			top: 0;
+			left: 0;
+			color: #000;
+			padding-top: 120rpx;
+
+			.index-mask-item {
+				font-size: 30rpx;
+				padding: 15rpx;
+				background: rgba(255, 255, 255, 0.5);
+				border-bottom: 1px solid #ccc;
+			}
+		}
+	}
+</style>
