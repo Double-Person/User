@@ -107,7 +107,14 @@
 		},
 		data() {
 			return {
-			
+				/*
+					f0d8604522a34fea7af419d353f98e8f  真机调试能定位
+					318dfe4e09e51453d11d2c31cde26534  申请的
+					6a827b40e5822fcbde20f50916a59522
+					2df5711d4e2fd9ecd1622b5a53fc6b1d
+					
+				*/
+				key: 'f0d8604522a34fea7af419d353f98e8f',
 				stroingCity: true,
 				title: '',
 				newCity: '', //当前城市
@@ -116,8 +123,8 @@
 				menuList: '',
 				itemType: 1,
 				// 定位信息        
-				longitude: '104.031341',
-				latitude: '30.698437',
+				longitude: '', // 104.031341
+				latitude: '', // 30.698437
 				kilometers: '',
 				swiperConfig: {
 					indicatorDots: true,
@@ -136,8 +143,10 @@
 		},
 
 		created() {
+			let that = this;
 			// #ifdef APP-PLUS
 			// plus 获取经纬度
+
 
 			uni.getLocation({
 				type: 'wgs84',
@@ -145,8 +154,26 @@
 				success: async (res) => {
 					this.longitude = res.longitude
 					this.latitude = res.latitude
-					console.log(JSON.stringify(res))
-				
+					
+					var points = new plus.maps.Point(res.longitude, res.latitude);
+
+					plus.maps.Map.reverseGeocode(
+						points, {},
+						function(event) {
+							var address = event.address; // 转换后的地理位置
+							var point = event.coord; // 转换后的坐标信息
+							var coordType = event.coordType; // 转换后的坐标系类型
+							var reg = /.+?(省|市|自治区|自治州|县|区)/g;
+							let addressList = address.match(reg).toString().split(",");
+							console.log(addressList);
+							
+							this.newCity = addressList[0] + addressList[1] + addressList[2]
+						},
+						function(e) {}
+					);
+
+
+
 
 					await uni.setStorageSync('locationPoint', JSON.stringify(res));
 					await this.conversionPoint(res)
@@ -155,60 +182,22 @@
 						url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
 						method: 'GET',
 						data: {
-							key: 'f0d8604522a34fea7af419d353f98e8f',
+							key: that.key,
 							location: `${res.longitude}, ${res.latitude}`
 						},
 						success: (data) => {
-					
+							console.log('位置转化', data)
 							getApp().globalData.city = [];
 							this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
 							getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
 								.district);
-							// console.log(this.newCity) // 注意就是data.data！！！
+							console.log('app定位', this.newCity)
 						},
 						fail(err) {
 							uni.showToast({
 								title: "定位失败！手动选择",
 								icon: 'none'
 							})
-						}
-					})
-					//  获取轮播
-				await	uni.request({
-						url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
-						header: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						data: { // 92.895400    34.759231   103.980318   经度  30.759185  维度
-							LONGITUDE: this.longitude || '103.980318', // '103.980318', //
-							LATITUDE: this.latitude || '30.759185', // '30.759185', //
-							// kilometers: '300',
-							showCount: 10,
-							currentPage: 1,
-							AREA: this.area, // '金牛区', //
-							NAME: this.itemType // 不填就是综合
-						},
-						method: 'POST',
-						success: (res) => {
-							if (res.data.status != '00') {
-								uni.showToast({
-									title: '请手动设置地区!',
-									icon: 'none',
-									duration: 2000
-								});
-							} else {
-								res.data.varList.map(item => {
-									item.distance = Math.round(item.distance);
-								});
-								this.menuList = res.data.varList;
-
-							}
-						},
-						fail: () => {
-							uni.showToast({
-								title: '获取数据失败！',
-								icon: 'none'
-							});
 						}
 					})
 
@@ -218,83 +207,16 @@
 				}
 			});
 
-			// this.getLocationPlus()
 			// #endif
 			this.getPoint()
-
 			// 定位 
 			// #ifdef MP-WEIXIN
-			amapPlugin.getRegeo({
-				success: (data) => {
-					// getApp().globalData.city = [];
-					this.area = data[0].regeocodeData.addressComponent.district
-					this.newCity = data[0].regeocodeData.addressComponent.city + data[0].regeocodeData.addressComponent.district;
-				},
-				fail: (err) => {
-					console.log('微信定位', err);
-					uni.showToast({
-						title: "定位失败！手动选择",
-						icon: 'none'
-					})
-				}
-			})
+			this.getPointByWeChat();
 			// #endif
 
 			// #ifdef H5
-			uni.getLocation({
-				// type: 'wgs84',
-				type: 'gcj02',
-				geocode: true,
-				altitude: true, // 高精确度
-				success: (res) => {
-					// this.latitude = res.latitude;
-					// this.longitude = res.longitude;
-					uni.request({
-						url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
-						method: 'GET',
-						data: {
-							key: 'f0d8604522a34fea7af419d353f98e8f',
-							// key:'6a827b40e5822fcbde20f50916a59522',
-							location: `${res.longitude}, ${res.latitude}`
-						},
-						success: (data) => {
-							console.log('位置解析成功', data.data.regeocode.addressComponent)
-							//getApp().globalData.city = [];
-							this.area = data.data.regeocode.addressComponent.district;
-							console.log('位置解析成功', this.area)
-							// this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
-							let {
-								province,
-								city,
-								district
-							} = data.data.regeocode.addressComponent
-							this.newCity = province + city + district
-							this.getPositonData(this.latitude, this.longitude, this.area)
+			this.getPointByH5();
 
-							// getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
-							// 	.district);
-							// console.log(getApp().globalData.city) // 注意就是data.data！！！
-						},
-						fail(err) {
-							console.log('位置解析失败', err)
-							uni.showToast({
-								title: "定位不成功",
-								icon: 'none'
-							})
-						},
-						complete() {
-							console.log('完毕')
-						}
-					})
-				},
-				fail: function(err) {
-					console.log('定位失败', err);
-					uni.showToast({
-						title: "定位失败！手动选择",
-						icon: 'none'
-					})
-				}
-			})
 			// #endif
 
 
@@ -312,17 +234,17 @@
 		methods: {
 			//   金纬度转位置
 			conversionPoint(res) {
+				let that = this;
 				uni.request({
 					url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
 					method: 'GET',
 					data: {
-						key: 'f0d8604522a34fea7af419d353f98e8f',
+						key: that.key,
 						location: `${res.longitude}, ${res.latitude}`
 					},
 
 					success: (data) => {
 						this.area = data.data.regeocode.addressComponent.district;
-						console.log('位置解析成功', data.data.regeocode)
 						uni.setStorageSync('locationAddress', JSON.stringify(data.data.regeocode.addressComponent));
 						let {
 							province,
@@ -338,9 +260,6 @@
 							icon: 'none'
 						})
 					},
-					complete() {
-						console.log('完毕')
-					}
 				})
 			},
 			getPoint() {
@@ -384,6 +303,69 @@
 					});
 				}
 			},
+			// h5 定位
+			getPointByH5() {
+				uni.getLocation({
+					// type: 'wgs84',
+					type: 'gcj02',
+					geocode: true,
+					altitude: true, // 高精确度
+					success: (res) => {
+						this.latitude = res.latitude;
+						this.longitude = res.longitude;
+						uni.request({
+							url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+							method: 'GET',
+							data: {
+								key: that.key,
+
+								location: `${res.longitude}, ${res.latitude}`
+							},
+							success: (data) => {
+								console.log('位置解析成功', data.data.regeocode)
+								this.area = data.data.regeocode.addressComponent.district;
+								// this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
+								let {
+									province,
+									city,
+									district
+								} = data.data.regeocode.addressComponent
+								this.newCity = province + city + district
+								this.getPositonData(this.latitude, this.longitude, this.area)
+							},
+							fail(err) {
+								uni.showToast({
+									title: "定位不成功",
+									icon: 'none'
+								})
+							}
+						})
+					},
+					fail: function(err) {
+						uni.showToast({
+							title: "定位失败！手动选择",
+							icon: 'none'
+						})
+					}
+				})
+			},
+			// 微信小程序定位
+			getPointByWeChat() {
+				amapPlugin.getRegeo({
+					success: (data) => {
+						this.area = data[0].regeocodeData.addressComponent.district
+						this.newCity = data[0].regeocodeData.addressComponent.city + data[0].regeocodeData.addressComponent.district;
+					},
+					fail: (err) => {
+						uni.showToast({
+							title: "定位失败！手动选择",
+							icon: 'none'
+						})
+					}
+				})
+			},
+
+			// 获取轮播
 
 			// 前往本地优惠
 			goLocalPre() {
@@ -447,6 +429,7 @@
 			},
 			// 手动设置城市
 			setCity(data) {
+				console.log('----', data)
 				this.newCity = data.data.slice(1, 3).join('');
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);
@@ -492,7 +475,6 @@
 			},
 			// 前往店铺
 			goShopPage(id, e) {
-				console.log(JSON.stringify(id), e)
 				if (e === 0) {
 					uni.navigateTo({
 						url: "../shopPage/shopPage?shopId=" + id
@@ -510,8 +492,6 @@
 				// #ifdef APP-PLUS
 				uni.scanCode({
 					success: res => {
-						// console.log('条码类型：' + res.scanType);
-						// console.log('条码内容：' + res.result);
 						var shopId = res.result;
 						getShopPay({
 							SHOP_ID: res.result
@@ -562,14 +542,7 @@
 				});
 				// #endif
 			},
-			// 搜索
-			// search(e){
-			// 	this.maskHide = true;
-			// 	console.log(e.detail.value)
-			// },
-			// showHistory(){
-			// 	this.maskHide = false;
-			// }
+
 			goSearch() {
 				uni.navigateTo({
 					url: '../search/search'

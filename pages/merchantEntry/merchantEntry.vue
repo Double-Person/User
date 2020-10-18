@@ -93,7 +93,8 @@
 	import amapPlugin from '@/components/initMap.js';
 	// 引入请求接口
 	import {
-		shopAuth
+		shopAuth,
+		baseUrl
 	} from '@/common/apis.js';
 	import {
 		pathToBase64,
@@ -102,7 +103,7 @@
 	export default {
 		data() {
 			return {
-				addressObj:{},
+				addressObj: {},
 				username: '',
 				phone: '',
 				email: "",
@@ -136,15 +137,19 @@
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'], //从相册选择
 					success: (res) => {
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl = base64; //
-								this.imgHide = false;
-							})
-							.catch(error => {
-								console.error(error);
-							});
-			
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							success: (uploadFileRes) => {
+								let url = (JSON.parse(uploadFileRes.data).data).split(
+									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
+								console.log(baseUrl + url[1])
+								this.imgUrl = baseUrl + url[1]
+								this.imgHide = false
+							}
+						});
 
 					}
 				});
@@ -155,17 +160,19 @@
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'], //从相册选择
 					success: (res) => {
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl1 = base64; //
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							success: (uploadFileRes) => {
+								let url = (JSON.parse(uploadFileRes.data).data).split(
+									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
+								this.imgUrl1 = baseUrl + url[1]
 								this.imgHide1 = false
-							})
-							.catch(error => {
-								console.error(error);
-							});
-				
-						;
-						console.log(JSON.stringify(res.tempFilePaths));
+							}
+						});
+
 					}
 				});
 			},
@@ -175,16 +182,18 @@
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'], //从相册选择
 					success: (res) => {
-						
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl2 = base64; //
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							success: (uploadFileRes) => {
+								let url = (JSON.parse(uploadFileRes.data).data).split(
+									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
+								this.imgUrl2 = baseUrl + url[1]
 								this.imgHide2 = false;
-							})
-							.catch(error => {
-								console.error(error);
-							});
-						console.log(JSON.stringify(res.tempFilePaths));
+							}
+						});
 					}
 				});
 			},
@@ -210,11 +219,11 @@
 					name: this.username, // 用户名
 					phone: this.phone, //  手机号
 					eamil: this.eamil,
-					city: this.addressObj.city||'1',
-					area: this.addressObj.district||'2',
+					city: this.addressObj.city || '1',
+					area: this.addressObj.district || '2',
 					fulladd: this.city,
-					longitude: this.longitude||0,
-					latitude: this.latitude|| 0,
+					longitude: this.longitude || 0,
+					latitude: this.latitude || 0,
 					idcarddfront: this.imgUrl, // 身份证真反面
 					idcardback: this.imgUrl1, // 身份证真反面
 					certificate: this.imgUrl2 //营业执照
@@ -235,7 +244,7 @@
 						this.addressObj = data.data.regeocode.addressComponent
 					},
 					fail(err) {
-					
+
 						uni.showToast({
 							title: "定位不成功",
 							icon: 'none'
@@ -243,12 +252,12 @@
 					}
 				})
 			},
-			
-			getPoint(){
+
+			getPoint() {
 				uni.getLocation({
-				    type: 'wgs84',
-				    success: (res)=> {
-				        
+					type: 'wgs84',
+					success: (res) => {
+
 						this.longitude = res.longitude
 						this.latitude = res.latitude
 						this.conversionPoint(res)
@@ -257,9 +266,9 @@
 							header: {
 								'Content-Type': 'application/x-www-form-urlencoded',
 							},
-							data: { 
+							data: {
 								LONGITUDE: this.longitude, // '103.980318', //
-								LATITUDE: this.latitude,  // '30.759185', //
+								LATITUDE: this.latitude, // '30.759185', //
 								// kilometers: '300',
 								showCount: 10,
 								currentPage: 1,
@@ -268,7 +277,7 @@
 							},
 							method: 'POST',
 							success: (res) => {
-							
+
 								if (res.data.status != '00') {
 									uni.showToast({
 										title: '请手动设置地区!',
@@ -276,12 +285,12 @@
 										duration: 2000
 									});
 								} else {
-								
+
 									res.data.varList.map(item => {
 										item.distance = Math.round(item.distance);
 									});
 									this.menuList = res.data.varList;
-						
+
 								}
 							},
 							fail: () => {
@@ -291,13 +300,13 @@
 								});
 							}
 						})
-				    }
+					}
 				})
 			},
-			
-		
 
-			
+
+
+
 		}
 	}
 </script>

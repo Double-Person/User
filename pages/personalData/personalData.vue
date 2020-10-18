@@ -7,7 +7,8 @@
 				<view class="left">
 					头像
 				</view>
-				<view class="right" @tap="addImg">
+				<!-- addImg  -->
+				<view class="right" @tap="uploadBackgroundImg">
 					<view class="right-add" :class="imgHide?'':'imgHide'">
 						<text class="iconfont icon-tubiaolunkuo-"></text>
 						<view>添加图片</view>
@@ -47,7 +48,8 @@
 		uploadImag,
 		setPassword,
 		personal,
-		editInfo
+		editInfo,
+		baseUrl
 	} from '@/common/apis.js';
 	export default {
 		data() {
@@ -63,31 +65,34 @@
 			tabbar
 		},
 		methods: {
-			// 添加图片
-			addImg() {
+			// 上传背景图
+			uploadBackgroundImg() {
 				uni.chooseImage({
-					count: 1, //默认9
-					sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album', 'camera'], //从相册选择
+					count: 1,
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['album'], //从相册选择
 					success: (res) => {
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl = base64
-								console.log(this.imgUrl)
-								this.imgHide = false  // 
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							formData: {
+								file: 'test'
+							},
+							success: (uploadFileRes) => {
+								let url = (JSON.parse(uploadFileRes.data).data).split(
+									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
+								console.log(baseUrl + url[1])
+								this.imgUrl = baseUrl + url[1]
+								this.imgHide = false 
+							}
+						});
 
-								uploadImag({Img: base64}).then(up => {
-									console.log('+++++++++', JSON.stringify(up))
-								}).catch(err => {
-									console.log('+++++err++++', JSON.stringify(err))
-								})
-							})
-							.catch(error => {
-								console.error(error)
-							})
 					}
 				});
 			},
+		
 			// 修改
 			upload() {
 				if (this.imgUrl == '' || this.username == '') {
@@ -101,7 +106,7 @@
 					title: '加载中...'
 				})
 				// userinfo_id     name   hard
-				editInfo({ 
+				editInfo({
 					"userinfo_id": this.USERINFO_ID,
 					"hard": this.imgUrl,
 					"name": this.username
@@ -125,6 +130,8 @@
 						title: '修改失败！',
 						icon: 'none'
 					})
+				}).finally(() => {
+					uni.hideLoading()
 				})
 			}
 		},

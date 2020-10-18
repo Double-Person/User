@@ -1,6 +1,8 @@
 // 引入封装的request
 // import request from './request.js';
 import request from './ajax.js'
+export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+
 
 
 
