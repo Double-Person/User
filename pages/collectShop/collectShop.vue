@@ -11,10 +11,14 @@
 						<text>{{item.shopName}}</text>
 					</view>
 					<view class="title-right">
-						已收藏
+						<!-- 已收藏 -->
+						<view class="btn">
+							<text @tap="cancel(item.collectionsId)">取消收藏</text>
+							<!-- <text>再来一单</text> -->
+						</view>
 					</view>
 				</view>
-				<view class="content">
+				<!-- <view class="content">
 					<view class="content-left">
 						<image :src="item.shopImg" mode=""></image>
 					</view>
@@ -22,10 +26,10 @@
 						<text>下单时间：{{item.createTime}}</text>
 						<text>总价：￥{{item.actualPay}}</text>
 					</view>
-				</view>
+				</view> -->
 				<view class="btn">
-					<text @tap="cancel(item.collectionsId)">取消收藏</text>
-					<text>再来一单</text>
+					<!-- <text @tap="cancel(item.collectionsId)">取消收藏</text> -->
+					<!-- <text>再来一单</text> -->
 				</view>
 			</view>
 		</view>
@@ -48,10 +52,6 @@
 			return {
 				collectShopList:[
 					{id:"01",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"},
-					{id:"02",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"},
-					{id:"03",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"},
-					{id:"04",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"},
-					{id:"05",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"}
 				],
                 USERINFO_ID:''
 			};
@@ -138,6 +138,8 @@
 					.title-right{
 						font-size: 28rpx;
 						color: #999;
+						display: flex;justify-content: center;
+						align-items: center;
 					}
 				}
 				.content{
@@ -165,7 +167,7 @@
 				.btn{
 					display: flex;
 					justify-content: flex-end;
-					padding-bottom: 20rpx;
+					// padding-bottom: 20rpx;
 					text{
 						padding: 9rpx 20rpx;
 						color: #FF6504;

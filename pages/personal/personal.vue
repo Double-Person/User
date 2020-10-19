@@ -431,7 +431,8 @@ export default {
 				text-align: center;
 
 				text {
-					font-size: 38rpx;
+					// font-size: 38rpx;
+					font-size: 26rpx;
 					color: #ff5a32;
 					font-weight: bold;
 				}
@@ -464,7 +465,8 @@ export default {
 				}
 
 				.xingbi {
-					font-size: 30rpx;
+					// font-size: 30rpx;
+					font-size: 26rpx;
 					margin: 20rpx 0;
 				}
 

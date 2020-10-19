@@ -3,6 +3,7 @@
 		<!-- header -->
 		<commonHeader headerTitl="商家入驻" xingHide=true lingHide=true></commonHeader>
 		<!-- 内容开始 -->
+		
 		<view class="merchantEntry-content">
 			<view class="merchantEntry-content-item">
 				<text>姓名</text>
@@ -11,13 +12,17 @@
 			</view>
 			<view class="merchantEntry-content-item">
 				<text>手机号码认证注册</text>
-				<input @blur="getPhone" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input @blur="getPhone" :maxlength="11" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="注册手机号已读取" />
 			</view>
 			<view class="merchantEntry-content-item">
 				<text>选择入驻城市/区</text>
-				<input @blur="getCity" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
-				 placeholder="填写入驻城市/区" />
+				<!-- <input @blur="getCity" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				 placeholder="填写入驻城市/区" /> -->
+				 {{this.city}}
+				 <pickerAddress class="index-top-address" @change="getCity">
+				 	<text class="iconfont icon-dingwei"></text>
+				 </pickerAddress>
 			</view>
 			<view class="merchantEntry-content-item">
 				<text>负责人邮箱</text>
@@ -206,8 +211,9 @@
 				this.phone = e.detail.value;
 			},
 			// 城市
-			getCity(e) {
-				this.city = e.detail.value;
+			getCity(data) {
+				// this.city = e.detail.value;
+				this.city = data.data.slice(0, 3).join('');
 			},
 			// 邮箱
 			getEmail(e) {
@@ -311,7 +317,10 @@
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+	.index-top-address{
+		margin-right: 15rpx;
+	}
 	.merchantEntry {
 		min-height: 100%;
 		background: #f6f7f8;
