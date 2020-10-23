@@ -111,9 +111,9 @@
 					"hard": this.imgUrl,
 					"name": this.username
 				}).then(res => {
-					if (res.returnMsg.status == '00') {
+					if (res.msgType == '0') {
 						setTimeout(() => {
-							uni.hideLoading()
+							uni.hideLoading();
 							uni.showToast({
 								title: '修改成功!'
 							})
@@ -121,8 +121,8 @@
 								uni.navigateTo({
 									url: '../setting/setting'
 								})
-							}, 1000)
-						}, 2000)
+							}, 500)
+						}, 1000)
 					}
 					console.log(res)
 				}).catch(err => {

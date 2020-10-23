@@ -375,19 +375,8 @@ export default {
 					
 			this.payMode = index;
 			// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
-			// if (index === 0) {
-			// 	this.payMode = 0;
-			// }
-			// if (index === 1) {
-			// 	this.payMode = 1;
-			// }
-			// if (index === 2) {
-			// 	this.payMode = 2;
-			// }
-			// if (index === 3) {
-			// 	this.payMode = 3;
-			// }
-			var obj = {
+	
+			let obj = {
 				payAmount: this.payAmount,  // '216.0',//
 				orderSummaryId: this.orderID // 'D1601279104958'//
 			};
@@ -396,7 +385,7 @@ export default {
 			// 微信支付
 			if (this.payMode === 1) {
 				wxpay(obj).then(res => {
-					
+					console.log(res)
 					uni.requestPayment({// 现在都没进这个
 						provider: 'wxpay',
 						orderInfo: res.returnMsg, // 用JSON.stringify(res.returnMsg)和 res.returnMsg都不行

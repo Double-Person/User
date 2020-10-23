@@ -165,9 +165,9 @@
 							var coordType = event.coordType; // 转换后的坐标系类型
 							var reg = /.+?(省|市|自治区|自治州|县|区)/g;
 							let addressList = address.match(reg).toString().split(",");
-							console.log(addressList);
-							
-							this.newCity = addressList[0] + addressList[1] + addressList[2]
+							console.log('--------------', addressList);
+							// addressList[0] +
+							this.newCity =  addressList[1] + addressList[2]
 						},
 						function(e) {}
 					);
@@ -247,11 +247,12 @@
 						this.area = data.data.regeocode.addressComponent.district;
 						uni.setStorageSync('locationAddress', JSON.stringify(data.data.regeocode.addressComponent));
 						let {
-							province,
+							// province,
 							city,
 							district
 						} = data.data.regeocode.addressComponent
-						this.newCity = province + city + district
+						// province +
+						this.newCity =  city + district
 						this.getPositonData(this.latitude, this.longitude, this.area)
 					},
 					fail: err => {

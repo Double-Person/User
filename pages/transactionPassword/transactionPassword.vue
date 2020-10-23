@@ -16,7 +16,7 @@
 
 <script>
 	import commonHeader from "@/components/common-header/common-header"
-    import {transaction} from "@/common/apis.js"
+    import {transaction, pwdInfo} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
@@ -26,7 +26,17 @@
 			};
 		},
 		components:{commonHeader},
+		mounted() {
+			this.check()
+		},
 		methods:{
+			// userinfo_id    USERINFO_ID
+			check(){
+				let userinfo_id = uni.getStorageSync('USERINFO_ID')
+				pwdInfo({userinfo_id}).then(res => {
+					console.log("检查交易密码", res)
+				})
+			},
 			submit(){
                 if (this.oldPwd  === '' || this.newPwd==='' || this.pwd==='') {
                     uni.showToast({

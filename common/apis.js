@@ -172,6 +172,8 @@ export const updeteShopBank = params => request.get('/api/merchant/updeteShopBan
 
 //  37 添加到购物车
 export const addCarts = params => request.post('/api/user/carts/addCarts', params);
+// 判断是否有交易密码
+export const pwdInfo = params => request.get('/api/ordersummary/pwdInfo', {params});
 
 
 

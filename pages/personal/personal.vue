@@ -15,7 +15,7 @@
 			<view class="personal-top">
 				<view class="personal-top-left">
 					<image 
-						:src="userInfo1.userInfo.FACEICON ? userInfo1.userInfo.FACEICON : '../../static/images/cartLOGO.png'" 
+						:src="userInfo1.userInfo.FACEICON ? userInfo1.userInfo.FACEICON : '/static/images/cartLOGO.png'" 
 						mode="" @tap="goSetting">
 					</image>
 					<view class="title">
@@ -33,21 +33,21 @@
 		<view class="personal-msg">
 			<view class="personal-msg-top">
 				<view>
-					<text>{{ userInfo1.dividend ? userInfo1.dividend+'.00' : 0+'.00' }}</text>
+					<text>{{ userInfo1.dividend }}</text>
 					<view>上一天分利</view>
 				</view>
 				<view>
-					<text>{{ userInfo1.order ? userInfo1.order+'.00' : 0 }}</text>
+					<text>{{ userInfo1.order }}</text>
 					<view>总消费金</view>
 				</view>
 				<view @tap="goMyConsume">
-					<text>{{ userInfo1.userOrder ? userInfo1.userOrder+'.00' : 0+'.00' }}</text>
+					<text>{{ userInfo1.userOrder }}</text>
 					<view>我的消费金</view>
 				</view>
 			</view>
 			<view class="personal-msg-bottom">
 				<view class="text">
-					<text @tap="goMyPentacle">{{(userInfo1.userInfo.STARCOINS || 0)+'.00' }}</text>
+					<text @tap="goMyPentacle">{{(userInfo1.userInfo.STARCOINS || 0) }}</text>
 					<view class="xingbi" @tap="goMyPentacle">我的星币</view>
 					<view class="duihuan" @tap="goXbExchange">兑换</view>
 				</view>
