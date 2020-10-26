@@ -17,8 +17,8 @@
 				<view class="cart-content-item-content" v-for="(goods, $goods) in item.goodsList" :key="$goods">
 					<label class="radio">
 						<radio value="" :checked="goods.checked" @tap="changeRadio(goods,index)" />
-						<image :src="goods.SHOP_IMG" mode="" @tap="goShopDetails"></image>
-						<view class="text" @tap="goShopDetails">
+						<image :src="goods.SHOP_IMG" mode="" @tap="goShopDetails(goods)"></image>
+						<view class="text" @tap="goShopDetails(goods)">
 							<text class="title">{{goods.GOODS_NAME}}</text>
 							<view class="num">
 								<text>数量: {{ goods.COUNTS }}</text>
@@ -216,9 +216,9 @@
 				
 			},
 			// 前往商品详情
-			goShopDetails() {
+			goShopDetails(item) {
 				uni.navigateTo({
-					url: "../goodsDetails/goodsDetails"
+					url: "../goodsDetails/goodsDetails?shopId=" + item.GOODS_ID
 				})
 			}
 		},

@@ -81,10 +81,11 @@
 								file: 'test'
 							},
 							success: (uploadFileRes) => {
-								let url = (JSON.parse(uploadFileRes.data).data).split(
-									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
-								console.log(baseUrl + url[1])
-								this.imgUrl = baseUrl + url[1]
+								// let url = (JSON.parse(uploadFileRes.data).data).split(
+								// 	'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
+								// console.log(baseUrl + url[1])
+								// this.imgUrl = baseUrl + url[1]
+								this.imgUrl = JSON.parse(uploadFileRes.data).data
 								this.imgHide = false 
 							}
 						});

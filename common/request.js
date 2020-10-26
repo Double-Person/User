@@ -37,6 +37,7 @@ if(process.env.NODE_ENV === 'development'){
 uniRequest.interceptors.request.use(
     request => {
 		// 所有请求在请求发送之前获取本地token,带上token
+		console.log('请求拦截', request)
 		let token =	'';
 		uni.getStorage({
 			key:'token',
@@ -48,6 +49,7 @@ uniRequest.interceptors.request.use(
             title: '加载中...',
             mask:true
         })
+		
 		request.headers.Authorization = 'Bearer ' + token;
         // request.headers.USERINFO_ID = getApp().globalData.USERINFO_ID;
         //配置基本信息    

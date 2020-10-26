@@ -105,6 +105,12 @@
 				// #ifdef H5
 				let canBack = true;
 				const pages = getCurrentPages();
+				
+				if((pages.route == 'pages/news/news')||(pages.route == 'pages/cart/cart')) {
+					uni.navigateTo({
+						url:"/pages/index/index"
+					})
+				}
 				// 有可返回的页面则直接返回，uni.navigateBack默认返回失败之后会自动刷新页面 ，无法继续返回  
 				if (pages.length > 1) {
 					uni.navigateBack(1)
@@ -122,6 +128,17 @@
 				// #endif
 				// 修复小程序app返回退出应用bug(无法返回重定向至首页)
 				var pagelength = getCurrentPages();
+				
+				var pageLast = pagelength[pagelength.length - 1];
+				var currentWebview = pageLast.$getAppWebview();
+				let currentRouter = currentWebview.__uniapp_route
+				if((currentRouter == 'pages/news/news')||(currentRouter == 'pages/cart/cart')) {
+					uni.navigateTo({
+						url:"/pages/index/index"
+					})
+					return false;
+				}
+				
 				if (pagelength.length === 1) {
 					var path = pagelength[0].route;
 					// console.log(path)

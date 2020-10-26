@@ -2,23 +2,22 @@
 	<view class="goodsDetails">
 		<!-- header -->
 		<commonHeader headerTitl="产品详情" xingHide=true lingHide=true></commonHeader>
-		
 		<view class="goodsDetails-content">
 			<view class="goodsDetails-content-background">
-				<image src="../../static/images/content01.png" mode=""></image>
+				<image :src="Detail.IMG ? Detail.IMG : '../../static/images/content01.png'" mode=""></image>
 			</view>
 			<view class="goodsDetails-content-title">
 				<view class="title">
 					{{Detail.NAME}}
 				</view>
 				<view class="sale">
-					<text>月售{{Detail.MONTHLY_SALES}}</text>好评率92%  
+					<text>月售{{Detail.MONTHLY_SALES || 0}}</text>
 				</view>
 				 <view class="jiesao">
 				 	主要原料：{{Detail.MARERIAL}}
 				 </view> 
 				 <view class="price">
-				 	￥{{Detail.PRICE}}
+				 	￥{{Detail.PRICE || 0}}
 				 </view>
 			</view>
 			<view class="goodsDetails-content-details">
@@ -63,20 +62,22 @@
 	export default {
 		data() {
 			return {
-				Detail:''
+				Detail: {}
 			};
 		},
 		components:{
 			tabbar,
 			commonHeader
 		},
+		
 		onLoad(opetion) {
-			console.log(opetion)
-			shopDetails({GOODS_ID: opetion.shopId}).then(res=>{
-				console.log('商品详情',res)
-				this.Detail = res.data.returnMsg.newevaluate && res.data.returnMsg.newevaluate[0]
+			//    
+			shopDetails({goodsId: opetion.shopId}).then(res=>{
+				console.log('商品详情',res.returnMsg.newevaluate[0])
+				this.Detail = res.returnMsg.newevaluate && res.returnMsg.newevaluate[0]
 				
 			}).catch(err=>{
+				console.log(err)
 				uni.showToast({
 					title:'请求失败！',
 					icon:'none'

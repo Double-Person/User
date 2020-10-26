@@ -117,7 +117,7 @@
 				<view class="item" v-for="item in orderList" :key="item.id">
 					<view class="item-title">
 						<view class="left">
-							<image :src="item.goodsImg" mode=""></image>
+							<image :src="item.goodsImg ? item.goodsImg : '/static/images/cartLOGO.png'" mode=""></image>
 							<text>{{item.shopName}}</text>
 						</view>
 						<view class="right">
@@ -126,7 +126,7 @@
 					</view>
 					<view url="../oraderDetails/oraderDetails" class="item-content">
 						<view class="left">
-							<image :src="item.goodsImg" mode=""></image>
+							<image :src="item.goodsImg ? item.goodsImg : '/static/images/cartLOGO.png'" mode=""></image>
 							<view>
 								<text class="left-title">
 									{{item.goodsName}}
@@ -158,14 +158,14 @@
 					</view>
 					<view class="item-btn">
 						<text @click="again(item.shopId)">进入店铺</text>
-						<text>撤销退款</text>
+						<text @click="cancelRefund(item)">撤销退款</text>
 					</view>
 				</view>
 			</view>
 		</view>
 		<!-- 暂无提示 -->
 		<view class="myOrder-content-tips" v-if="orderList.length==0" style="textAlign: center;color: #666;paddingTop: 50rpx;">
-			占无订单！
+			暂无订单！
 		</view>
 		<!-- tabbar -->
 		<tabbar></tabbar>
@@ -176,7 +176,7 @@
 	import commonHeader from"@/components/common-header/common-header";
 	import tabbar from"@/components/common-tabbar/common-tabbar";
 	
-	import {myOrder,submitOrder} from "@/common/apis.js";
+	import {myOrder,submitOrder, orderRepeal} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
@@ -184,6 +184,13 @@
 				orderList:[],
                 USERINFO_ID:''
 			};
+		},
+		components:{
+			commonHeader,
+			tabbar
+		},
+		mounted() {
+		    this.getOrderList(1)
 		},
 		methods:{
 			changeTitle(index){
@@ -244,18 +251,32 @@
             },
             // 再来一单
             again(shopId){
+				console.log(shopId)
                 uni.navigateTo({
                     url:"../shopPage/shopPage?shopId="+shopId
                 })
-            }
+            },
+			cancelRefund(item) {
+				console.log(item)
+				orderRepeal({ORDERSUMMARY_ID: item.ORDERSUMMARY_ID}).then(res => {
+					if(res.msgType == 0) {
+						uni.showToast({
+							title:'取消退款成功',
+							icon: "none"
+						})
+						this.active = 2
+						this.getOrderList(2)
+					}else{
+						uni.showToast({
+							title:'取消退款失败',
+							icon: "none"
+						})
+					}
+					
+				})
+			}
 		},
-		components:{
-			commonHeader,
-			tabbar
-		},
-		mounted() {
-            this.getOrderList(1)
-		}
+		
 	}
 </script>
 

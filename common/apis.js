@@ -180,7 +180,8 @@ export const pwdInfo = params => request.get('/api/ordersummary/pwdInfo', {param
 
 //  修改用户头像，用户名
 export const editInfo = params => request.post('/api/ordersummary/editInfo', params);
-
+// 撤销退款
+export const orderRepeal = params => request.post('/api/ordersummary/order/repeal', params);
 
 export const uploadImag = params => request.post('/api/ordersummary/upload/imag', params);
 

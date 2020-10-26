@@ -76,7 +76,7 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {addEvaluate} from "@/common/apis.js"
+    import {addEvaluate, baseUrl} from "@/common/apis.js"
     import { pathToBase64, base64ToPath } from 'image-tools'
 	export default {
 		data() {
@@ -112,14 +112,27 @@
 				    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
 				    sourceType: ['album','camera'], //从相册选择
 				    success: (res)=> {
-                        pathToBase64(res.tempFilePaths[0])
-                          .then(base64 => {
-                            this.imgUrl = base64
-                            this.imgHide = false
-                          })
-                          .catch(error => {
-                            console.error(error)
-                          })
+                        // pathToBase64(res.tempFilePaths[0])
+                        //   .then(base64 => {
+                        //     this.imgUrl = base64
+                        //     this.imgHide = false
+                        //   })
+                        //   .catch(error => {
+                        //     console.error(error)
+                        //   })
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							formData: {
+								file: 'test'
+							},
+							success: (uploadFileRes) => {
+								this.imgUrl = JSON.parse(uploadFileRes.data).data
+								this.imgHide = false 
+							}
+						});
 				    }
 				});
 			},

@@ -246,6 +246,7 @@
 					success: (data) => {
 						this.area = data.data.regeocode.addressComponent.district;
 						uni.setStorageSync('locationAddress', JSON.stringify(data.data.regeocode.addressComponent));
+						uni.setStorageSync('locationArea', JSON.stringify(this.area));
 						let {
 							// province,
 							city,
@@ -476,6 +477,8 @@
 			},
 			// 前往店铺
 			goShopPage(id, e) {
+				console.log(id, e)
+				// return false;
 				if (e === 0) {
 					uni.navigateTo({
 						url: "../shopPage/shopPage?shopId=" + id

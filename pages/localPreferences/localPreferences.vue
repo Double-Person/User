@@ -13,7 +13,7 @@
 				<view class="localPreferences-content-hot-title">
 					<text class="iconfont icon-dian"></text>热门推荐
 				</view>
-				<view @click="goShop(item.shopId)" class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id">
+				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
 					<view class="left">
 						<image :src="item.img" mode=""></image>
 					</view>
@@ -63,6 +63,7 @@
 		data() {
 			return {
 				bannerList: [],
+				onloadObj: {},
 				swiperConfig: {
 					indicatorDots: true,
 					indicatorColor: 'rgba(255, 255, 255, .4)',
@@ -83,29 +84,18 @@
 			tabbar,
 			uniRate
 		},
-		methods: {
-			goShop(id) {
-				console.log(id)
-				uni.navigateTo({
-					url: "../shopPage/shopPage?shopId=" + id
-				});
-			}
-		},
+	
 		onLoad(e) {
 			console.log(e)
 			var obj = {
 				longitude: e.longitude,
 				latitude: e.latitude,
 				AREA: e.area,
-				kilometers:'300', 
-				NAME:'' // 不填就是综合
+				kilometers: '300',
+				NAME: '' // 不填就是综合
 			}
-			console.log('obj', obj)
-			// 本地优惠
-			getPush(obj).then(res => {
-				console.log('本地优惠', res)
-				this.hotLIst = res.returnMsg.shop
-			})
+			this.onloadObj = obj
+			this.getCalPreferences()
 			this.getBannerList();
 			//根据用户位置推送最近商家
 			//     pushShop(obj).then(res=>{
@@ -132,15 +122,25 @@
 			//     })
 		},
 		methods: {
+			handelShop(id) {
+				console.log(id)
+				uni.navigateTo({
+					url: "../shopPage/shopPage?shopId=" + id
+				});
+			},
+			// 本地优惠
+			getCalPreferences() {
+				getPush(this.onloadObj).then(res => {
+					this.hotLIst = res.returnMsg.shop
+				})
+			},
 			// 获取banner
 			getBannerList() {
 				var data = {
-					area: '东城区',
+					area: uni.getStorageSync('locationArea'),
 					category: '本地优惠'
 				}
 				getBanner(data).then(res => {
-					console.log('获取banner', res)
-
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
 							picture: item.IMG,
