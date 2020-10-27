@@ -90,7 +90,26 @@
                 content:'',
                 imgHide: true, // 隐藏/显示图片
                 imgUrl: '', // 图片地址
+				fromPath:''
 			};
+		},
+		components:{
+			commonHeader,
+			tabbar
+		},
+		onLoad(e){
+			console.log(e)
+			this.ORDERSUMMARY_ID = e.ORDERSUMMARY_ID
+			if(e.from == 'order') {
+				this.fromPath = e.from
+			}
+			this.goodsId = e.goodsId
+			uni.getStorage({
+				key:"USERINFO_ID",
+				success:(res)=>{
+					this.USERINFO_ID = res.data
+				}
+			})
 		},
 		methods:{
 			selectActive(index){
@@ -138,6 +157,7 @@
 			},
             // 发表评论
             submit(){
+				let that = this;
                 if(this.active<0 || this.content == ''){
                     uni.showToast({
                         title:'请完善信息!',
@@ -168,9 +188,16 @@
                             mask:true
                         })
                         setTimeout(()=>{
-                            uni.navigateTo({
-                                url:"../myEvaluate/myEvaluate"
-                            })
+							if(that.fromPath == 'order') {
+								uni.navigateTo({
+									url: '../myOrder/myOrder'
+								})
+							}else{
+								uni.navigateTo({
+								    url:"../myEvaluate/myEvaluate"
+								})
+							}
+                            
                         },2000)
                     }else{
                         uni.showToast({
@@ -183,20 +210,7 @@
                 })
             }
 		},
-		components:{
-			commonHeader,
-			tabbar
-		},
-        onLoad(e){
-            this.ORDERSUMMARY_ID = e.ORDERSUMMARY_ID
-            this.goodsId = e.goodsId
-            uni.getStorage({
-                key:"USERINFO_ID",
-                success:(res)=>{
-                    this.USERINFO_ID = res.data
-                }
-            })
-        }
+		
 	}
 </script>
 

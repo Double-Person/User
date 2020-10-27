@@ -208,11 +208,8 @@ export default {
 			// #ifdef APP-PLUS
 			uni.scanCode({
 				success: res => {
-					console.log('条码类型：' + res.scanType);
-					console.log('条码内容：' + res.result);
 					var shopId = res.result;
 					getShopPay({ SHOP_ID: res.result }).then(res => {
-						console.log(res);
 						if (res.returnMsg.status == '00') {
 							uni.navigateTo({
 								url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
@@ -237,7 +234,6 @@ export default {
 					success: function(res) {
 						var shopId = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
 						getShopPay({ SHOP_ID: res.result }).then(res => {
-							console.log(res);
 							if (res.returnMsg.status == '00') {
 								uni.navigateTo({
 									url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
@@ -276,7 +272,6 @@ export default {
 			key: 'USERINFO_ID',
 			success: res => {
 				personal({ USERINFO_ID: res.data }).then(res => {
-					console.log('me', res.returnMsg)
 					uni.setStorageSync('userInfo', res.returnMsg.userInfo)   // kbalance
 					uni.setStorageSync('kbalance', res.returnMsg.kbalance)   // kbalance
 			

@@ -59,6 +59,7 @@
 					<view class="item-btn">
 						<text v-if="item.takeStatus == 'N'" @click="goOrderDetail(item.ORDERSUMMARY_ID)">申请退款</text>
 						<text v-if="item.takeStatus == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)">确认收货</text>
+						<text v-if="item.takeStatus != 'N'" @click="evaluation(item.ORDERSUMMARY_ID)">立即评价</text>
 						<text v-if="item.address!='线下支付'" @click="again(item.shopId)">再来一单</text>
 					</view>
 				</view>
@@ -193,6 +194,11 @@
 		    this.getOrderList(1)
 		},
 		methods:{
+			evaluation(orderId) {  // ORDERSUMMARY_ID
+				uni.navigateTo({
+					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order'
+				})
+			},
 			changeTitle(index){
 				this.active = index;
                 this.getOrderList(index)

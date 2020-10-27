@@ -4,10 +4,6 @@
 		<commonHeader headerTitl="关于我们" xingHide=true lingHide=true fenxiangHide=true></commonHeader>
 		<view class="about-content">
 			<view>
-				<view class="img">
-					<image src="../../static/images/codeshoukuan.png" mode=""></image>
-					<view>扫描二维码，您就可以下载APP客户端</view>
-				</view>
 				<view class="content">
 					<view class="title">
 						{{ info.SYSSET_NAME }}
