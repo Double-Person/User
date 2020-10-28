@@ -88,11 +88,12 @@
 					this.pwdState = true;
 					this.loginState();
 					login({ PHONE, PASSWORD, openId, nickName }).then(res => {
-						uni.showToast({
-							title: res.errMsg,
-							duration: 2000
-						})
+						
 						if (res.returnMsg.status == '00') {
+							uni.showToast({
+								title: '登陆成功',
+								icon: 'none'
+							})
 							uni.redirectTo({
 								url: '/pages/index/index'
 							})
@@ -185,11 +186,9 @@
 				let that = this;
 				// 登录请求
 				login(that.saveObj).then(res => {
-					
-					console.log('登录响应', JSON.stringify(res));
 					uni.showToast({
 						title: res.errMsg,
-						duration: 2000
+						icon:'none'
 					})
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局

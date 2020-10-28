@@ -63,6 +63,21 @@
 				timeStamp: ''
 			}
 		},
+		components: {
+			commonHeader,
+			tabbar
+		},
+		computed: {
+			startDate() {
+				return this.getDate('start');
+			},
+			endDate() {
+				return this.getDate('end');
+			}
+		},
+		mounted() {
+			this.getData()
+		},
 		methods: {
 			// 日期选择
 			bindDateChange: function(e) {
@@ -85,26 +100,17 @@
 				}
 				month = month > 9 ? month : '0' + month;;
 				day = day > 9 ? day : '0' + day;
-				// this.timeStamp = new Date(`${year}-${month}-${day}`).getTime()
-				this.timeStamp = `${arr[0]}-${arr[1]}-${arr[2]}`
-				// return `${year}年${month}月${day}日`;
 				return `${year}-${month}-${day}`;
 			},
 			getData(timeStamp) {
-
 				uni.getStorage({
 					key: 'USERINFO_ID',
 					success: res => {
-						// console.log( res.data)
-						let timeStr = (new Date().toLocaleDateString()).split('/').join('-');
 						var obj = {
 							"USERINFO_ID": res.data,
-							"TRADETIME": this.timeStamp ? this.timeStamp : timeStr
+							"TRADETIME": this.timeStamp ? this.timeStamp : ''
 						}
-						// obj 先不传，后台数据有问题
 						myPentacle(obj).then(res => {
-							console.log(res)
-							// console.log('res',res.returnMsg.varList)
 							this.listData = res.returnMsg.varList
 						}).catch(err => {
 							uni.showToast({
@@ -116,21 +122,7 @@
 				})
 			}
 		},
-		components: {
-			commonHeader,
-			tabbar
-		},
-		computed: {
-			startDate() {
-				return this.getDate('start');
-			},
-			endDate() {
-				return this.getDate('end');
-			}
-		},
-		mounted() {
-			this.getData()
-		}
+		
 	}
 </script>
 

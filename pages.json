@@ -117,7 +117,13 @@
         }, {
             "path": "pages/localPreferences/localPreferences",
             "style": {}
-        }, {
+        },
+		{
+		    "path": "pages/localPreferences/localPreferencesDetail",
+		    "style": {}
+		},
+		
+		{
             "path": "pages/shopPage/shopPage",
             "style": {}
         }, {

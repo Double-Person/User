@@ -12,7 +12,7 @@
 		<view class="certification-upload">
 			<view class="certification-upload-zhang" @tap="zheng">
 				<view class="top" :class="imgHide1 ? '' : 'imgHide'">
-					<image src="../../static/images/renzheng01.png" mode=""></image>
+					<image src="/static/images/renzheng01.png" mode=""></image>
 					<view>请上传身份证正面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
@@ -22,7 +22,7 @@
 			</view>
 			<view class="certification-upload-fan" @tap="fan">
 				<view class="top" :class="imgHide2 ? '' : 'imgHide'">
-					<image src="../../static/images/renzheng02.png" mode=""></image>
+					<image src="/static/images/renzheng02.png" mode=""></image>
 					<view>请上传身份证反面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
@@ -46,7 +46,9 @@
 	import tabbar from '@/components/common-tabbar/common-tabbar';
 	import {
 		Authentication,
-		personal
+		personal,
+		uploadImag,
+		baseUrl
 	} from '@/common/apis.js';
 	import {
 		pathToBase64,
@@ -76,14 +78,20 @@
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'], //从相册选择
 					success: res => {
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl1 = base64;
-								this.imgHide1 = false;
-							})
-							.catch(error => {
-								console.error(error);
-							});
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							formData: {
+								file: 'test'
+							},
+							success: (uploadFileRes) => {
+								this.imgUrl1 = JSON.parse(uploadFileRes.data).data
+								this.imgHide1 = false 
+							}
+						});
+						
 					}
 				});
 			},
@@ -93,14 +101,20 @@
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 					sourceType: ['album', 'camera'], //从相册选择
 					success: res => {
-						pathToBase64(res.tempFilePaths[0])
-							.then(base64 => {
-								this.imgUrl2 = base64;
-								this.imgHide2 = false;
-							})
-							.catch(error => {
-								console.error(error);
-							});
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							formData: {
+								file: 'test'
+							},
+							success: (uploadFileRes) => {
+								this.imgUrl2 = JSON.parse(uploadFileRes.data).data
+								this.imgHide2 = false 
+							}
+						});
+						
 					}
 				});
 			},
@@ -181,7 +195,7 @@
 			personal({
 				USERINFO_ID: this.USERINFO_ID
 			}).then(res => {
-				console.log(res);
+				console.log('获取个人资料', res);
 				this.userInfo = res.returnMsg.userInfo
 				this.username = res.returnMsg.userInfo.USERNAME ? res.returnMsg.userInfo.USERNAME : '';
 				if (res.returnMsg.userInfo.IDCARDFRONT) {

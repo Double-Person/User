@@ -427,7 +427,7 @@ export default {
 
 				text {
 					// font-size: 38rpx;
-					font-size: 26rpx;
+					font-size: 24rpx;
 					color: #ff5a32;
 					font-weight: bold;
 				}
@@ -456,12 +456,13 @@ export default {
 
 				text {
 					font-weight: bold;
+					font-size: 24rpx;
 					color: #ff5a32;
 				}
 
 				.xingbi {
 					// font-size: 30rpx;
-					font-size: 26rpx;
+					font-size: 24rpx;
 					margin: 20rpx 0;
 				}
 

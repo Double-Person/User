@@ -13,7 +13,7 @@
 				<view class="localPreferences-content-hot-title">
 					<text class="iconfont icon-dian"></text>热门推荐
 				</view>
-				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
+				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item)">
 					<view class="left">
 						<image :src="item.img" mode=""></image>
 					</view>
@@ -95,38 +95,21 @@
 				NAME: '' // 不填就是综合
 			}
 			this.onloadObj = obj
+			console.log(obj)
 			this.getCalPreferences()
 			this.getBannerList();
-			//根据用户位置推送最近商家
-			//     pushShop(obj).then(res=>{
-			//     	console.log('res',res.returnMsg)
-			//         if(res.returnMsg.status == '00'){
-			// this.hotLIst = res.returnMsg.shop
-			//             // this.hotLIst = res.varList
-			//             // res.varList.map(item => {
-			//             //     this.hotLIst.push(item.GoodsImg[0])
-			//             // })
-			//             console.log('优惠', this.hotLIst)
-			//         }else{
-			//             uni.showToast({
-			//                 title:'数据获取失败!',
-			//                 icon:'none',
-			//                 duration:2000
-			//             })
-			//         }
-			//     }).catch(err=>{
-			//     	uni.showToast({
-			//     		title:'获取数据失败！',
-			//     		icon:'none'
-			//     	})
-			//     })
+			
 		},
 		methods: {
-			handelShop(id) {
-				console.log(id)
+			handelShop(item) { // shopId
+				console.log(item)
 				uni.navigateTo({
-					url: "../shopPage/shopPage?shopId=" + id
-				});
+					// url: './localPreferencesDetail
+					url: 'localPreferencesDetail?info='+ JSON.stringify(item)
+				}).then(res => console.log(res)).catch(err => console.log(err))
+				// uni.navigateTo({
+				// 	url: "../shopPage/shopPage?shopId=" + id
+				// });
 			},
 			// 本地优惠
 			getCalPreferences() {

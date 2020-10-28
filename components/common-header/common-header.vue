@@ -4,9 +4,9 @@
 			<text class="iconfont icon-zuojiantou" @tap="backPage"></text>
 			<text class="title">{{headerTitl}}</text>
 			<view class="right">
-				 <!--  -->
+				<!--  -->
 				<text class="header-right-title-common" @click="withdrawalRecord" v-if="isShowHistory">提现记录</text>
-				
+
 				<text class="iconfont icon-xingxing" :class="xingHide?'xingHide':''"></text>
 				<text class="iconfont icon-lingdang-xianxing" @tap="goNews" :class="lingHide?'lingHide':''"></text>
 				<text class="iconfont icon-fenxiang" @tap="maskState=true" :class="fenxiangHide?'fenxiangHide':''"></text>
@@ -93,6 +93,16 @@
 				maskState: false
 			}
 		},
+		onShareAppMessage(res) {
+			console.log('++++++++++++++', res)
+		    if (res.from === 'button') {// 来自页面内分享按钮
+		      console.log(res.target)
+		    }
+		    return {
+		      title: '自定义分享标题',
+		      path: '/pages/index/index'
+		    }
+		  },
 		methods: {
 			//  提现记录
 			withdrawalRecord() {
@@ -105,10 +115,10 @@
 				// #ifdef H5
 				let canBack = true;
 				const pages = getCurrentPages();
-				
-				if((pages.route == 'pages/news/news')||(pages.route == 'pages/cart/cart')) {
+
+				if ((pages.route == 'pages/news/news') || (pages.route == 'pages/cart/cart')) {
 					uni.navigateTo({
-						url:"/pages/index/index"
+						url: "/pages/index/index"
 					})
 				}
 				// 有可返回的页面则直接返回，uni.navigateBack默认返回失败之后会自动刷新页面 ，无法继续返回  
@@ -128,17 +138,17 @@
 				// #endif
 				// 修复小程序app返回退出应用bug(无法返回重定向至首页)
 				var pagelength = getCurrentPages();
-				
+
 				var pageLast = pagelength[pagelength.length - 1];
 				var currentWebview = pageLast.$getAppWebview();
 				let currentRouter = currentWebview.__uniapp_route
-				if((currentRouter == 'pages/news/news')||(currentRouter == 'pages/cart/cart')) {
+				if ((currentRouter == 'pages/news/news') || (currentRouter == 'pages/cart/cart')) {
 					uni.navigateTo({
-						url:"/pages/index/index"
+						url: "/pages/index/index"
 					})
 					return false;
 				}
-				
+
 				if (pagelength.length === 1) {
 					var path = pagelength[0].route;
 					// console.log(path)
@@ -158,27 +168,38 @@
 			// 分享
 			// #ifdef APP-PLUS
 			shareDemo(platform, type, typeNum = 0) {
-				console.log('+++++++++', typeNum)
+				// if (plus.os.name == 'Android') {
+				//     plus.runtime.launchApplication( {pname: 'uni.UNI3287CC4'}, function(e) {  
+				//         console.log('Open system default browser failed: ' + e.message);  
+				//     });  
+				// } else if (plus.os.name == 'iOS') {  
+				//     plus.runtime.launchApplication({ action: 'taobao://' }, function(e) {  
+				//         console.log('Open system default browser failed: ' + e.message);  
+				//     });  
+				// } 
+				// return false;
+	
 				uni.share({
 					provider: platform,
 					scene: type,
 					type: typeNum,
 					// href: "http://uniapp.dcloud.io/",
-					href: this.currentUrl,
-					title: "趣分利 分享",
-					summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-					imageUrl: "../../static/images/youhui.png",
+					// href: this.currentUrl,
+					href: "https://down.qq.com/qqweb/PCQQ/PCQQ_EXE/PCQQ2020.exe",
+					title: "趣分利",
+					summary: "我正在使用趣分利，赶紧跟我一起来体验！",
+					imageUrl: "../../static/images/logo.png",
 					miniProgram: {
 						id: 'wx9a062afb3e6ff487',
-						path: 'pages/index/index',
+						path: '/pages/index/index',
 						type: 0,
 						webUrl: 'http://uniapp.dcloud.io'
 					},
 					success: function(res) {
-						console.log("success:" + JSON.stringify(res));
+						console.log("分享success:" + res);
 					},
 					fail: function(err) {
-						console.log("fail:" + JSON.stringify(err));
+						console.log("分享fail:" + err);
 					}
 				});
 			},
@@ -191,12 +212,12 @@
 					this.shareDemo('weixin', 'WXSceneSession')
 					// #endif
 					// #ifdef H5
-					this.jweixin.ready(()=> { //需在用户可能点击分享按钮前就先调用
+					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
 						this.jweixin.updateAppMessageShareData({
 							title: '公众号分享', // 分享标题
 							desc: '这是一个测试', // 分享描述
 							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: '../../static/images/youhui.png', // 分享图标
+							imgUrl: '/static/images/youhui.png', // 分享图标
 							success: function() {
 								// 设置成功
 								alert('分享成功')
@@ -211,17 +232,17 @@
 					this.shareDemo('weixin', 'WXSenceTimeline')
 					// #endif
 					// #ifdef H5
-					this.jweixin.ready( ()=> {      //需在用户可能点击分享按钮前就先调用
-					  this.jweixin.updateTimelineShareData({ 
-					    title: '公众号分享', // 分享标题
-					    link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-					    imgUrl: '../../static/images/youhui.png', // 分享图标
-					    success: function () {
-					      // 设置成功
-						  alert('分享成功')
-					    }
-					  })
-					}); 
+					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
+						this.jweixin.updateTimelineShareData({
+							title: '公众号分享', // 分享标题
+							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+							imgUrl: '../../static/images/youhui.png', // 分享图标
+							success: function() {
+								// 设置成功
+								alert('分享成功')
+							}
+						})
+					});
 					// #endif
 				}
 				// 分享微博
@@ -242,7 +263,6 @@
 </script>
 
 <style lang="less">
-	
 	.common-header {
 		height: 100rpx;
 		font-size: 40rpx;
@@ -295,8 +315,8 @@
 			.icon-gengduo {
 				display: none;
 			}
-	
-			.header-right-title-common{
+
+			.header-right-title-common {
 				height: 40rpx;
 				font-size: 28rpx;
 				color: #FFFFFF;
