@@ -12,7 +12,7 @@
 		<view class="certification-upload">
 			<view class="certification-upload-zhang" @tap="zheng">
 				<view class="top" :class="imgHide1 ? '' : 'imgHide'">
-					<image src="/static/images/renzheng01.png" mode=""></image>
+					<image :src="userInfo.IDCARDFRONT ? userInfo.IDCARDFRONT :'/static/images/renzheng01.png'" mode=""></image>
 					<view>请上传身份证正面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
@@ -22,7 +22,7 @@
 			</view>
 			<view class="certification-upload-fan" @tap="fan">
 				<view class="top" :class="imgHide2 ? '' : 'imgHide'">
-					<image src="/static/images/renzheng02.png" mode=""></image>
+					<image :src="userInfo.IDCARDBACK ? userInfo.IDCARDBACK : '/static/images/renzheng02.png'" mode=""></image>
 					<view>请上传身份证反面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>

@@ -47,7 +47,7 @@
 			</view>
 			<view class="personal-msg-bottom">
 				<view class="text">
-					<text @tap="goMyPentacle">{{(userInfo1.userInfo.STARCOINS || 0) }}</text>
+					<text @tap="goMyPentacle">{{(userInfo1.STARCOINS || 0) }}</text>
 					<view class="xingbi" @tap="goMyPentacle">我的星币</view>
 					<view class="duihuan" @tap="goXbExchange">兑换</view>
 				</view>

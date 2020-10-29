@@ -384,14 +384,8 @@
 			},
 			// 根据定位请求数据
 			getPositonData(longitude, latitude, area) {
-				// var obj = {
-				// 	LONGITUDE: longitude,
-				// 	LATITUDE: latitude,
-				// 	// kilometers: '300',
-				// 	AREA: "金牛区",
-				// 	// NAME: this.itemType // 不填就是综合
-				// };
-
+				
+				console.log('点击调用')
 				uni.request({
 					url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
 					header: {
@@ -406,7 +400,7 @@
 					},
 					method: 'POST',
 					success: (res) => {
-						// console.log(res)
+						console.log(res)
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',
@@ -431,7 +425,6 @@
 			},
 			// 手动设置城市
 			setCity(data) {
-				console.log('----', data)
 				this.newCity = data.data.slice(1, 3).join('');
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);
