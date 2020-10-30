@@ -13,7 +13,7 @@
 				<view class="localPreferences-content-hot-title">
 					<text class="iconfont icon-dian"></text>热门推荐
 				</view>
-				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item)">
+				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
 					<view class="left">
 						<image :src="item.img" mode=""></image>
 					</view>
@@ -95,17 +95,15 @@
 				NAME: '' // 不填就是综合
 			}
 			this.onloadObj = obj
-			console.log(obj)
 			this.getCalPreferences()
 			this.getBannerList();
 			
 		},
 		methods: {
-			handelShop(item) { // shopId
-				console.log(item)
+			handelShop(shopId) { // shopId
+		
 				uni.navigateTo({
-					// url: './localPreferencesDetail
-					url: 'localPreferencesDetail?info='+ JSON.stringify(item)
+					url: 'localPreferencesDetail?shopId=' + shopId
 				}).then(res => console.log(res)).catch(err => console.log(err))
 				// uni.navigateTo({
 				// 	url: "../shopPage/shopPage?shopId=" + id

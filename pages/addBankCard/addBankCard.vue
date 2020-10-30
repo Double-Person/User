@@ -23,8 +23,8 @@
 </template>
 
 <script>
+	import {addShopBank} from '@/common/apis.js'
 	import commonHeader from"@/components/common-header/common-header";
-
 	export default {
 		data() {
 			return {
@@ -76,10 +76,23 @@
 			// 添加银行卡
 			addCard(){
 				if(this.cardState&&this.usernameState){
-					console.log(this.username,this.card)
+					console.log(this.username,this.card)  // 
+					uni.getStorage({
+					    key: 'USERINFO_ID',
+					    success:  (res)=> {
+					     // 绑定银行啊卡   foreign_id 商户id   cardno 银行卡 
+							addShopBank({cardno: this.card, foreign_id: res.data, name: this.username}).then(res => {
+								console.log(res)
+							})
+					    }
+					});
+				 
+					
+					return false;
 					uni.showToast({
 						title:'添加成功'
 					})
+					
 					getApp().globalData.cardStata = true;
 					uni.navigateTo({
 						url:'../myCard/myCard'
@@ -95,7 +108,7 @@
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 	.addBankCard{
 		background: #f7f7f7;
 		padding-top: 120rpx;

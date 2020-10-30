@@ -52,9 +52,10 @@
 					<view class="duihuan" @tap="goXbExchange">兑换</view>
 				</view>
 				<view class="text">
-					<text @tap="goMyBalance">{{ userInfo1.userInfo.BALANCE }}</text>
+					<text @tap="goMyBalance">{{ userInfo1.BALANCE }}</text>
 					<view class="xingbi" @tap="goMyBalance">账户余额</view>
-					<navigator url="../withdrawal/withdrawal" class="duihuan">提现</navigator>
+					<view class="duihuan" @click="goMycard">提现</view>
+		
 			
 				</view>
 			</view>
@@ -80,10 +81,11 @@ import tabbar from '@/components/common-tabbar/common-tabbar';
 // 引入高德地图
 import amapPlugin from '@/components/initMap.js';
 
-import { personal } from '@/common/apis.js';
+import { personal, shopBank } from '@/common/apis.js';
 export default {
 	data() {
 		return {
+			bindList: {},
 			menuList: [
 				{
 					id: '01',
@@ -140,7 +142,55 @@ export default {
 	components: {
 		tabbar
 	},
+	onLoad() {
+		// 获取全局城市地址
+		this.newCity = getApp().globalData.city[1];
+		uni.getStorage({
+			key: 'USERINFO_ID',
+			success: res => {
+				this._shopBank(res.data);
+				
+				personal({ USERINFO_ID: res.data }).then(res => {
+					uni.setStorageSync('userInfo', res.returnMsg.userInfo)   // kbalance
+					uni.setStorageSync('kbalance', res.returnMsg.kbalance)   // kbalance
+			
+					if (res.msgType == 0) {
+						this.userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
+						// 判断交易密码是否存在
+						if (this.userInfo1.userInfo.TRADRPASS && this.userInfo1.userInfo.TRADRPASS.length > 0) {
+							getApp().globalData.isPwd = true;
+							getApp().globalData.pwd = this.userInfo1.userInfo.TRADRPASS;
+						}
+					} else {
+						uni.showToast({
+							title: '网络出小差了！',
+							icon: 'none'
+						});
+					}
+				});
+			}
+		});
+	},
+	mounted() {},
 	methods: {
+		goMycard() {
+			if(Object.keys(this.bindList).length > 0) {
+				uni.navigateTo({
+					url: "../withdrawal/withdrawal"
+				})
+			}else{
+				uni.navigateTo({
+					url: "../myCard/myCard"
+				})
+			}
+		},
+		_shopBank(shop_id) {
+			shopBank({shop_id}).then(res => {
+				console.log(res)
+				this.bindList = res.returnMsg
+			})
+			
+		},
 		goPage(index) {
 			if (index == 1) {
 				uni.navigateTo({
@@ -265,34 +315,7 @@ export default {
 			});
 		}
 	},
-	onLoad() {
-		// 获取全局城市地址
-		this.newCity = getApp().globalData.city[1];
-		uni.getStorage({
-			key: 'USERINFO_ID',
-			success: res => {
-				personal({ USERINFO_ID: res.data }).then(res => {
-					uni.setStorageSync('userInfo', res.returnMsg.userInfo)   // kbalance
-					uni.setStorageSync('kbalance', res.returnMsg.kbalance)   // kbalance
-			
-					if (res.msgType == 0) {
-						this.userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
-						// 判断交易密码是否存在
-						if (this.userInfo1.userInfo.TRADRPASS && this.userInfo1.userInfo.TRADRPASS.length > 0) {
-							getApp().globalData.isPwd = true;
-							getApp().globalData.pwd = this.userInfo1.userInfo.TRADRPASS;
-						}
-					} else {
-						uni.showToast({
-							title: '网络出小差了！',
-							icon: 'none'
-						});
-					}
-				});
-			}
-		});
-	},
-	mounted() {}
+	
 };
 </script>
 

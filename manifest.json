@@ -69,6 +69,14 @@
                     "weixin" : {
                         "appid" : "wx9a062afb3e6ff487",
                         "UniversalLinks" : ""
+                    },
+                    "sina" : {
+                        "appkey" : "1977887330",
+                        "appsecret" : "92f58dd78ee9e666ccdf7283a4fe9f2f",
+                        "redirect_uri" : "https://service.dcloud.net.cn/build/download/c2e756a0-5cfc-11ea-8cd4-95a252aff0ec"
+                    },
+                    "qq" : {
+                        "appid" : "1110285322"
                     }
                 },
                 "maps" : {
@@ -100,6 +108,9 @@
                         "appkey_ios" : "bb951af8f1d37fdb7dcc4f0de5ecee64",
                         "appkey_android" : "318dfe4e09e51453d11d2c31cde26534"
                     }
+                },
+                "speech" : {
+                    "ifly" : {}
                 }
             },
             "icons" : {

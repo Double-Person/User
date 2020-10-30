@@ -78,6 +78,10 @@ export const transaction = params => request.post('/api/ordersummary/transaction
 export const passwordback = params => request.post('/api/ordersummary/retrieve', params);
 // 35.取消收藏
 export const delCollec = params => request.post('/api/ordersummary/collections/delete', params);
+
+
+//  32 绑定银行
+export const addShopBank = params => request.get('/api/merchant/addShopBank', {params});
 // 36.绑定支付宝
 export const bandApliy = params => request.post('/api/ordersummary/ali/account', params);
 // 37.绑定微信
@@ -86,6 +90,24 @@ export const bandWX = params => request.post('/api/ordersummary/wx/account', par
 export const unbindWX = params => request.post('/api/ordersummary/wx/unbind', params);
 // 39.解绑支付宝
 export const unbindApliy = params => request.post('/api/ordersummary/ali/unbind', params);
+
+
+// 获取银行卡信息  参数 /api/merchant/backCardInfo
+export const backCardInfo = params => request.get('/api/merchant/backCardInfo', {
+	params
+})
+
+// 33 绑定收款微信账号
+export const wxAccount = params => request.post('/api/ordersummary/wx/account', params)
+// 34 绑定收款支付宝账号
+export const aliAccount = params => request.post('/api/ordersummary/ali/account', params)
+// 35 判断是否绑定银行卡
+export const shopBank = params => request.get('/api/merchant/shopBank', {params});
+// 36 解绑银行卡
+export const updeteShopBank = params => request.get('/api/merchant/updeteShopBank', {params});
+
+
+
 // 40.首页商品分类
 export const getItem = params => request.post('/api/ordersummary/shop/category', params);
 // 41.根据商家名或者商品名搜索
@@ -143,6 +165,14 @@ export const getMessageActive = params => request.post('/api/user/message/readMe
 // 60 商家入驻
 export const shopAuth = params => request.post('/api/merchant/shopAuth', params)
 
+// 获取首页分类（综合商家等）
+export const homePage = () => request.get('/api/ordersummary/homePage')
+
+// 获取首页活动详情
+export const shopActivityGoods = params => request.get('/api/ordersummary/shopActivityGoods', { params })
+
+
+
 
 
 // 提现接口     
@@ -153,20 +183,7 @@ export const withdrawal = params => request.get('/api/merchant/withdrawal', {
 export const withdrawalInfo = params => request.get('/api/merchant/withdrawalInfo', {
 	params
 })
-// 获取银行卡信息  参数 /api/merchant/backCardInfo
-export const backCardInfo = params => request.get('/api/merchant/backCardInfo', {
-	params
-})
 
-
-// 33 绑定收款微信账号
-export const wxAccount = params => request.post('/api/ordersummary/wx/account', params)
-// 34 绑定收款支付宝账号
-export const aliAccount = params => request.post('/api/ordersummary/ali/account', params)
-// 35 判断是否绑定银行卡
-export const shopBank = params => request.get('/api/merchant/shopBank', {params});
-// 36 解绑银行卡
-export const updeteShopBank = params => request.get('/api/merchant/updeteShopBank', {params});
 
 
 

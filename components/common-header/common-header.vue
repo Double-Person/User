@@ -26,25 +26,25 @@
 					——<text>分享到</text>——
 				</view>
 				<view class="mask-content-item">
-					<view class="weixin" @tap="share(1)">
+					<view class="weixin" @tap="share(1, $event)">
 						<view class="iconfont icon-weixin">
 
 						</view>
 						<text>微信</text>
 					</view>
-					<view class="pengyouquan" @tap="share(2)">
+					<view class="pengyouquan" @tap="share(2, $event)">
 						<view>
 							<image src="../../static/images/pengyouquan.png" mode=""></image>
 						</view>
 						<text>朋友圈</text>
 					</view>
-					<view class="weibo" @tap="share(3)">
+					<view class="weibo" @tap="share(3, $event)">
 						<view>
 							<text class="iconfont icon-weibo"></text>
 						</view>
 						<text>微博</text>
 					</view>
-					<view class="qq" @tap="share(4)">
+					<view class="qq" @tap="share(4, $event)">
 						<view>
 							<text class="iconfont icon-qq"></text>
 						</view>
@@ -94,7 +94,6 @@
 			}
 		},
 		onShareAppMessage(res) {
-			console.log('++++++++++++++', res)
 		    if (res.from === 'button') {// 来自页面内分享按钮
 		      console.log(res.target)
 		    }
@@ -106,7 +105,6 @@
 		methods: {
 			//  提现记录
 			withdrawalRecord() {
-				console.log('-----------')
 				uni.navigateTo({
 					url: '../../pages/withdrawalRecord/withdrawalRecord'
 				})
@@ -168,24 +166,14 @@
 			// 分享
 			// #ifdef APP-PLUS
 			shareDemo(platform, type, typeNum = 0) {
-				// if (plus.os.name == 'Android') {
-				//     plus.runtime.launchApplication( {pname: 'uni.UNI3287CC4'}, function(e) {  
-				//         console.log('Open system default browser failed: ' + e.message);  
-				//     });  
-				// } else if (plus.os.name == 'iOS') {  
-				//     plus.runtime.launchApplication({ action: 'taobao://' }, function(e) {  
-				//         console.log('Open system default browser failed: ' + e.message);  
-				//     });  
-				// } 
-				// return false;
-	
+				
 				uni.share({
 					provider: platform,
 					scene: type,
 					type: typeNum,
-					// href: "http://uniapp.dcloud.io/",
+					href: "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI0ODY3NzQ3MQ==&scene=124#wechat_redirect",
 					// href: this.currentUrl,
-					href: "https://down.qq.com/qqweb/PCQQ/PCQQ_EXE/PCQQ2020.exe",
+					// http://www.qfl168.cn/static/#/pages/news/news
 					title: "趣分利",
 					summary: "我正在使用趣分利，赶紧跟我一起来体验！",
 					imageUrl: "../../static/images/logo.png",
@@ -205,7 +193,8 @@
 			},
 			// #endif
 			// 分享功能开始
-			share(index) {
+			share(index, event) {
+			
 				// 分享到微信
 				if (index === 1) {
 					// #ifdef APP-PLUS

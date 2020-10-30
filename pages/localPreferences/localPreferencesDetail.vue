@@ -5,11 +5,11 @@
 		</view>
 		
 		<view class="info">
-			a我萨尔发违法ad发送到发送到发色人工费计划于六月徒客厅阳台发送到发送到发色人工费计划于六月徒客厅阳台发送到发送到发色人工费计划于六月徒客厅阳台
+			{{ hotInfo.activity.DESCRIBE }}
 			
-			<view class="phone" @click="callPhone">
+			<view class="phone" @click="callPhone(hotInfo.shopphone)">
 				<image src="/static/images/tab04_4.png"></image>
-				<view class="">12234556747</view>
+				<view class="">{{ hotInfo.shopphone }}</view>
 			</view>
 		</view>
 
@@ -18,25 +18,25 @@
 			<view class="localPreferences-content-hot-title">
 				<text class="iconfont icon-dian"></text>热门推荐
 			</view>
-			<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id"@click="toDetail">
+			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail">
 				<view class="left">
-					<image :src="item.img" mode=""></image>
+					<image :src="item.IMG" mode=""></image>
 				</view>
 				<view class="right">
 					<view class="right-title">
-						<text>{{item.name}}</text>
+						<text>{{item.NAME}}</text>
 						<view>
 							<text class="iconfont icon-youjiantou"></text>
 						</view>
 					</view>
 					<view class="right-text">
-						{{item.details}}
+						{{item.DETAILS}}
 					</view>
 					<!-- 评分 -->
 					<view class="right-score">
 						<!-- 不可点击状态 -->
-						<uni-rate disabled="true" :value="item.score" active-color="#FF5D06" size="18"></uni-rate>
-						<text>{{item.score}}分</text>
+						<uni-rate disabled="true" :value="item.MONTHLY_SALES" active-color="#FF5D06" size="18"></uni-rate>
+						<text>{{item.MONTHLY_SALES}}分</text>
 					</view>
 					<!-- 时间 -->
 					<view class="right-date">
@@ -55,59 +55,37 @@
 	import {
 		pushShop,
 		getBanner,
-		getPush
+		getPush,
+		shopActivityGoods
 	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
-				onloadObj: {},
-				hotLIst: []
+				hotInfo: {}
 			};
 		},
 		components: {
 			uniRate
 		},
 
-		onLoad(e) {
-			let locationPoint = uni.getStorageSync('locationPoint')
-			let locationArea = uni.getStorageSync('locationArea')
-			var obj = {
-				// longitude: JSON.parse(locationPoint).longitude,
-				// latitude: JSON.parse(locationPoint).latitude,
-				// AREA: locationArea,
-				// kilometers: '300',
-				// NAME: '' // 不填就是综合
+		onLoad(options) {
+			let shopId = options.shopId;  // 'b542d78940b04df7a37800b91e508bb31';//
+			shopActivityGoods({shop_id: shopId}).then( res => {
+				this.hotInfo = res.returnMsg
+			} )
 
-				"longitude": "104.031363",
-				"latitude": "30.698423",
-				"AREA": "金牛区",
-				"kilometers": "300",
-				"NAME": ""
-			}
-
-			console.log(obj)
-
-			this.onloadObj = obj
-			this.getCalPreferences()
 		},
 		methods: {
-			// 本地优惠
-			getCalPreferences() {
-				getPush(this.onloadObj).then(res => {
-
-					this.hotLIst = res.returnMsg.shop
-					console.log(this.hotLIst)
-				})
-			},
+		
 			toDetail() { // goodsId 
 				uni.navigateTo({
 					url: '../goodsDetails/goodsDetails?shopId=' + '126549489'
 				})
 			},
 			// 拨打电话
-			callPhone(){
+			callPhone(phone){
 				uni.makePhoneCall({
-					phoneNumber: '123456' //仅为示例
+					phoneNumber: phone //仅为示例
 				});
 			}
 		}

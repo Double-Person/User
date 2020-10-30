@@ -20,7 +20,7 @@
 						</view>
 					</view>
 					<view class="right" @tap="goBindWeixin">
-						{{info && info.Wx? '已绑定' : '去绑定'}}
+						{{info && info.Wx? '重新绑定' : '去绑定'}}
 					</view>
 				</view>
 				<!-- 支付宝 -->
@@ -36,7 +36,7 @@
 					</view>
 					<view class="right" @tap="goBindAlipay">
 
-						{{info &&info.Ali? '已绑定' : '去绑定'}}
+						{{info &&info.Ali? '重新绑定' : '去绑定'}}
 					</view>
 				</view>
 				<!-- 招商银行卡 -->
@@ -52,7 +52,7 @@
 					</view>
 					<view class="right" @tap="goBindBankCard">
 
-						{{info &&info.Card ? '已绑定' : '去绑定'}}
+						{{info.Card &&info.Card.length ? '已绑定' : '去绑定'}}
 					</view>
 				</view>
 			</view>
@@ -159,7 +159,7 @@
 					})
 					shopBank({shop_id: res.data}).then(res => {
 						console.log('银行卡绑定信息', res)
-						// this.info = res.returnMsg
+						this.info = res.returnMsg
 					}).catch(err => {
 						console.log('---',err)
 					})
@@ -169,12 +169,7 @@
 		methods: {
 			// 检查绑定
 			 checkBind() {
-				return false;
-				uni.getStorage('USERINFO_ID').then(res => {
-					console.log('+++++', res)
-				})
-				
-				uni.getStorageSync({
+				uni.getStorage({
 					key: 'USERINFO_ID',
 					success: (res) => {
 						shopBank({
@@ -219,9 +214,16 @@
 			},
 			// 前往绑定银行卡
 			goBindBankCard() {
-				uni.navigateTo({
-					url: "../bindBankCard/bindBankCard"
-				})
+				let info = this.info && this.info.Card || ''
+				if(info) {
+					uni.navigateTo({
+						url:"../bindBankCard/bindBankCard?info=" + JSON.stringify(info)
+					})
+				}else{
+					uni.navigateTo({
+						url:"../bindBankCard/bindBankCard"
+					})
+				}
 			},
 			// 前往首页
 			ljsy() {

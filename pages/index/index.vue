@@ -34,7 +34,7 @@
 				</view>
 			</view>
 			<view class="index-item-right">
-				<view @tap="getItemClick(index + 1)" v-for="(item, index) in itemList" :key="index">
+				<view @tap="getItemClick(index + 1, item.CATEGORY_ID)" v-for="(item, index) in itemList" :key="index">
 					<text>{{ item.NAME }}</text>
 					<image :src="'../../static/images/item0' + (3 + index) + '.png'" mode=""></image>
 				</view>
@@ -95,7 +95,8 @@
 		pushShop,
 		getItem,
 		getShopPay,
-		getBanner
+		getBanner,
+		homePage
 	} from '@/common/apis.js';
 
 
@@ -222,9 +223,10 @@
 
 
 			// 获取分类
-			getItem().then(res => {
-				this.itemList = res.returnMsg && res.returnMsg.varList;
-			});
+			// getItem().then(res => {
+				// this.itemList = res.returnMsg && res.returnMsg.varList;
+			// });
+			this._homePage()
 			this.getBannerList();
 			this.$forceUpdate()
 
@@ -232,6 +234,13 @@
 		},
 
 		methods: {
+			// 獲取分類
+			_homePage() {
+				homePage().then(res => {
+					console.log('獲取分類', res.returnMsg)
+					this.itemList = res.returnMsg && res.returnMsg
+				})
+			},
 			//   金纬度转位置
 			conversionPoint(res) {
 				let that = this;
@@ -383,7 +392,7 @@
 				});
 			},
 			// 根据定位请求数据
-			getPositonData(longitude, latitude, area) {
+			getPositonData(longitude, latitude, area, CATEGORY_ID) {
 				
 				console.log('点击调用')
 				uni.request({
@@ -396,7 +405,8 @@
 						LATITUDE: latitude,
 						// kilometers: '300',
 						AREA: area,
-						// NAME: this.itemType // 不填就是综合
+						// NAME: this.itemType, // 不填就是综合
+						CATEGORY_ID: CATEGORY_ID
 					},
 					method: 'POST',
 					success: (res) => {
@@ -445,10 +455,10 @@
 					}
 				});
 			},
-			// 分类筛选
-			getItemClick(item) {
+			// 分类筛选  CATEGORY_ID
+			getItemClick(item, CATEGORY_ID) {
 				this.itemType = item;
-				this.getPositonData(this.longitude, this.latitude, this.area);
+				this.getPositonData(this.longitude, this.latitude, this.area, CATEGORY_ID);
 			},
 			// 获取banner
 			getBannerList() {

@@ -163,7 +163,6 @@
 				if (!this.cardNum) {
 					this.cardNum = this.list[0].CARDNO
 				}
-				console.log(this.list)
 				let obj = {
 					userinfo_id, // 参数userinfo_id  用户id
 					amount: Number(this.money), // amount  金额  
@@ -172,15 +171,23 @@
 				console.log(obj)
 				withdrawal(obj).then(res => {
 					console.log(res)
-					uni.showToast({
-						title: res.errMsg,
-						icon: 'none'
-					})
+					if(res.msgType == 0) {
+						uni.showToast({
+							title: '提现申请已提交',
+							icon: 'none'
+						})
+					}else {
+						uni.showToast({
+							title: res.errMsg,
+							icon: 'none'
+						})
+					}
+					
 					setTimeout(() => {
 						uni.navigateTo({
 							url: '/pages/personal/personal'
 						})
-					})
+					}, 1000)
 				})
 			}
 

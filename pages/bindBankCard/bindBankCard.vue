@@ -4,111 +4,134 @@
 		<commonHeader headerTitl="提现账户绑定" xingHide=true lingHide=true fenxiangHide=true></commonHeader>
 		
 		<!-- 内容开始 -->
-		<view class="bindBankcard-content">
-			<!-- card -->
-			<view class="bindAlipay-content-card">
-				<view class="addCard">
-					<view class="addCard-add" :class="addCardHide?'addCardHide':''" @tap="goAdd">
-						<image src="../../static/images/addIcon.png" mode=""></image>
-						添加银行卡
-					</view>
-					<view class="addCard-card" @longpress="delCard" :class="addCardHide?'':'addCardHide'">
-						<view class="left">
-							<view class="img">
-								<image src="../../static/images/jsLogo.png" mode=""></image>
-							</view>
-							<view class="text">
-								<view>
-									中国建设银行
+			<view class="bindBankcard-content">
+				<!-- card -->
+				<view class="bindAlipay-content-card">
+					<view class="addCard">
+						<view class="addCard-add" :class="addCardHide?'addCardHide':''" @tap="goAdd">
+							<image src="/static/images/addIcon.png" mode=""></image>
+							添加银行卡
+						</view>
+						<view class="addCard-card" @longpress="delCard" :class="addCardHide?'':'addCardHide'">
+							<view class="left">
+								<view class="img">
+									<image src="/static/images/jsLogo.png" mode=""></image>
 								</view>
-								<text>储蓄卡</text>
+								<view class="text">
+									<view>
+										{{cardInfo.BANK}}
+									</view>
+									<text>储蓄卡</text>
+								</view>
+							</view>
+							
+							<view class="right" v-if="cardInfo.CASHOUT && cardInfo.CASHOUT.length">
+								**** <text>{{cardInfo.CASHOUT.substr(cardInfo.CASHOUT.length-4)}}</text>
 							</view>
 						</view>
-						<view class="right">
-							**** <text>3715</text>
-						</view>
+					</view>
+					<view class="other" :class="addCardHide?'addCardHide':''">支持储蓄卡</view>
+				</view>
+		
+				<!-- btn -->
+				<view class="submit-btn" @tap="bindsucc">
+					{{addCardHide?'解除绑定':'去绑定'}}
+				</view>
+			</view>
+			<!-- 内容结束 -->
+		
+			<!-- 提示蒙板层 -->
+			<view class="phoneMask" :class="phoneMaskShow?'':'phoneMaskShow'">
+				<view class="phoneMask-content">
+					<view class="phoneMask-content-title">
+						解除银行卡绑定
+					</view>
+					<view class="phoneMask-content-text">
+						当前为中国建设银行卡<text></text>，确定要解除绑定吗？
+					</view>
+					<view class="phoneMask-content-btn">
+						<text @tap="phoneMaskShow=false">取消</text>
+						<text @tap="submit">确认</text>
 					</view>
 				</view>
-				<view class="other" :class="addCardHide?'addCardHide':''">支持储蓄卡</view>
-			</view>
-			
-			<!-- btn -->
-			<view class="submit-btn" @tap="bindsucc">
-				{{addCardHide?'解除绑定':'去绑定'}}
 			</view>
 		</view>
-		<!-- 内容结束 -->
-		
-		<!-- 提示蒙板层 -->
-		<view class="phoneMask" :class="phoneMaskShow?'':'phoneMaskShow'">
-			<view class="phoneMask-content">
-				<view class="phoneMask-content-title">
-					解除银行卡绑定
-				</view>
-				<view class="phoneMask-content-text">
-					当前为中国建设银行卡<text></text>，确定要解除绑定吗？
-				</view>
-				<view class="phoneMask-content-btn">
-					<text @tap="phoneMaskShow=false">取消</text>
-					<text @tap="submit">确认</text>
-				</view>
-			</view>
-		</view>
-	</view>
 </template>
 
 <script>
-	import commonHeader from"@/components/common-header/common-header";
+	import commonHeader from "@/components/common-header/common-header";
+	import {
+		updeteShopBank
+	} from '@/common/apis.js';
+
 	export default {
 		data() {
 			return {
-				addCardHide:false,
-				goChange:'',
+				cardInfo:{},
+				addCardHide: false,
+				goChange: '',
 				phoneMaskShow: false,
 			};
 		},
-		components:{
+		components: {
 			commonHeader
 		},
-		methods:{
-			goAdd(){
+		
+		methods: {
+			goAdd() {
 				uni.navigateTo({
-					url:"../addBankCard/addBankCard"
+					url: "../addBankCard/addBankCard"
 				})
 			},
+			
 			// 绑定
-			bindsucc(){
-				// uni.showToast({
-				// 	title:"绑定成功",
-				// 	success:function(){
-				// 		console.log(11)
-				// 	}
-				// });
-				// uni.hideToast();
-				if(this.addCardHide){
+			bindsucc() {
+				if (this.addCardHide) {
 					this.phoneMaskShow = true;
 					console.log(111)
-				}else{
+				} else {
 					uni.navigateTo({
-						url:"../addBankCard/addBankCard"
+						url: "../addBankCard/addBankCard"
 					})
 				}
 			},
 			// 删除银行卡
-			delCard(){
+			delCard() {
 				console.log(111)
 			},
 			// 确认注销
-			submit(){
+			submit() {
+				// 解绑
+				if (this.addCardHide) {
+					let shop_id = uni.getStorageSync('USERINFO_ID')
+					console.log(shop_id)
+					updeteShopBank({shop_id}).then(res => {
+						console.log(res)
+					})
+				}
 				this.phoneMaskShow = false;
 				getApp().globalData.cardStata = false;
 				uni.navigateTo({
-					url:'../myCard/myCard'
+					url: '../myCard/myCard'
 				})
 			}
 		},
-		onLoad() {
-			this.addCardHide = getApp().globalData.cardStata;
+		onLoad(info) {
+			console.log(info, this.addCardHide)
+			// 
+			let isCard = (Object.keys(info.info || {})).length ? true: false
+			// return false;
+			if(isCard) {
+			
+				this.cardInfo = JSON.parse(info.info)
+				this.cardInfo = this.cardInfo && this.cardInfo.length && this.cardInfo[0]
+				console.log('银行卡',this.cardInfo)
+				this.addCardHide = this.cardInfo && this.cardInfo.length > 0 ? true : false
+			}else{
+				this.addCardHide = false
+			}
+			
+			// this.addCardHide = getApp().globalData.cardStata;
 		}
 	}
 </script>

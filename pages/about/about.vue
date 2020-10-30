@@ -10,14 +10,13 @@
 					</view>
 					<view class="item">
 						<view src="" frameborder="0" v-html="info.SYSSET_VALUE"></view>
-            <!-- {{ info.SYSSET_VALUE }} -->
-						<!-- 这本书很好，耐心看完，觉得很不错,很有收获，都是第一次做父母，确实很多地方教育还是很合理，这本书很好，耐心看完，觉得很有收获，教育得很到位 这本书很好，耐心看完，觉得很不错,很有收获，都是第一次做父母，确实很多地方教育还是很合理，这本书很好，耐心看完，觉得很有收获。 -->
 					</view>
 				</view>
 			</view>
 		</view>
+		<view class="usage-pprivacy-protocol" @click="usage">用户使用与隐私协议</view>
 		<view class="beian">
-			<view>Copyright  2020 趣分利版权所有</view>
+			<view>Copyright 2020 趣分利版权所有</view>
 			<view>ICP备案号 湘ICP备20003506号-1</view>
 		</view>
 	</view>
@@ -26,31 +25,46 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
-  import { getAboutInfo } from '@/common/apis.js'
-  
+	import {
+		getAboutInfo
+	} from '@/common/apis.js'
+
 	export default {
 		data() {
 			return {
-        info: {}
+				info: {}
 			};
 		},
-    mounted () {
-      this.getInitData()
-    },
-    methods: {
-      async getInitData () {
-        const { returnMsg } = await getAboutInfo()
-        // console.log(data)
-        this.info = returnMsg
-      }
-    },
+		mounted() {
+			this.getInitData()
+		},
+		methods: {
+			async getInitData() {
+				const {
+					returnMsg
+				} = await getAboutInfo()
+				// console.log(data)
+				this.info = returnMsg
+			},
+			usage() {
+				uni.navigateTo({
+					url: '../userAgreement/userAgreement'
+				})
+			}
+		},
 		components: {
 			commonHeader
 		}
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+	.usage-pprivacy-protocol {
+		text-align: center;
+		color:#FF5904;
+		margin-top: 50rpx;
+	}
+
 	.about {
 		background: #f7f7f7;
 		height: 100%;
@@ -100,9 +114,10 @@
 				}
 			}
 		}
-		.beian{
+
+		.beian {
 			text-align: center;
-			margin-top: 50rpx;
+			margin-top: 30rpx;
 			color: #999;
 		}
 	}

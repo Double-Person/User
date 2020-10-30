@@ -14,7 +14,8 @@
 		<view class="history">
 			<view class="search-history">
 				<view class="item" @click="goShop(item.shopId)" v-for="(item,index) in historyArr" :key="index">
-					{{item.shopName}}
+					<view class="">{{item.shopName}}</view>
+					<view class="">{{item.address}}</view>
 				</view>
 			</view>
 			<!-- 清空历史 -->
@@ -203,6 +204,8 @@
 				height: 90rpx;
 				line-height: 90rpx;
 				border-bottom: 1px solid #f3f3f3;
+				display: flex;
+				justify-content: space-between;
 			}
 		}
 		.search-record{
