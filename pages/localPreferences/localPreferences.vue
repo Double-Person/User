@@ -15,7 +15,7 @@
 				</view>
 				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
 					<view class="left">
-						<image :src="item.img" mode=""></image>
+						<image :src="item.faceicon" mode=""></image>
 					</view>
 					<view class="right">
 						<view class="right-title">
@@ -113,6 +113,7 @@
 			getCalPreferences() {
 				getPush(this.onloadObj).then(res => {
 					this.hotLIst = res.returnMsg.shop
+					console.log(this.hotLIst)
 				})
 			},
 			// 获取banner

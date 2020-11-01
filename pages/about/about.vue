@@ -5,9 +5,9 @@
 		<view class="about-content">
 			<view>
 				<view class="content">
-					<view class="title">
+				<!-- 	<view class="title">
 						{{ info.SYSSET_NAME }}
-					</view>
+					</view> -->
 					<view class="item">
 						<view src="" frameborder="0" v-html="info.SYSSET_VALUE"></view>
 					</view>
@@ -61,6 +61,7 @@
 <style lang="less" scoped>
 	.usage-pprivacy-protocol {
 		text-align: center;
+		width: 100%;
 		color:#FF5904;
 		margin-top: 50rpx;
 	}

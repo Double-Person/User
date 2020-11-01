@@ -37,7 +37,7 @@
 		<view class="merchantEntry-idCard">
 			<view class="item" @tap="zheng">
 				<view class="item-top" :class="imgHide?'':'imgHide'">
-					<image src="../../static/images/renzheng01.png" mode=""></image>
+					<image src="/static/images/renzheng01.png" mode=""></image>
 					<view>
 						请上传身份证正面
 					</view>
@@ -49,7 +49,7 @@
 			</view>
 			<view class="item" @tap="fan">
 				<view class="item-top" :class="imgHide1?'':'imgHide'">
-					<image src="../../static/images/renzheng02.png" mode=""></image>
+					<image src="/static/images/renzheng02.png" mode=""></image>
 					<view>
 						请上传身份证反面
 					</view>
@@ -67,7 +67,7 @@
 		<view class="merchantEntry-item">
 			<view class="item" @tap="huzhao">
 				<view class="item-top" :class="imgHide2?'':'imgHide'">
-					<image src="../../static/images/yingye.png" mode=""></image>
+					<image src="/static/images/yingye.png" mode=""></image>
 					<view>
 						请上传营业执照
 					</view>
@@ -148,10 +148,7 @@
 							filePath: tempFilePaths[0],
 							name: 'file',
 							success: (uploadFileRes) => {
-								let url = (JSON.parse(uploadFileRes.data).data).split(
-									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
-								console.log(baseUrl + url[1])
-								this.imgUrl = baseUrl + url[1]
+								this.imgUrl = JSON.parse(uploadFileRes.data).data
 								this.imgHide = false
 							}
 						});
@@ -171,9 +168,7 @@
 							filePath: tempFilePaths[0],
 							name: 'file',
 							success: (uploadFileRes) => {
-								let url = (JSON.parse(uploadFileRes.data).data).split(
-									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
-								this.imgUrl1 = baseUrl + url[1]
+								this.imgUrl1 = JSON.parse(uploadFileRes.data).data
 								this.imgHide1 = false
 							}
 						});
@@ -193,9 +188,7 @@
 							filePath: tempFilePaths[0],
 							name: 'file',
 							success: (uploadFileRes) => {
-								let url = (JSON.parse(uploadFileRes.data).data).split(
-									'/usr/local/tomcat8.5/apache-tomcat-8.5.47/webapps/qufl');
-								this.imgUrl2 = baseUrl + url[1]
+								this.imgUrl2 = JSON.parse(uploadFileRes.data).data
 								this.imgHide2 = false;
 							}
 						});
@@ -236,6 +229,12 @@
 				}
 				let res = await shopAuth(obj)
 				console.log(JSON.stringify(res))
+				if(res.msgType == 0) {
+					uni.showToast({
+						title: '申请提交成功',
+						icon: 'none'
+					})
+				}
 			},
 			//   金纬度转位置
 			conversionPoint(res) {

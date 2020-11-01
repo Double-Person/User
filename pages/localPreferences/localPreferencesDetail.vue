@@ -1,14 +1,14 @@
 <template>
 	<view class="local-preferences-detail">
-		<view class="warp">
-			<image class="bg-img" src="/static/images/youhui.png" mode=""></image>
+		<view class="warp" v-if="hotInfo.activity">
+			<image class="bg-img" :src="hotInfo.activity.PICTURE ? hotInfo.activity.PICTURE : '/static/images/youhui.png'" mode=""></image>
 		</view>
 		
-		<view class="info">
+		<view class="info"  v-if="hotInfo.activity">
 			{{ hotInfo.activity.DESCRIBE }}
 			
 			<view class="phone" @click="callPhone(hotInfo.shopphone)">
-				<image src="/static/images/tab04_4.png"></image>
+				<image src="/static/images/phone.jpg"></image>
 				<view class="">{{ hotInfo.shopphone }}</view>
 			</view>
 		</view>
@@ -39,8 +39,8 @@
 						<text>{{item.MONTHLY_SALES}}分</text>
 					</view>
 					<!-- 时间 -->
-					<view class="right-date">
-						{{item.createtime}}
+					<view class="right-date" v-if="hotInfo.activity">
+						{{hotInfo.activity.STARTTIME}}
 					</view>
 				</view>
 			</view>
@@ -69,9 +69,12 @@
 		},
 
 		onLoad(options) {
-			let shopId = options.shopId;  // 'b542d78940b04df7a37800b91e508bb31';//
+			let shopId = options.shopId;  // 'b542d78940b04df7a37800b91e508bb31';// options.shopId
 			shopActivityGoods({shop_id: shopId}).then( res => {
 				this.hotInfo = res.returnMsg
+				console.log(this.hotInfo)
+				
+				this.hotInfo.glist = res.returnMsg.glist.slice(0, 5)
 			} )
 
 		},
@@ -99,15 +102,15 @@
 		
 
 		.warp {
-			position: fixed;
-			z-index: -1;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
+			// position: fixed;
+			// z-index: -1;
+			// top: 0;
+			// left: 0;
+			// right: 0;
+			// bottom: 0;
 			.bg-img{
 				width: 100%;
-				height: 100%;
+				// height: 300rpx;
 			}
 		}
 	
@@ -116,7 +119,7 @@
 			background: rgb(245, 166, 35);
 			width: 90%;
 			border-radius: 20rpx;
-			margin: 80% auto 50rpx auto;
+			margin: 0 auto;
 			padding: 20rpx;
 			.phone{
 				background: rgb(250, 214, 154);
