@@ -72,8 +72,9 @@
 		
 		onLoad(opetion) {
 			//    
+			console.log(opetion)
 			shopDetails({goodsId: opetion.shopId}).then(res=>{
-				console.log('商品详情',res.returnMsg.newevaluate[0])
+				console.log('商品详情',res.returnMsg)
 				this.Detail = res.returnMsg.newevaluate && res.returnMsg.newevaluate[0]
 				
 			}).catch(err=>{

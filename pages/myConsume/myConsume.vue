@@ -19,18 +19,20 @@
 			<view class="mybalance-content-item" v-for="item in listData" :key="item.id">
 				<view class="content">
 					<text class="left">
-						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue"></text>
+						<image :src="item.faceicon" mode="" v-if="item.faceicon.length> 10"></image>
+						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue" v-else></text>
+						
 					</text>
 					<view class="right">
 						<view class="top">
 							<view class="name">
-								<text>{{item.shopName?item.shopName:'线下支付'}}</text>
+								<text>{{item.shopName ? item.shopName : '线下支付'}}</text>
 								<view v-if="item.goodsName">
 									{{item.goodsName}}
 								</view>
 							</view>
 							<view class="price">
-								-￥{{item.actualPay}}
+								{{item.paytype == 0 ? '-' : '+'}}￥{{item.actualPay}}
 							</view>
 						</view>
 						<view class="bottom">
@@ -189,6 +191,7 @@
 					.left {
 						width: 60rpx;
 						height: 60rpx;
+						// line-height: 60rpx;
 						background: #f8f5f8;
 						border-radius: 50%;
 						border: 1px solid #E0E0E0;
@@ -196,7 +199,14 @@
 						justify-content: center;
 						align-items: center;
 						margin-right: 20rpx;
-
+						image {
+							width: 45rpx;
+							height: 45rpx;
+							border-radius: 50%;
+							margin-top: 10rpx;
+							border: none;
+							display: inline-block;
+						}
 						text {
 							font-size: 40rpx;
 							color: #FF5A32;

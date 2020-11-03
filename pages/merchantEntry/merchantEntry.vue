@@ -19,7 +19,7 @@
 				<text>选择入驻城市/区</text>
 				<!-- <input @blur="getCity" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入驻城市/区" /> -->
-				 {{this.city}}
+				 {{ addressObj.city }} {{ addressObj.district }}
 				 <pickerAddress class="index-top-address" @change="getCity">
 				 	<text class="iconfont icon-dingwei"></text>
 				 </pickerAddress>
@@ -214,12 +214,20 @@
 			},
 			// 提交
 			async submit() {
+				if(!this.username) { return uni.showToast({ title: '请输入用户名', icon: 'none' }) }
+				if(!this.phone) { return uni.showToast({ title: '请输入手机号', icon: 'none' }) }
+				if(!this.addressObj.district) { return uni.showToast({ title: '定位失败请手动选择', icon: 'none' }) }
+				if(!this.eamil) { return uni.showToast({ title: '请输入负责人邮箱', icon: 'none' }) }
+				
+				if(!this.imgUrl) { return uni.showToast({ title: '请上传身份证正面', icon: 'none' }) }
+				if(!this.imgUrl1) { return uni.showToast({ title: '请上传身份证反面', icon: 'none' }) }
+				if(!this.imgUrl2) { return uni.showToast({ title: '请上传营业执照', icon: 'none' }) }
 				let obj = {
 					name: this.username, // 用户名
 					phone: this.phone, //  手机号
 					eamil: this.eamil,
-					city: this.addressObj.city || '1',
-					area: this.addressObj.district || '2',
+					city: this.addressObj.city || '成都市',
+					area: this.addressObj.district || '',
 					fulladd: this.city,
 					longitude: this.longitude || 0,
 					latitude: this.latitude || 0,
@@ -251,7 +259,7 @@
 					fail(err) {
 
 						uni.showToast({
-							title: "定位不成功",
+							title: "定位失败请手动选择",
 							icon: 'none'
 						})
 					}
@@ -262,49 +270,10 @@
 				uni.getLocation({
 					type: 'wgs84',
 					success: (res) => {
-
+	
 						this.longitude = res.longitude
 						this.latitude = res.latitude
 						this.conversionPoint(res)
-						uni.request({
-							url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
-							header: {
-								'Content-Type': 'application/x-www-form-urlencoded',
-							},
-							data: {
-								LONGITUDE: this.longitude, // '103.980318', //
-								LATITUDE: this.latitude, // '30.759185', //
-								// kilometers: '300',
-								showCount: 10,
-								currentPage: 1,
-								AREA: this.area, // '金牛区', //
-								NAME: this.itemType // 不填就是综合
-							},
-							method: 'POST',
-							success: (res) => {
-
-								if (res.data.status != '00') {
-									uni.showToast({
-										title: '请手动设置地区!',
-										icon: 'none',
-										duration: 2000
-									});
-								} else {
-
-									res.data.varList.map(item => {
-										item.distance = Math.round(item.distance);
-									});
-									this.menuList = res.data.varList;
-
-								}
-							},
-							fail: () => {
-								uni.showToast({
-									title: '获取数据失败！',
-									icon: 'none'
-								});
-							}
-						})
 					}
 				})
 			},

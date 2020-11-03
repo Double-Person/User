@@ -18,7 +18,7 @@
 			<view class="localPreferences-content-hot-title">
 				<text class="iconfont icon-dian"></text>热门推荐
 			</view>
-			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail">
+			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail(item.goodsId)">
 				<view class="left">
 					<image :src="item.IMG" mode=""></image>
 				</view>
@@ -36,7 +36,7 @@
 					<view class="right-score">
 						<!-- 不可点击状态 -->
 						<uni-rate disabled="true" :value="item.MONTHLY_SALES" active-color="#FF5D06" size="18"></uni-rate>
-						<text>{{item.MONTHLY_SALES}}分</text>
+						<text>{{item.SCORE}}分</text>
 					</view>
 					<!-- 时间 -->
 					<view class="right-date" v-if="hotInfo.activity">
@@ -80,9 +80,9 @@
 		},
 		methods: {
 		
-			toDetail() { // goodsId 
+			toDetail(goodsId) { // goodsId 
 				uni.navigateTo({
-					url: '../goodsDetails/goodsDetails?shopId=' + '126549489'
+					url: '../goodsDetails/goodsDetails?shopId=' + goodsId
 				})
 			},
 			// 拨打电话

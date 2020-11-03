@@ -105,15 +105,12 @@
 				uni.navigateTo({
 					url: 'localPreferencesDetail?shopId=' + shopId
 				}).then(res => console.log(res)).catch(err => console.log(err))
-				// uni.navigateTo({
-				// 	url: "../shopPage/shopPage?shopId=" + id
-				// });
+			
 			},
 			// 本地优惠
 			getCalPreferences() {
 				getPush(this.onloadObj).then(res => {
 					this.hotLIst = res.returnMsg.shop
-					console.log(this.hotLIst)
 				})
 			},
 			// 获取banner

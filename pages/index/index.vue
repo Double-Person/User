@@ -167,6 +167,7 @@
 							var reg = /.+?(省|市|自治区|自治州|县|区)/g;
 							let addressList = address.match(reg).toString().split(",");
 							console.log('--------------', addressList);
+							uni.setStorageSync('addressList', addressList)
 							// addressList[0] +
 							this.newCity =  addressList[1] + addressList[2]
 						},
