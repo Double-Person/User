@@ -38,26 +38,33 @@
 				<input type="text" class="input" v-model.number="money" placeholder="输入提现金额" />
 				<text class="all" @click="balanceAll()">全部</text>
 			</view>
-			<view class="fl-center-between from" v-if="list.length">
+	
+			<view class="fl-center-between from" v-if="bindList.Wx || bindList.Ali">
 				<view class="bank">
 					<view class="info-text from-item">
 						提现到
 					</view>
 					<view class="info-text">
+						
+						<text>{{ cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝' || cardNum == '' && '请选择' }}  {{ cardNum }}</text>
 						<!-- 招商银行（8707） -->
-						{{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }})
+						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
 				</view>
 				<view class="icon" @click="showCardList">
-					<image class="img" src="../../static/images/more.png" mode=""></image>
+					<image class="img" src="/static/images/more.png" mode=""></image>
 				</view>
 
 			</view>
 			<view class="" v-show="isShowChangeCard" class="change-card-list">
-				<view class="list" v-for="(item, index) in list">
-					<view class="fl-center-between item" @click="changeCardId(item.CARDNO)">
-						<view>{{item.BANK}} {{computedPhone(item.CARDNO)}}</view>
-						<icon type="success_no_circle" size="20" v-if="cardNum == item.CARDNO" />
+				<view class="list">
+					<view class="fl-center-between item" @click="changeCardId(bindList.Wx)" v-if="bindList.Wx">
+						<view>微信 {{bindList.Wx}}</view>
+						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Wx" />
+					</view>
+					<view class="fl-center-between item" @click="changeCardId(bindList.Ali)" v-if="bindList.Ali">
+						<view>支付宝 {{bindList.Ali}}</view>
+						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Ali" />
 					</view>
 				</view>
 			</view>
@@ -65,7 +72,7 @@
 
 
 			<view class="tips">
-				<view>注意：满一元可以提现，提现收取手续费2% </view>
+				<view>注意：满一元可以提现，按协议收取手续费 </view>
 				<view>
 					预计2个工作日内到账，请注意查收
 				</view>
@@ -93,17 +100,17 @@
 				userInfo: {},
 				isShowChangeCard: false,
 				list: [],
+				bindList: {},
 				money: null,
 				cardNum: '', // 卡号
 				kbalance: 0, // uni.setStorageSync('kbalance')
 			};
 		},
-		onLoad() {
-			this.getBackCardInfo()
+		onLoad(opt) {
+			// this.getBackCardInfo()
 			this.userInfo = uni.getStorageSync('userInfo');
 			this.kbalance = uni.getStorageSync('kbalance');
-
-			console.log(this.userInfo)
+			this.bindList = JSON.parse(opt.bindList)
 		},
 		methods: {
 			//  转银行卡账号 和手机号
@@ -131,6 +138,7 @@
 			balanceAll() {
 				this.money = this.kbalance
 			},
+		
 			//  获取银行卡信息
 			getBackCardInfo() {
 				let userinfo_id = uni.getStorageSync('USERINFO_ID');

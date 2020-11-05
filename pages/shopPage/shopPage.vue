@@ -254,6 +254,7 @@
 		onLoad(e) {
 			// 获取店铺id
 			this.shopId = e.shopId;
+			
 			uni.getSystemInfo({
 				success: res => {
 					/* 设置当前滚动容器的高，若非窗口的告诉，请自行修改 */
@@ -274,6 +275,7 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
+				
 			});
 			// 获取userid
 			uni.getStorage({

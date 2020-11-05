@@ -174,9 +174,11 @@ export default {
 	mounted() {},
 	methods: {
 		goMycard() {
-			if(Object.keys(this.bindList).length > 0) {
+			console.log(this.bindList) // Ali  Wx
+			// if(Object.keys(this.bindList).length > 0) {
+			if(this.bindList.Ali || this.bindList.Wx  ) {
 				uni.navigateTo({
-					url: "../withdrawal/withdrawal"
+					url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
 				})
 			}else{
 				uni.navigateTo({
