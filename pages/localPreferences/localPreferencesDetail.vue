@@ -110,6 +110,7 @@
 			// bottom: 0;
 			.bg-img{
 				width: 100%;
+				object-fit: cover;
 				// height: 300rpx;
 			}
 		}
@@ -121,6 +122,7 @@
 			border-radius: 20rpx;
 			margin: 0 auto;
 			padding: 20rpx;
+			font-size: 26rpx;
 			.phone{
 				background: rgb(250, 214, 154);
 				display: flex;
@@ -142,7 +144,7 @@
 
 
 	.localPreferences-content-hot {
-		margin-top: 20rpx;
+		margin-top: 50rpx;
 
 		.localPreferences-content-hot-title {
 			font-size: 32rpx;
