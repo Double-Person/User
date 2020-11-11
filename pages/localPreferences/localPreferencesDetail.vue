@@ -8,7 +8,7 @@
 			{{ hotInfo.activity.DESCRIBE }}
 			
 			<view class="phone" @click="callPhone(hotInfo.shopphone)">
-				<image src="/static/images/phone.jpg"></image>
+				<image src="/static/images/phone.png"></image>
 				<view class="">{{ hotInfo.shopphone }}</view>
 			</view>
 		</view>
@@ -71,9 +71,7 @@
 		onLoad(options) {
 			let shopId = options.shopId;  // 'b542d78940b04df7a37800b91e508bb31';// options.shopId
 			shopActivityGoods({shop_id: shopId}).then( res => {
-				this.hotInfo = res.returnMsg
-				console.log(this.hotInfo)
-				
+				this.hotInfo = res.returnMsg				
 				this.hotInfo.glist = res.returnMsg.glist.slice(0, 5)
 			} )
 
