@@ -5,7 +5,6 @@
 		
 		<!-- 内容开始 -->
 		<view class="notice-content">
-			<image src="../../static/images/banner.png" mode=""></image>
 			
 			<view class="text">
 				<view class="">
@@ -74,7 +73,7 @@
 			border-radius: 20rpx;
 			margin: auto;
 			height: 100%;
-			padding: 30rpx;
+			padding: 20rpx;
 			image{
 				width: 100%;
 				height: 269rpx;

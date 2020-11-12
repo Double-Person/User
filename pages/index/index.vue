@@ -6,7 +6,7 @@
 				<!-- 定位 -->
 				<pickerAddress class="index-top-address" @change="setCity">
 					<text class="iconfont icon-dingwei"></text>
-					{{ newCity }}
+					{{ cityShow }}
 					<text class="iconfont icon-jiantou-xia"></text>
 				</pickerAddress>
 				<!-- 搜索 -->
@@ -115,6 +115,7 @@
 					2df5711d4e2fd9ecd1622b5a53fc6b1d
 					
 				*/
+			   cityShow: '',
 				key: 'f0d8604522a34fea7af419d353f98e8f',
 				stroingCity: true,
 				title: '',
@@ -191,6 +192,7 @@
 							console.log('位置转化', data)
 							getApp().globalData.city = [];
 							this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
+							this.cityShow = data.data.regeocode.addressComponent.district;
 							getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
 								.district);
 							console.log('app定位', this.newCity)
@@ -336,7 +338,6 @@
 							success: (data) => {
 								console.log('位置解析成功', data.data.regeocode)
 								this.area = data.data.regeocode.addressComponent.district;
-								// this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
 								let {
 									province,
 									city,

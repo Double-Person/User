@@ -1,5 +1,7 @@
 <template>
 	<view class="settlement">
+
+
 		<!-- 顶部 -->
 		<commonHeader :headerTitl="headerTitl" xingHide="true" lingHide="true"></commonHeader>
 		<view class="settlement-content">
@@ -15,7 +17,7 @@
 				<view v-else class="setting-content-top-right" style="color: #999;font-size: 30rpx;">选择地址</view>
 			</view>
 			<view class="setting-content-product" v-for="(item, index) in orderList" :key="index">
-				<image src="../../static/images/content01.png" mode=""></image>
+				<image src="/static/images/content01.png" mode=""></image>
 				<view class="product">
 					<view class="title">
 						<text>{{ item.shopName }}</text>
@@ -93,7 +95,7 @@
 				<view class="item" @tap="pay(0)">
 					<view class="item-left">
 						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue" style="color: #FF5A32;"></text>
-						余额支付
+						余额支付（{{ BALANCE }}）
 					</view>
 					<view class="item-right"><text class="iconfont icon-youjiantou"></text></view>
 				</view>
@@ -223,6 +225,16 @@
 				</view>
 			</view>
 		</view>
+	
+		<view class="input-pwd" v-if="inputPwd">
+			
+			<view class="input-warp">
+				<view style="padding-top: 30rpx; font-size: 38rpx;">请输入密码</view>
+				<input class="input" v-model="tradePass" type="password" />
+				<view class="btn" @click="payByBalance">确定</view>
+			</view>
+		</view>
+	
 	</view>
 </template>
 
@@ -230,10 +242,10 @@
 // 引入tabbar
 import tabbar from '@/components/common-tabbar/common-tabbar';
 import commonHeader from '@/components/common-header/common-header';
-import { orderPay, getAddress, myCard, personal, alipay, wxpay } from '@/common/apis.js';
+import { orderPay, getAddress, myCard, personal, alipay, wxpay, shopBygoodList } from '@/common/apis.js';
 export default {
 	props: {
-		//最大长度 值为4或者6
+		//最大长度 值为4或者6  
 		maxlength: {
 			type: Number,
 			default: 6
@@ -246,6 +258,9 @@ export default {
 	},
 	data() {
 		return {
+			BALANCE: '',
+			inputPwd: false,
+			tradePass: '',  // 交易密碼
 			phone:'',
 			headerTitl: '结算',
 			checked: false,
@@ -380,7 +395,7 @@ export default {
 				payAmount: this.payAmount,  // '216.0',//
 				orderSummaryId: this.orderID // 'D1601279104958'//
 			};
-			console.log('订单信息', JSON.stringify(obj))
+	
 		
 			// 微信支付
 			if (this.payMode === 1) {
@@ -390,7 +405,6 @@ export default {
 						provider: 'wxpay',
 						orderInfo: res.returnMsg, // 用JSON.stringify(res.returnMsg)和 res.returnMsg都不行
 						success :( res) =>{  
-							console.log("res",res)
 							this.payMaskHide = true; // 隐藏当前支付方式选择
 							uni.showToast({
 								title: '支付成功!',
@@ -453,8 +467,14 @@ export default {
 				});
 			}
 			
+			// 餘額支付
 			
-			if (this.payMode === 3 || this.payMode === 0) {
+			if(this.payMode === 0) {
+				this.inputPwd = true	
+			}
+			
+			
+			if (this.payMode === 3) {
 				uni.showToast({
 					title: '暂未开通此功能!',
 					duration: 2000,
@@ -463,6 +483,40 @@ export default {
 			}
 			// 显示密码输入
 			// this.payPwdMaskHide = false
+		},
+		payByBalance() {
+			
+			// if(this.tradePass == '') {
+			// 	return uni.showToast({ title: '请输入交易密码', icon: 'none' })
+			// }
+			this.inputPwd = false;
+			shopBygoodList({ orderSummaryId: this.orderID, tradePass: this.tradePass }).then(res => {
+				console.log(res)
+				this.tradePass = '';
+				if(res.returnMsg) {
+					if(res.returnMsg.status == '01') {
+						uni.showToast({
+							title: '交易密码不正确或者未设置交易密码',
+							icon: 'none'
+						})	
+					}else if(res.returnMsg.status == '02') {
+						uni.showToast({
+							title: '余额不足',
+							icon: 'none'
+						})	
+					}else{
+						uni.showToast({
+							title: '支付成功',
+							icon: 'none'
+						})	
+					}
+				}else{
+					uni.showToast({
+						title: '系统错误稍后再试', icon: 'none'
+					})
+				}
+				
+			})
 		},
 		// 返回支付选择
 		backPay() {
@@ -501,7 +555,9 @@ export default {
 		tabbar
 	},
 	onLoad(e) {
-		
+		// 余额显示
+		let useInfoObj = uni.getStorageSync('userInfo');
+		this.BALANCE = useInfoObj.BALANCE;
 		// this.Allprice=e.allTotal
 		// this.shopId = e.shopId;
 		uni.getStorage({
@@ -592,6 +648,35 @@ export default {
 </script>
 
 <style lang="less" scoped>
+	.input-pwd{
+		position: fixed;
+		z-index: 999;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: rgba(0,0,0, .5);
+		.input-warp{
+			background: #fff;
+			margin-top: 500rpx;
+			margin-left: 10%;
+			border-radius: 30rpx;
+			height: 500rpx;
+			width: 80%;
+			text-align: center;
+			input{
+				border: 1rpx solid #000;
+				border-radius: 10rpx;
+				height: 90rpx;
+				width: 80%;
+				margin-left: 10%;
+				margin-top: 100rpx;
+			}
+			.btn{
+				margin-top: 30rpx;
+			}
+		}
+	}
 .settlement {
 	background: #f6f7f8;
 	color: #333;

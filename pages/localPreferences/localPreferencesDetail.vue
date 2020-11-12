@@ -106,6 +106,7 @@
 			// left: 0;
 			// right: 0;
 			// bottom: 0;
+			margin-bottom: 40rpx;
 			.bg-img{
 				width: 100%;
 				object-fit: cover;
@@ -120,17 +121,17 @@
 			border-radius: 20rpx;
 			margin: 0 auto;
 			padding: 20rpx;
-			font-size: 26rpx;
+			font-size: 30rpx;
 			.phone{
 				background: rgb(250, 214, 154);
 				display: flex;
 				align-items: center;
-				padding: 15rpx;
+				padding: 15rpx 0 15rpx 30rpx;
 				border-radius: 60rpx;
 				margin: 30rpx auto;
 				image{
-					width: 60rpx;
-					height: 60rpx;
+					width: 45rpx;
+					height: 45rpx;
 				}
 				view{
 					margin-left: 30rpx;
@@ -142,7 +143,7 @@
 
 
 	.localPreferences-content-hot {
-		margin-top: 50rpx;
+		margin-top: 100rpx;
 
 		.localPreferences-content-hot-title {
 			font-size: 32rpx;

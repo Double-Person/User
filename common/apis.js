@@ -171,6 +171,13 @@ export const homePage = () => request.get('/api/ordersummary/homePage')
 // 获取首页活动详情
 export const shopActivityGoods = params => request.get('/api/ordersummary/shopActivityGoods', { params })
 
+// 余额支付
+export const shopBygoodList = params => request.get('/api/ordersummary/balance/pay', { params })
+
+
+
+       
+
 
 
 
