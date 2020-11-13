@@ -15,18 +15,25 @@
 				<input @blur="getPhone" :maxlength="11" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="注册手机号已读取" />
 			</view>
-			<view class="merchantEntry-content-item">
+			<view class="merchantEntry-content-item" style="text-align: right;">
 				<text>选择入驻城市/区</text>
 				<!-- <input @blur="getCity" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入驻城市/区" /> -->
-				 {{ addressObj.city }} {{ addressObj.district }}
+				 {{ addressObj.city }} {{ addressObj.district }} 
 				 <pickerAddress class="index-top-address" @change="getCity">
 				 	<text class="iconfont icon-dingwei"></text>
 				 </pickerAddress>
 			</view>
+			
+			<view class="merchantEntry-content-item">
+				<text>详细地址</text>
+				<input @blur="getEmail" type="text" v-model="city"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				 placeholder="填写入详细地址" />
+			</view>
+			
 			<view class="merchantEntry-content-item">
 				<text>负责人邮箱</text>
-				<input @blur="getEmail" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input @blur="getEmail" type="text"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入负责人邮箱" />
 			</view>
 			<view class="merchantEntry-content-item">
@@ -211,13 +218,15 @@
 			// 邮箱
 			getEmail(e) {
 				this.email = e.detail.value;
+				console.log(this.email)
 			},
 			// 提交
 			async submit() {
 				if(!this.username) { return uni.showToast({ title: '请输入用户名', icon: 'none' }) }
 				if(!this.phone) { return uni.showToast({ title: '请输入手机号', icon: 'none' }) }
-				if(!this.addressObj.district) { return uni.showToast({ title: '定位失败请手动选择', icon: 'none' }) }
-				if(!this.eamil) { return uni.showToast({ title: '请输入负责人邮箱', icon: 'none' }) }
+				if(!(this.addressObj && this.addressObj.district)) { return uni.showToast({ title: '定位失败请手动选择', icon: 'none' }) }
+				if(!this.email) { return uni.showToast({ title: '请输入负责人邮箱', icon: 'none' }) }
+				if(!this.city) { return uni.showToast({ title: '请输入详细地址', icon: 'none' }) }
 				
 				if(!this.imgUrl) { return uni.showToast({ title: '请上传身份证正面', icon: 'none' }) }
 				if(!this.imgUrl1) { return uni.showToast({ title: '请上传身份证反面', icon: 'none' }) }
@@ -226,7 +235,7 @@
 					name: this.username, // 用户名
 					phone: this.phone, //  手机号
 					eamil: this.eamil,
-					city: this.addressObj.city || '成都市',
+					city: this.addressObj.city || '',
 					area: this.addressObj.district || '',
 					fulladd: this.city,
 					longitude: this.longitude || 0,
@@ -235,11 +244,18 @@
 					idcardback: this.imgUrl1, // 身份证真反面
 					certificate: this.imgUrl2 //营业执照
 				}
+				 
 				let res = await shopAuth(obj)
-				console.log(JSON.stringify(res))
+				console.log(obj);
+				console.log(res);
 				if(res.msgType == 0) {
 					uni.showToast({
 						title: '申请提交成功',
+						icon: 'none'
+					})
+				}else{
+					uni.showToast({
+						title: res.errMsg,
 						icon: 'none'
 					})
 				}
@@ -287,7 +303,7 @@
 
 <style lang="less" scoped>
 	.index-top-address{
-		margin-right: 15rpx;
+		margin-right: 30rpx;
 	}
 	.merchantEntry {
 		min-height: 100%;
@@ -315,7 +331,7 @@
 				justify-content: space-between;
 
 				input {
-					width: 280rpx;
+					width: 380rpx;
 					margin-right: 30rpx;
 					text-align: right;
 				}
