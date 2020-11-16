@@ -439,6 +439,7 @@ export default {
 					uni.requestPayment({
 						provider: 'alipay',
 						orderInfo: res1.returnMsg,
+						// orderInfo: mockOrderInfo.returnMsg,
 						success: res => {
 							console.log('success支付宝:' + JSON.stringify(res));
 							// 隐藏当前支付方式选择
