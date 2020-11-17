@@ -15,7 +15,10 @@
 					</view>
 					<view class="text">
 						<text>{{item.TITLE}}</text>
-						<view>{{item.COUNTENT}}</view>
+						<!-- <view>{{item.COUNTENT }}</view> -->
+						<view :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
+							{{showMsg(item.COUNTENT)}}
+						</view>
 					</view>
 				</view>
 				<view class="news-gonggao-msg-right">
@@ -61,9 +64,9 @@
 				headerTitl: "消息",
 				active: true,
 				guanggaoData: [],
-			
+
 				kefuData: []
-			
+
 			};
 		},
 		components: {
@@ -73,6 +76,7 @@
 		onShow() {
 			this.getNewsList()
 		},
+
 		methods: {
 			setType(type) {
 				this.active = type
@@ -85,18 +89,25 @@
 					RECIPIENT: uni.getStorageSync('USERINFO_ID'),
 					MESSAGETYPE: this.active ? 1 : 2
 				})
-				console.log('returnMsg',returnMsg)
 				this[this.active ? 'guanggaoData' : 'kefuData'] = returnMsg
 			},
 			getVal(e) {
 				console.log(e)
+			},
+			showMsg(str) {
+				if (str.includes('img')) return '[图片]';
+				else {
+					let msg = str.replace(/\<\/p\>/g, "");
+					let res = msg.replace(/\<p\>/g, "");
+					return res
+				}
 			},
 			// 查看公告详情
 			goNotice(id) {
 				uni.navigateTo({
 					url: '../notice/notice?id=' + id
 				})
-			}
+			},
 		}
 	}
 </script>

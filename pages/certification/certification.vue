@@ -33,7 +33,8 @@
 		</view>
 		<view class="submit-btn" v-if="userInfo.CHECKSTATE == 1">审核通过</view>
 		<view class="submit-btn" v-if="userInfo.CHECKSTATE == 0">审核中</view>
-		<view class="submit-btn" @tap="submit" v-if="userInfo.CHECKSTATE == 2 || userInfo.CHECKSTATE == '-1'">提交审核</view>
+		<!-- <view class="submit-btn" @tap="submit" v-if="userInfo.CHECKSTATE == 2 || userInfo.CHECKSTATE == '-1'">提交审核</view> -->
+		<view class="submit-btn" @tap="submit" v-else>提交审核</view>
 		<!-- tabbar -->
 		<tabbar></tabbar>
 	</view>

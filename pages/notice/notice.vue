@@ -10,8 +10,8 @@
 				<view class="">
 					{{info.TITLE}}
 				</view>
-				<view class="text-item">
-					{{info.COUNTENT}}
+				<view class="text-item" v-html="info.COUNTENT">
+					
 				</view>
 				
 			</view>
