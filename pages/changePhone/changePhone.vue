@@ -163,11 +163,16 @@
                 uni.showLoading({
                     title:'更换中...'
                 })
+				let userInfo = uni.getStorageSync('userInfo');
                 var obj = {
-                    "USERINFO_ID": getApp().globalData.USERINFO_ID,
+                    // "USERINFO_ID": getApp().globalData.USERINFO_ID,
+                    "USERINFO_ID": userInfo.USERINFO_ID,
                     "code": this.code,
                     "mobile": this.phone
                 }
+				
+		
+				console.log(obj);
                 changePhone(obj).then(res=>{
                     this.phoneMaskShow = false;
                     uni.hideLoading()

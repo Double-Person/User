@@ -16,32 +16,32 @@
 					<view class="text">
 						<text>{{item.TITLE}}</text>
 						<!-- <view>{{item.COUNTENT }}</view> -->
-						<view :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
+						<view  class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
 							{{showMsg(item.COUNTENT)}}
 						</view>
 					</view>
 				</view>
 				<view class="news-gonggao-msg-right">
 					<text>{{item.PUBLISHTIME}}</text>
-					<view>{{item.PUBLISHERID}}</view>
+					<view>{{item.PUBLISHERID || 1}}</view>
 				</view>
 			</view>
 		</view>
 		<!-- 客服通知 -->
 		<view class="news-tongzhi new-common" :class="active?'hide':''">
-			<view class="news-gonggao-msg" v-for="item in kefuData" :key="item.id" @tap="goNotice">
+			<view class="news-gonggao-msg" v-for="item in kefuData" :key="item.id" @tap="goNotice(item.MESSAGE_ID)">
 				<view class="news-gonggao-msg-left">
 					<view class="logo">
 						<text class="iconfont icon-kefu"></text>
 					</view>
 					<view class="text">
 						<text>{{item.TITLE}}</text>
-						<view>{{item.COUNTENT}}</view>
+						<view class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">{{showMsg(item.COUNTENT)}}</view>
 					</view>
 				</view>
 				<view class="news-gonggao-msg-right">
 					<text>{{item.PUBLISHTIME}}</text>
-					<view>{{item.PUBLISHERID}}</view>
+					<view>{{item.PUBLISHERID || 1}}</view>
 				</view>
 			</view>
 		</view>
@@ -112,7 +112,13 @@
 	}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+	.content{
+		width: 380rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 	.news {
 		font-family: PingFangSC-Regular, PingFang SC;
 		color: #333333;

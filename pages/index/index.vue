@@ -503,7 +503,8 @@
 					success: res => {
 						var shopId = res.result;
 						getShopPay({
-							SHOP_ID: res.result
+							SHOP_ID: res.result,
+							
 						}).then(res => {
 							console.log(res);
 							if (res.returnMsg.status == '00') {

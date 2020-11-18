@@ -86,7 +86,7 @@
 					账号注销
 				</view>
 				<view class="phoneMask-content-text">
-					当前账号为<text>17788889999</text>手机号，确定注销账号吗？
+					当前账号为<text>{{ phone }}</text>手机号，确定注销账号吗？
 				</view>
 				<view class="phoneMask-content-btn">
 					<text @tap="phoneMaskShow=false">取消</text>
@@ -137,6 +137,7 @@
 	export default {
 		data() {
 			return {
+				phone: '',
 				phoneMaskShow: false,
 				hideBox: true,
 				hideBox1: true,
@@ -147,6 +148,20 @@
 				isPwd:''
 			};
 		},
+	
+		components: {
+			tabbar,
+			testCode
+		},
+		onLoad() {
+			this.isPwd = getApp().globalData.isPwd;
+			console.log(getApp().globalData)
+			//  
+			let info = uni.getStorageSync('name');
+			this.phone = JSON.parse(info).PHONE;
+			console.log()
+		},
+	
 		methods: {
 			backPage() {
 				// #ifdef H5
@@ -218,11 +233,28 @@
 			},
 			// 确认注销
 			submit() {
-				// 关闭确认弹窗
-				this.phoneMaskShow = false;
-				// 弹出交易密码验证
-				this.hideBox1=false;
-				
+				if(getApp().globalData.pwd == '') {
+					uni.removeStorage({key:'saveStata'})
+					uni.removeStorage({
+						key:'name',
+						success:()=>{
+							uni.showToast({
+								title: '注销成功',
+								icon: 'none'
+							})
+							setTimeout(() => {
+								uni.reLaunch({
+									url:'../login/login'
+								})
+							}, 500)
+						}
+					})
+				}else {
+					// 关闭确认弹窗
+					this.phoneMaskShow = false;
+					// 弹出交易密码验证
+					this.hideBox1=false;
+				}
 			},
 			// 获取输入登录密码
 			getPwd(val) {
@@ -244,7 +276,7 @@
 				
 				console.log('---', getApp().globalData.pwd)
 				console.log('---', pwd)
-				if(pwd==getApp().globalData.pwd){
+				if(val==getApp().globalData.pwd){
 					this.hideBox1 = true;
 					if(this.type1){
 						// 前往修改手机号
@@ -252,9 +284,7 @@
 							url: "../changePhone/changePhone"
 						})
 					}else{
-						uni.removeStorage({
-							key:'saveStata'
-						})
+						uni.removeStorage({key:'saveStata'})
 						uni.removeStorage({
 							key:'name',
 							success:()=>{
@@ -283,13 +313,7 @@
 				})
 			}
 		},
-		components: {
-			tabbar,
-			testCode
-		},
-		onLoad() {
-			this.isPwd = getApp().globalData.isPwd;
-		}
+		
 	}
 </script>
 
