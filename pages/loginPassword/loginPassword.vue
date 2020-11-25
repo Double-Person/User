@@ -48,6 +48,13 @@
 					})
 					return false
 				}
+				if (this.newPwd.length != 6 || this.pwd.length != 6) {
+					uni.showToast({
+						title: '请输入6位密码！',
+						icon: 'none'
+					})
+					return false
+				}
 				uni.showLoading({
 					title: '加载中...'
 				})
@@ -66,6 +73,7 @@
 						})
 						uni.hideLoading()
 						setTimeout(() => {
+							uni.clearStorageSync();
 							uni.reLaunch({
 								url: '../login/login'
 							})

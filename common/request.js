@@ -4,14 +4,14 @@
 */
 import uniRequest from 'uni-request';
 
-// 判断请求环境
+// 判断请求环境   http://192.168.0.111:8081/
 if(process.env.NODE_ENV === 'development'){
 	console.log('开发环境')
     // 开发环境
    // #ifdef H5   
    // /qfl
    uniRequest.defaults.baseURL = '/qfl'
-   // uniRequest.defaults.baseURL = 'https://d30013n639.wicp.vip/'
+ 
    // #endif
    // #ifdef APP-PLUS
 	uniRequest.defaults.baseURL = 'https://yflh.hkzhtech.com/qufl'
@@ -22,12 +22,10 @@ if(process.env.NODE_ENV === 'development'){
 	// #ifdef H5
 	// yflh.hkzhtech.com/qufl/
 	uniRequest.defaults.baseURL = 'yflh.hkzhtech.com/qufl/'
-	// uniRequest.defaults.baseURL = 'http://127.0.01:8081/'
 	// #endif
 	// #ifdef APP-PLUS
 	// yflh.hkzhtech.com/qufl/
 	uniRequest.defaults.baseURL = 'yflh.hkzhtech.com/qufl/'
-	// uniRequest.defaults.baseURL = 'http://127.0.01:8081/'
 	// #endif
 }
 // 跨域请求设置

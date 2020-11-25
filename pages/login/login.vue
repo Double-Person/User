@@ -170,6 +170,7 @@
 					PHONE: that.phone,
 					PASSWORD: that.pwd
 				}
+				console.log('===', that.saveObj)
 
 				try {
 					that.saveObj.openId = getApp().globalData.openid ? getApp().globalData.openid : '';
@@ -190,6 +191,7 @@
 						title: res.errMsg,
 						icon:'none'
 					})
+					console.log(that.saveObj)
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局
 						uni.setStorage({
