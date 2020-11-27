@@ -242,7 +242,7 @@
 // 引入tabbar
 import tabbar from '@/components/common-tabbar/common-tabbar';
 import commonHeader from '@/components/common-header/common-header';
-import { orderPay, getAddress, myCard, personal, alipay, wxpay, shopBygoodList } from '@/common/apis.js';
+import { orderPay, getAddress, myCard, personal, alipay, wxpay, shopBygoodList} from '@/common/apis.js';
 export default {
 	props: {
 		//最大长度 值为4或者6  
@@ -556,9 +556,7 @@ export default {
 		tabbar
 	},
 	onLoad(e) {
-		// 余额显示
-		let useInfoObj = uni.getStorageSync('userInfo');
-		this.BALANCE = useInfoObj.BALANCE;
+
 		// this.Allprice=e.allTotal
 		// this.shopId = e.shopId;
 		uni.getStorage({
@@ -600,6 +598,8 @@ export default {
 				
 				// 获取星币
 				personal({ USERINFO_ID: res.data }).then(res => {
+					
+					console.log('++++++++++' , res)
 					if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
 						if (this.total <= 1) {
 						} else {
@@ -609,6 +609,8 @@ export default {
 						this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
 					}
 					this.XBMoney = res.returnMsg.userInfo.STARCOINS;
+					//  显示余额
+					this.BALANCE = res.returnMsg.BALANCE || '0' ;
 				});
 			}
 		});

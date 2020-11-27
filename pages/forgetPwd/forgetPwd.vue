@@ -125,9 +125,20 @@
                             	url:'../login/login',
                             })
                         },1000)
-					}else{
+					}else if(res.returnMsg.status=='02'){
 						uni.showToast({
-							title:'重置失败！'
+							title:'验证码超时！' ,
+							icon: 'none'
+						})
+					}else if(res.returnMsg.status=='01'){
+						uni.showToast({
+							title:'验证码错误！',
+							icon: 'none'
+						})
+					}else if(res.returnMsg.status=='03'){
+						uni.showToast({
+							title:'账号不存在！',
+							icon: 'none'
 						})
 					}
 				}).catch(err=>{

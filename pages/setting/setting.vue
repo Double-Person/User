@@ -95,11 +95,11 @@
 			</view>
 		</view>
 		<!-- 退出登录 -->
-		<!-- #ifdef APP-PLUS -->
+		
 		<view class="submit-btn" @tap="outLogin;hideBox=false;type=0">
 			退出登录
 		</view>
-		<!-- #endif -->
+	
 		<!-- tabbar -->
 		<tabbar></tabbar>
 		<!-- 验证登录密码蒙层 -->
@@ -258,10 +258,13 @@
 			},
 			// 获取输入登录密码
 			getPwd(val) {
-				if(val==888888){
+				let info = uni.getStorageSync('name');
+				let PASSWORD = JSON.parse(info).PASSWORD;
+				if(val == PASSWORD){
 					this.hideBox = true;
 					if(this.type===2||this.type===0){
 						this.phoneMaskShow=true;
+						uni.clearStorageSync();
 						uni.reLaunch({
 							url:"../login/login"
 						})
