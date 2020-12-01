@@ -185,7 +185,11 @@
         ,{
             "path" : "pages/withdrawalRecord/withdrawalRecord",
             "style" : {}
-        }
+        },
+		{
+			"path":"pages/payment/Payment",
+			"style" : {}
+		}
     ],
     "globalStyle": {
         "navigationStyle": "custom",

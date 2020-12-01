@@ -23,7 +23,7 @@
 				</view>
 				<view class="news-gonggao-msg-right">
 					<text>{{item.PUBLISHTIME}}</text>
-					<view>{{item.PUBLISHERID || 1}}</view>
+					<view v-if="item.STATE == 0">1</view>
 				</view>
 			</view>
 		</view>
@@ -41,7 +41,7 @@
 				</view>
 				<view class="news-gonggao-msg-right">
 					<text>{{item.PUBLISHTIME}}</text>
-					<view>{{item.PUBLISHERID || 1}}</view>
+					<view v-if="item.STATE == 0">1</view>
 				</view>
 			</view>
 		</view>

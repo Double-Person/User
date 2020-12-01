@@ -1,7 +1,7 @@
 <template>
 	<view class="cart">
 		<!-- 顶部 -->
-		<commonHeader :headerTitl="headerTitl" ></commonHeader>
+		<commonHeader :headerTitl="headerTitl" xingHide=true lingHide=true></commonHeader>
 		<!-- 购物内容 -->
 		<view class="cart-content" v-if="cartList.length>0">
 			<view class="cart-content-item" v-for="(item,index) in cartList" :key="index">

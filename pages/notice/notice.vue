@@ -1,7 +1,7 @@
 <template>
 	<view class="notice">
 		<!-- header -->
-		<commonHeader headerTitl="公告"></commonHeader>
+		<commonHeader headerTitl="公告" xingHide=true lingHide=true></commonHeader>
 		
 		<!-- 内容开始 -->
 		<view class="notice-content">

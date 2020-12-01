@@ -5,7 +5,10 @@
 		<view class="phone1">
 			注册手机号：{{oldPhone}}
 		</view>
-		<input type="text" value="" placeholder="请输入变更手机号" @input="enter" maxlength="11" :class="testCode===0?'testsuc':''||testCode===1?'testerr':''||testCode===2?'':''"/>
+		<input type="text" value="" 
+		placeholder="请输入变更手机号" 
+		@input="enter" maxlength="11" 
+		:class="testCode===0?'testsuc':''||testCode===1?'testerr':''||testCode===2?'':''"/>
 		<view class="getcode">
 			<input type="text" value="" maxlength="6" @input="gettestcode" placeholder="请输入验证码"/>
 			<button class="testCode" :class="selectCode?'selectCode':''" :disabled="disabled"  @tap="getCode">{{codeText}}</button>
@@ -69,9 +72,10 @@
 					this.testCode = 2;
 					this.selectCode = false;
 				}else if(e.detail.value.length===11){
+					console.log(e.detail.value, this.oldPhone1)
                     if(e.detail.value == this.oldPhone1) {
                         uni.showToast({
-                            title:'请输入正确手机号!',
+                            title:'更换手机与原手机号码相同!',
                             icon:'none'
                         })
                     }else{
@@ -97,7 +101,7 @@
 			},
 			// 判断输入按钮状态
 			submitState(){
-				if(this.testCode===0&&this.codeState){
+				if(this.testCode===0 && this.codeState){
 					this.btnState = false;
 				}else{
 					this.btnState = true;
