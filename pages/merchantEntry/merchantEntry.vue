@@ -270,7 +270,14 @@
 						location: `${res.longitude}, ${res.latitude}`
 					},
 					success: (data) => {
-						this.addressObj = data.data.regeocode.addressComponent
+						try{
+							this.addressObj = data.data.regeocode.addressComponent;
+							let addStr = data.data.regeocode.formatted_address.split(this.addressObj.district);
+							this.city = addStr[1];
+						}catch(e){
+							//TODO handle the exception
+						}
+						
 					},
 					fail(err) {
 
@@ -289,6 +296,7 @@
 	
 						this.longitude = res.longitude
 						this.latitude = res.latitude
+						console.log('---------', res)
 						this.conversionPoint(res)
 					}
 				})

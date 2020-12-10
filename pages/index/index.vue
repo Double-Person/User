@@ -395,8 +395,6 @@
 			},
 			// 根据定位请求数据
 			getPositonData(longitude, latitude, area, CATEGORY_ID) {
-				
-				console.log('点击调用')
 				uni.request({
 					url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
 					header: {
