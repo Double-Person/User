@@ -96,7 +96,8 @@
 		getItem,
 		getShopPay,
 		getBanner,
-		homePage
+		homePage,
+		baseUrl
 	} from '@/common/apis.js';
 
 
@@ -167,7 +168,6 @@
 							var coordType = event.coordType; // 转换后的坐标系类型
 							var reg = /.+?(省|市|自治区|自治州|县|区)/g;
 							let addressList = address.match(reg).toString().split(",");
-							console.log('--------------', addressList);
 							uni.setStorageSync('addressList', addressList)
 							// addressList[0] +
 							this.newCity =  addressList[1] + addressList[2]
@@ -189,13 +189,11 @@
 							location: `${res.longitude}, ${res.latitude}`
 						},
 						success: (data) => {
-							console.log('位置转化', data)
 							getApp().globalData.city = [];
 							this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
 							this.cityShow = data.data.regeocode.addressComponent.district;
 							getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
 								.district);
-							console.log('app定位', this.newCity)
 						},
 						fail(err) {
 							uni.showToast({
@@ -336,7 +334,6 @@
 								location: `${res.longitude}, ${res.latitude}`
 							},
 							success: (data) => {
-								console.log('位置解析成功', data.data.regeocode)
 								this.area = data.data.regeocode.addressComponent.district;
 								let {
 									province,
@@ -396,7 +393,7 @@
 			// 根据定位请求数据
 			getPositonData(longitude, latitude, area, CATEGORY_ID) {
 				uni.request({
-					url: 'https://yflh.hkzhtech.com/qufl/api/ordersummary/push/newvendor',
+					url: baseUrl + '/api/ordersummary/push/newvendor',
 					header: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
@@ -406,11 +403,10 @@
 						// kilometers: '300',
 						AREA: area,
 						// NAME: this.itemType, // 不填就是综合
-						CATEGORY_ID: CATEGORY_ID
+						CATEGORY_ID: CATEGORY_ID || ''
 					},
 					method: 'POST',
 					success: (res) => {
-						console.log(res)
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',
@@ -480,7 +476,6 @@
 			},
 			// 前往店铺
 			goShopPage(id, e) {
-				console.log(id, e)
 				// return false;
 				if (e === 0) {
 					uni.navigateTo({
@@ -504,7 +499,6 @@
 							SHOP_ID: res.result,
 							
 						}).then(res => {
-							console.log(res);
 							if (res.returnMsg.status == '00') {
 								uni.navigateTo({
 									url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
@@ -531,7 +525,6 @@
 							getShopPay({
 								SHOP_ID: res.result
 							}).then(res => {
-								// console.log(res);
 								if (res.returnMsg.status == '00') {
 									uni.navigateTo({
 										url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId

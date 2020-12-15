@@ -319,6 +319,8 @@ export default {
 				});
 				return false;
 			}
+			console.log('-----------',this.GOODS)
+			this.GOODS = this.GOODS.filter(ele => ele.COUTNS != 0)
 			var obj = {
 				PAYABLE: this.total,
 				COUPON: this.yhqID,
@@ -558,7 +560,7 @@ export default {
 	onLoad(e) {
 
 		// this.Allprice=e.allTotal
-		// this.shopId = e.shopId;
+		this.shopId = e.shopId;
 		uni.getStorage({
 			key: 'USERINFO_ID',
 			success: res => {
@@ -566,7 +568,8 @@ export default {
 				this.USERINFO_ID = res.data;
 				// var arr = JSON.parse(decodeURIComponent(e.item));
 				var arr = JSON.parse(e.item);
-			
+				console.log(arr)
+			 
 				// arr.map(item => {
 				// 	item.num > 0 && this.orderList.push(item);
 				// 	this.total += parseFloat(item.price) * item.num;
@@ -575,9 +578,13 @@ export default {
 				// });
 	
 				
-				if(arr[0].COUNTS) {  // 从购物车中
-					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
-					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
+				if(arr[0].num) {  // 从购物车中
+					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
+					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
+					
+					arr.map(item => {
+						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
+					});
 				}else{ //  从商店直接购买
 					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);

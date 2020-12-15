@@ -35,7 +35,7 @@
 			</view>
 			<view class="shopPage-shopTitle-content">
 				<view class="address">
-					地址：{{vendor.CITY+vendor.FULLADD}}
+					地址：{{(vendor.CITY || '')+ (vendor.FULLADD || '')}}
 					<text class="iconfont icon-yiliaohangyedeICON-" @tap="goMap"></text>
 				</view>
 				
@@ -254,6 +254,7 @@
 		onLoad(e) {
 			// 获取店铺id
 			this.shopId = e.shopId;
+			console.log(this.shopId)
 			
 			uni.getSystemInfo({
 				success: res => {
@@ -275,6 +276,7 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
+				console.log(res)
 				
 			});
 			// 获取userid
@@ -545,7 +547,7 @@
 					let temp = [].concat(...list);
 					let stringifyArr = JSON.stringify(temp)
 					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll
+						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId
 					})
 					// uni.navigateTo({
 					// 	url: "../settlement/settlement?item=" +

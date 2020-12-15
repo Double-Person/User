@@ -192,6 +192,7 @@
 						icon:'none'
 					})
 					console.log(that.saveObj)
+					console.log(res)
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局
 						uni.setStorage({
