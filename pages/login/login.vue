@@ -64,7 +64,7 @@
 		
 				codeText: "获取验证码",
 				btnState: true,
-				phone: "13258188656", // 13258188656
+				phone: "", // 13258188656
 				pwd: "", /// 123456
 				phoneState: false,
 				pwdState: false,
