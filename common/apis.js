@@ -1,7 +1,9 @@
 // 引入封装的request
 // import request from './request.js';
 import request from './ajax.js'
-export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+export const baseUrl = 'http://192.168.0.104:8081'
+export const imgBaseUrl = 'http://192.168.0.104:8081/'
 
 
 
@@ -136,9 +138,7 @@ export const collectionShop = params => request.post('/api/ordersummary/collecti
 // 49.查询商家是否存在
 export const getShopPay = params => request.post('/api/ordersummary/shop/check', params);
 // 50.根据分类查询banner图
-export const getBanner = params => request.get('/api/ordersummary/banner', {
-	params
-});
+export const getBanner = params => request.get('/api/ordersummary/banner', { params });
 // 51.本地优惠
 export const getPush = params => request.post('/api/ordersummary/vendor/push', params);
 // 52.微信公众号支付

@@ -82,7 +82,7 @@
 <script>
 	// banner
 	// 318dfe4e09e51453d11d2c31cde26534
-	import specialBanner from '../../components/specialBanner.vue'
+	import specialBanner from '@/components/specialBanner.vue'
 	//引入tabbar
 	import tabbar from '@/components/common-tabbar/common-tabbar';
 	//引入高德地图
@@ -418,6 +418,7 @@
 								item.distance = Math.round(item.distance);
 							});
 							this.menuList = res.data.varList;
+							console.log('------', this.menuList)
 						}
 					},
 					fail: () => {
@@ -462,7 +463,9 @@
 					area: this.area,
 					category: '首页轮播'
 				};
+				console.log('首页轮播', data)
 				getBanner(data).then(res => {
+					console.log('首页轮播', res)
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
 							picture: item.IMG,
@@ -471,8 +474,9 @@
 							path: item.URL
 						}
 					})
+					console.log('首页轮播', this.bannerList)
 
-				});
+				}).catch(err => console.log(err))
 			},
 			// 前往店铺
 			goShopPage(id, e) {
