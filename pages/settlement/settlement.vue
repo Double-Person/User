@@ -402,10 +402,9 @@ export default {
 			// 微信支付
 			if (this.payMode === 1) {
 				wxpay(obj).then(res => {
-					console.log(res)
 					uni.requestPayment({// 现在都没进这个
 						provider: 'wxpay',
-						orderInfo: res.returnMsg, // 用JSON.stringify(res.returnMsg)和 res.returnMsg都不行
+						orderInfo: res.returnMsg, 
 						success :( res) =>{  
 							this.payMaskHide = true; // 隐藏当前支付方式选择
 							uni.showToast({
