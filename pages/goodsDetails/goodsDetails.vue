@@ -4,7 +4,13 @@
 		<commonHeader headerTitl="产品详情" xingHide=true lingHide=true></commonHeader>
 		<view class="goodsDetails-content">
 			<view class="goodsDetails-content-background">
-				<image :src="Detail.IMG ? Detail.IMG : '../../static/images/content01.png'" mode=""></image>
+
+				<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
+					<swiper-item v-for="item in Detail.image" :key='item.GOODSIMGS_ID'>
+						<image :src="imgBaseUrl + item.IMG" mode=""></image>
+					</swiper-item>
+
+				</swiper>
 			</view>
 			<view class="goodsDetails-content-title">
 				<view class="title">
@@ -13,19 +19,19 @@
 				<view class="sale">
 					<text>月售{{Detail.MONTHLY_SALES || 0}}</text>
 				</view>
-				 <view class="jiesao">
-				 	主要原料：{{Detail.MARERIAL}}
-				 </view> 
-				 <view class="price">
-				 	￥{{Detail.PRICE || 0}}
-				 </view>
+				<view class="jiesao">
+					主要原料：{{Detail.MARERIAL}}
+				</view>
+				<view class="price">
+					￥{{Detail.PRICE || 0}}
+				</view>
 			</view>
 			<view class="goodsDetails-content-details">
 				<view class="title">
 					商品详情
 				</view>
 				<view class="details">
-					 {{Detail.DETAILS}}
+					{{Detail.DETAILS}}
 				</view>
 			</view>
 			<view class="goodsDetails-content-evaluate">
@@ -34,7 +40,7 @@
 				</view>
 				<view class="item" v-for="(item,i) in Detail.varlist" :key="i">
 					<view class="left">
-						<image :src="item.FACEICON" mode=""></image>
+						<image :src="imgBaseUrl + item.FACEICON" mode=""></image>
 					</view>
 					<view class="right">
 						<view class="name">
@@ -58,42 +64,48 @@
 <script>
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-	import {shopDetails} from "@/common/apis.js";
+	import {
+		shopDetails,
+		imgBaseUrl
+	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
-				Detail: {}
+				Detail: {},
+				imgBaseUrl: imgBaseUrl,
 			};
 		},
-		components:{
+		components: {
 			tabbar,
 			commonHeader
 		},
-		
+
 		onLoad(opetion) {
 			//    
 			console.log(opetion)
-			shopDetails({goodsId: opetion.shopId}).then(res=>{
-				console.log('商品详情',res.returnMsg)
-				this.Detail = res.returnMsg.newevaluate && res.returnMsg.newevaluate[0]
-				
-			}).catch(err=>{
+			shopDetails({
+				goodsId: opetion.shopId
+			}).then(res => {
+				console.log('商品详情', res.returnMsg)
+				this.Detail = res.returnMsg.newevaluate
+
+			}).catch(err => {
 				console.log(err)
 				uni.showToast({
-					title:'请求失败！',
-					icon:'none'
+					title: '请求失败！',
+					icon: 'none'
 				})
 			})
-			
+
 		},
 		mounted() {
-			
+
 		}
 	}
 </script>
 
 <style lang="less">
-	.goodsDetails{
+	.goodsDetails {
 		background: #f7f7f7;
 		color: #333;
 		padding-top: 90rpx;
@@ -104,85 +116,114 @@
 		/* #endif */
 		/* #ifdef MP-WEIXIN */
 		padding-top: 130rpx;
+
 		/* #endif */
-		.goodsDetails-content{
-			.goodsDetails-content-background{
+		.goodsDetails-content {
+			.goodsDetails-content-background {
 				height: 390rpx;
 				width: 100%;
-				image{
-					width: 100%;
+				.swiper{
 					height: 100%;
+					image {
+						width: 100%;
+						height: 100%;
+					}
 				}
+
+				
 			}
-			.goodsDetails-content-title{
+
+			.goodsDetails-content-title {
 				background: #fff;
 				padding: 20rpx 30rpx;
 				font-size: 24rpx;
 				color: #666;
-				.title{
+
+				.title {
 					color: #000;
 					font-size: 36rpx;
 					font-weight: bold;
 				}
-				.sale{
+
+				.sale {
 					padding-top: 15rpx;
-					text{margin-right: 30rpx;}
+
+					text {
+						margin-right: 30rpx;
+					}
 				}
-				.jiesao{
+
+				.jiesao {
 					margin-top: 5rpx;
 				}
-				.price{
+
+				.price {
 					font-size: 28rpx;
 					color: #FF5A32;
 					margin-top: 15rpx;
 				}
 			}
-			.goodsDetails-content-details{
+
+			.goodsDetails-content-details {
 				padding: 30rpx;
 				background: #fff;
 				margin-top: 20rpx;
-				.title{
+
+				.title {
 					font-size: 32rpx;
 					font-weight: bold;
 				}
-				.details{
+
+				.details {
 					font-size: 28rpx;
 					color: #666;
 					margin-top: 10rpx;
 				}
 			}
-			.goodsDetails-content-evaluate{
+
+			.goodsDetails-content-evaluate {
 				margin-top: 20rpx;
 				background: #fff;
-				.title{
+
+				.title {
 					font-size: 28rpx;
 					padding: 30rpx;
 				}
-				.item{
+
+				.item {
 					display: flex;
 					padding: 30rpx;
 					border-bottom: 1px solid #e0e0e0;
-					.left{
+
+					.left {
 						width: 65rpx;
 						height: 65rpx;
 						border-radius: 50%;
 						overflow: hidden;
-						image{width: 100%;height: 100%;}
+
+						image {
+							width: 100%;
+							height: 100%;
+						}
 					}
-					.right{
+
+					.right {
 						flex: 1;
 						margin-left: 30rpx;
-						.name{
+
+						.name {
 							font-size: 30rpx;
 							font-weight: bold;
 						}
-						.date{
+
+						.date {
 							font-size: 24rpx;
 							color: #666;
 							padding: 10rpx 0;
 							color: #666;
 						}
-						.text{
+
+						.text {
 							font-size: 30rpx;
 							letter-spacing: 5rpx;
 						}

@@ -551,6 +551,36 @@ export default {
 			} else {
 				this.checked = true;
 			}
+		},
+		// 获取优惠券
+		_myCard(USERINFO_ID) {
+			
+			myCard({ USERINFO_ID }).then(res => {
+				res.returnMsg.userCoupons.map(item => {
+					item.title = '通用抵扣券' + item.MONEY + '元';
+				});
+				
+				this.phone = res.returnMsg.phone
+				this.redpackgeList = res.returnMsg.userCoupons;
+				this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')
+				
+			});
+		},
+		// 获取星币
+		_personal(USERINFO_ID) {
+			personal({ USERINFO_ID }).then(res => {
+				if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
+					if (this.total <= 1) {
+					} else {
+						this.XBMoneyValid = Math.ceil(this.total - 1);
+					}
+				} else {
+					this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
+				}
+				this.XBMoney = res.returnMsg.userInfo.STARCOINS;
+				//  显示余额
+				this.BALANCE = res.returnMsg.BALANCE || '0' ;
+			});
 		}
 	},
 	components: {
@@ -559,66 +589,35 @@ export default {
 	},
 	onLoad(e) {
 
-		// this.Allprice=e.allTotal
+			// this.Allprice=e.allTotal
+		
 		this.shopId = e.shopId;
 		uni.getStorage({
 			key: 'USERINFO_ID',
 			success: res => {
-				
 				this.USERINFO_ID = res.data;
-				// var arr = JSON.parse(decodeURIComponent(e.item));
+			
+				if(e.page == 'cart') {  // 从购物车中
 				var arr = JSON.parse(e.item);
-				console.log(arr)
-			 
-				// arr.map(item => {
-				// 	item.num > 0 && this.orderList.push(item);
-				// 	this.total += parseFloat(item.price) * item.num;
-				// 	this.shopNum += item.num;
-				// 	this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
-				// });
-	
-				
-				if(arr[0].num) {  // 从购物车中
-					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
-					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
+					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
+					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
 					
 					arr.map(item => {
 						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
 					});
-				}else{ //  从商店直接购买
+				}else if(e.page == 'shopPage'){ //  从商店直接购买
+					var arr = JSON.parse(e.item);
 					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
 				}
+	
+	
+				// 获取优惠券
+				this._myCard(res.data)
+				// 获取星币
+				this._personal(res.data)
 		
 				
-				// 获取优惠券
-				myCard({ USERINFO_ID: res.data }).then(res => {
-					res.returnMsg.userCoupons.map(item => {
-						item.title = '通用抵扣券' + item.MONEY + '元';
-					});
-					
-					this.phone = res.returnMsg.phone
-					this.redpackgeList = res.returnMsg.userCoupons;
-					this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')
-					
-				});
-				
-				// 获取星币
-				personal({ USERINFO_ID: res.data }).then(res => {
-					
-					console.log('++++++++++' , res)
-					if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
-						if (this.total <= 1) {
-						} else {
-							this.XBMoneyValid = Math.ceil(this.total - 1);
-						}
-					} else {
-						this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
-					}
-					this.XBMoney = res.returnMsg.userInfo.STARCOINS;
-					//  显示余额
-					this.BALANCE = res.returnMsg.BALANCE || '0' ;
-				});
 			}
 		});
 	},

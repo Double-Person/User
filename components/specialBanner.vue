@@ -122,8 +122,10 @@ export default {
 	height: 100%;
 	display: flex;
 	.slide-image {
-	  width: 550rpx;
-	  height: 328rpx;
+	  // width: 550rpx;
+	  width: 100%;
+	  // height: 328rpx;
+	  height: 100%;
 	  z-index: 200;
 	}
   }

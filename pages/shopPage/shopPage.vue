@@ -22,14 +22,14 @@
 		<view class="shopPage-shopTitle">
 			<view class="shopPage-shopTitle-top">
 				<view class="img">
-					<image :src="vendor.FACEICON" mode="aspectFit" />
+					<image :src="imgBaseUrl + vendor.FACEICON" mode="aspectFit" />
 				</view>
 				<view class="title">
 					<text>{{vendor.SHOP_NAME}}</text>
 					<view>
 						联系电话：{{vendor.PHONE}}
-						<image style="marginLeft: 10rpx;" src="../../static/images/phone.jpg" mode="aspectFit" @tap="callPhone" />
-						<image src="../../static/images/weixin.jpg" mode="aspectFit" @tap="weixinMaskHide=false" />
+						<image style="marginLeft: 10rpx;" src="/static/images/phone.jpg" mode="aspectFit" @tap="callPhone" />
+						<image src="/static/images/weixin.jpg" mode="aspectFit" @tap="weixinMaskHide=false" />
 					</view>
 				</view>
 			</view>
@@ -40,9 +40,9 @@
 				</view>
 				
 				<view class="tips">
-					<text class="notice">公告：{{vendor.NOTICE}}</text>
-					<text @click="getMoreInfo" v-if="!open">查看更多></text>
-					<text @click="getClose" v-else>收起</text>
+					<text class="notice" :style="{height: open ? '140rpx': ''}">公告：{{vendor.NOTICE}}</text>
+					<view style="text-align: right; padding-right: 30rpx;" @click="getMoreInfo" v-if="!open">查看更多></view>
+					<view style="text-align: right; padding-right: 30rpx;" @click="getClose" v-else>收起</view>
 				</view>
 			</view>
 		</view>
@@ -68,13 +68,14 @@
 						</view>
 						<view class="shopPage-content-right-item" v-for="(item1,index1) in item.list" :key="index1">
 							<view class="left" @tap="goDetails(item1.goodsId)">
-								<image :src="item1.img" mode="aspectFit" />
+								<image :src="imgBaseUrl + item1.img" mode="aspectFit" /> 
+								
 							</view>
 							<view class="right">
 								<text class="title" @tap="goDetails(item1.goodsId)">{{item1.shopName}}</text>
 								<view class="text" @tap="goDetails(item1.goodsId)">
 									<text>月售{{item1.monthlySales}}</text>
-									<text>好评率{{item1.score}}%</text>
+									<text>好评率{{item1.score * 100 }}%</text>
 								</view>
 								<view class="addGoods">
 									<view @tap="goDetails(item1.goodsId)" class="addGoods-left">
@@ -82,9 +83,9 @@
 										<text>{{item1.price}}</text>
 									</view>
 									<view class="addGoods-right">
-										<text v-if="item1.num" @tap="changeNum(item1.goodsId,-1,item.title)" class="text">-</text>
+										<text v-if="item1.num" @tap="changeNum(item1.goodsId, -1, item.title)" class="text">-</text>
 										<text v-if="item1.num">{{item1.num}}</text>
-										<text @tap="changeNum(item1.goodsId,+1,item.title)" class="text">+</text>
+										<text @tap="changeNum(item1.goodsId, 1, item.title)" class="text">+</text>
 									</view>
 								</view>
 							</view>
@@ -167,7 +168,7 @@
 				<!-- #ifdef H5 -->
 				<view class="h5wx">
 					<text class="iconfont icon-shanchu" @tap="weixinMaskHide=true"></text>
-					<image :src="vendor.WXQRCODE" mode="aspectFit" />
+					<image :src="imgBaseUrl + vendor.WXQRCODE" mode="aspectFit" />
 					<view class="h5tips">
 						<text>长按识别图中二维码</text>
 					</view>
@@ -193,7 +194,7 @@
 					</view>
 					<view class="pengyouquan" @tap="share(2)">
 						<view>
-							<image src="../../static/images/pengyouquan.png" mode="aspectFit" />
+							<image src="/static/images/pengyouquan.png" mode="aspectFit" />
 						</view>
 						<text>朋友圈</text>
 					</view>
@@ -225,12 +226,14 @@
 		collectionShop,
 		getMoreShopInfo,
 		setCarts,
-		addCarts
+		addCarts,
+		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		name: 'ShopPage',
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				scrollHeight: "100%",
 				vendor: {},
 				mainArray: [],
@@ -537,6 +540,7 @@
 			goSettlement() {
 				var arr = [];
 				if (parseFloat(this.titleAll)) {
+					console.log(this.selectArr)
 					this.selectArr.map(item => {
 						item.list.map(item1 => {
 							arr.push(item1);
@@ -544,10 +548,21 @@
 					});
 
 					let list = this.selectArr.map(item => item.list);
+					
 					let temp = [].concat(...list);
-					let stringifyArr = JSON.stringify(temp)
+					
+					temp = temp.filter(item => item.num != 0)
+					let obj = {};
+					let peon = temp.reduce((cur,next) => {
+					    obj[next.category] ? "" : obj[next.category] = true && cur.push(next);
+					    return cur;
+					},[])
+					console.log(peon)
+					let stringifyArr = JSON.stringify(peon)
+					
+				
 					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId
+						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId + '&page=shopPage'
 					})
 					// uni.navigateTo({
 					// 	url: "../settlement/settlement?item=" +
@@ -870,12 +885,15 @@
 				.tips {
 					margin-top: 15rpx;
 					display: flex;
-					justify-content: space-between;
+					flex-direction: column;
+					justify-content: start;
+					// justify-content: space-between;
 
 					.notice {
 						box-sizing: border-box;
-						height: 140rpx;
-						overflow: scroll;
+						
+						// overflow: scroll;
+						overflow-y: auto;
 					}
 
 					text:last-child {
@@ -1253,6 +1271,7 @@
 					view {
 						margin-bottom: 10rpx;
 					}
+					
 				}
 
 				.img {

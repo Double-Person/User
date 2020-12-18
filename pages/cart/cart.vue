@@ -9,7 +9,7 @@
 				<view class="cart-content-item-title">
 					<label class="radio">
 						<radio value="" :checked="item.checked" @tap="changeQuan(item,index)" />
-						<image :src="item.shopImg ? item.shopImg : '../../static/images/cartLOGO.png'" mode=""></image>
+						<image :src="imgBaseUrl + item.shopImg " mode=""></image>
 						<text>{{item.shopName}}</text>
 					</label>
 				</view>
@@ -17,7 +17,7 @@
 				<view class="cart-content-item-content" v-for="(goods, $goods) in item.goodsList" :key="$goods">
 					<label class="radio">
 						<radio value="" :checked="goods.checked" @tap="changeRadio(goods,index)" />
-						<image :src="goods.SHOP_IMG" mode="" @tap="goShopDetails(goods)"></image>
+						<image :src="imgBaseUrl + goods.SHOP_IMG" mode="" @tap="goShopDetails(goods)"></image>
 						<view class="text" @tap="goShopDetails(goods)">
 							<text class="title">{{goods.GOODS_NAME}}</text>
 							<view class="num">
@@ -67,12 +67,13 @@
 	// 引入公用头部
 	import commonHeader from "@/components/common-header/common-header";
 	import {
-		cartList
+		cartList, imgBaseUrl
 	} from "@/common/apis.js"
 	export default {
 		name: 'ShopCart',
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				headerTitl: "购物车",
 				cartList: [],
 				allChecked: false,
@@ -210,7 +211,7 @@
 					let stringifyArr = JSON.stringify(arr);
 					console.log(this.allTotal, arr)
 					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.allTotal
+						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.allTotal + '&page=cart'
 					})
 				}
 				
@@ -241,20 +242,7 @@
 				});
 				return countMoney;
 			}
-			// 计算总价
-			// allTotal() {
-			// 	var all = 0;
-			// 	const goods = this.cartList.filter(item => item.checked).map(item => item.goodsList.map(item => item.COUNTS * item.PRICE))
-			// 	console.log('goods', goods)
-			// 	if (goods && goods.length) {
-			// 		for (var i = goods[0].length - 1; i >= 0; i--) {
-			// 			console.log(all, Number(goods[0][i].toString()))
-			// 			all = Number(all) + Number(goods[0][i].toString());
-			// 		}
-			// 	}
-			// 	console.log('all', all)
-			// 	return all;
-			// }
+			
 		}
 	}
 </script>

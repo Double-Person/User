@@ -64,8 +64,8 @@
 		
 				codeText: "获取验证码",
 				btnState: true,
-				phone: "", // 13258188656
-				pwd: "", /// 123456
+				phone: "18398207590", // 13258188656
+				pwd: "123456", /// 123456
 				phoneState: false,
 				pwdState: false,
 				rememberPwdHide: true,
@@ -186,7 +186,9 @@
 			loginSendData() {
 				let that = this;
 				// 登录请求
+				console.log(that.saveObj)
 				login(that.saveObj).then(res => {
+					
 					uni.showToast({
 						title: res.errMsg,
 						icon:'none'

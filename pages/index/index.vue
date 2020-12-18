@@ -50,11 +50,11 @@
 				</view>
 				<view class="index-content-msg">
 					<text>累计{{ item.PAID_COUNT }}人购买</text>
-					<view>{{item.CITY + item.AREA}} 距离{{ item.distance }}KM</view>
+					<view>{{item.CITY + item.AREA}} 距离{{ item.distance }}米</view>
 				</view>
 				<view class="index-content-product">
 					<view class="index-content-product-msg" v-for="(item1, index1) in item.GoodsImg" :key="index1" @tap="goShopPage(item1.GOODS_ID,1)">
-						<image :src="item1.img" mode=""></image>
+						<image :src="imgBaseUrl + item1.img" mode=""></image>
 						<text>{{ item1.name }}</text>
 						<view class="msg">
 							<text>￥{{ item1.price || 0 }}</text>
@@ -97,7 +97,8 @@
 		getShopPay,
 		getBanner,
 		homePage,
-		baseUrl
+		baseUrl,
+		imgBaseUrl
 	} from '@/common/apis.js';
 
 
@@ -116,6 +117,7 @@
 					2df5711d4e2fd9ecd1622b5a53fc6b1d
 					
 				*/
+			   imgBaseUrl: imgBaseUrl,
 			   cityShow: '',
 				key: 'f0d8604522a34fea7af419d353f98e8f',
 				stroingCity: true,
@@ -228,9 +230,11 @@
 				// this.itemList = res.returnMsg && res.returnMsg.varList;
 			// });
 			this._homePage()
-			this.getBannerList();
 			this.$forceUpdate()
-
+			
+			// #ifdef H5
+			this.getBannerList()
+			// #endif
 
 		},
 
@@ -238,7 +242,6 @@
 			// 獲取分類
 			_homePage() {
 				homePage().then(res => {
-					console.log('獲取分類', res.returnMsg)
 					this.itemList = res.returnMsg && res.returnMsg
 				})
 			},
@@ -264,6 +267,8 @@
 						} = data.data.regeocode.addressComponent
 						// province +
 						this.newCity =  city + district
+						console.log(city , district)
+						this.getBannerList(city , district)
 						this.getPositonData(this.latitude, this.longitude, this.area)
 					},
 					fail: err => {
@@ -283,7 +288,7 @@
 						this.latitude = res.latitude
 
 						uni.setStorageSync('locationPoint', JSON.stringify(res));
-						this.conversionPoint(res)
+						// this.conversionPoint(res)
 
 					}
 				})
@@ -418,7 +423,7 @@
 								item.distance = Math.round(item.distance);
 							});
 							this.menuList = res.data.varList;
-							console.log('------', this.menuList)
+							console.log(this.menuList)
 						}
 					},
 					fail: () => {
@@ -445,10 +450,16 @@
 						getApp().globalData.longitude = arr[0];
 						getApp().globalData.latitude = arr[1];
 
-						this.area = res.data.geocodes[0].district
+						
 						this.longitude = arr[0];
 						this.latitude = arr[1];
+						let { city, district } = res.data.geocodes[0]
+						this.area = district
 						this.getPositonData(this.longitude, this.latitude, this.area);
+						
+						
+						this.getBannerList(city, district)
+						this.getPositonData(this.longitude, this.latitude, this.area)
 					}
 				});
 			},
@@ -458,14 +469,13 @@
 				this.getPositonData(this.longitude, this.latitude, this.area, CATEGORY_ID);
 			},
 			// 获取banner
-			getBannerList() {
+			getBannerList(CITY='成都市', AREA='金牛区') {
 				var data = {
-					area: this.area,
-					category: '首页轮播'
+					CITY,
+					AREA, //this.area,
+					CATEGORY: 0, // 0 首页轮播 1 优惠活动
 				};
-				console.log('首页轮播', data)
 				getBanner(data).then(res => {
-					console.log('首页轮播', res)
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
 							picture: item.IMG,
@@ -474,7 +484,6 @@
 							path: item.URL
 						}
 					})
-					console.log('首页轮播', this.bannerList)
 
 				}).catch(err => console.log(err))
 			},
