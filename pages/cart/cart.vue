@@ -35,9 +35,9 @@
 		
 						</view>
 						<view class="right">
-							<text class="iconfont icon-jian" @tap="changeNun(-1,index,$goods)"></text>
+							<text class="iconfont icon-jian" @tap="changeNun(-1,index,$goods, goods)"></text>
 							{{goods.COUNTS}}
-							<text class="iconfont icon-jia" @tap="changeNun(1,index,$goods)"></text>
+							<text class="iconfont icon-jia" @tap="changeNun(1,index,$goods, goods)"></text>
 						</view>
 					</view>
 				</view>
@@ -107,7 +107,6 @@
 								// 	item.checked = false
 								// })
 								this.cartList = res.returnMsg.carts
-								console.log(this.cartList)
 							}
 						}).catch()
 					}
@@ -169,14 +168,10 @@
 				})
 			},
 			// 改变数量
-			changeNun(num, index1, index2) {
-				console.log(this.cartList)
+			changeNun(num, index1, index2, goodsInfo) {
+				console.log(num, index1, index2, goodsInfo);
 				this.cartList.forEach((item, index) => {
 					if (index === index1) {
-						// item.num += num;
-						// if(item.num<1){
-						// 	this.cartList.splice(index,1)
-						// }
 						item.goodsList.forEach((goods, $goods) => {
 							if ($goods == index2) {
 								goods.COUNTS = Number(goods.COUNTS) + num
@@ -190,28 +185,30 @@
 			},
 			// 结算
 			settlement() {
-				
 				if (!this.cartList.length) {
-					uni.showToast({
-						title: '没有商品!',
-						icon: 'none'
-					});
-					return false
+					return uni.showToast({ title: '没有商品!', icon: 'none' });		 
+				}
+				var arr = [];
+				console.log(this.cartList );
+				// 全部商品选中过滤
+				let arr1 = this.cartList.filter(item => item.checked)
+				let temp = [];
+				for (let i = 0; i < arr1.length; i++) {
+					temp = arr1[i].goodsList.filter(item => item.checked)
+					arr.push(...temp)
 				}
 				
-				var arr=this.cartList[this.goodsindex].goodsList.filter(item => {
-					return item.checked==true
-				})
+				console.log(arr );			
+				// return false;
+				
 				if (arr.length==0) {
-					uni.showToast({
-						title: '请先选择商品!',
-						icon: 'none'
-					});
+					uni.showToast({ title: '请先选择商品!', icon: 'none' });
 				} else {
+					let shopId = arr[this.goodsindex].SHOP_ID || arr[this.goodsindex].shopId;
 					let stringifyArr = JSON.stringify(arr);
-					console.log(this.allTotal, arr)
+
 					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.allTotal + '&page=cart'
+						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.allTotal + '&page=cart' +"&shopId=" + shopId
 					})
 				}
 				
@@ -233,13 +230,18 @@
 				var tabbarNum = 0;
 				// 没转换的数字
 				let newMoney = 0;
-				this.cartList && this.cartList[0] && this.cartList[0].goodsList.forEach(item => {
-					if (item.checked == true) {
-						newMoney += item.COUNTS *item.PRICE;
-						countMoney = newMoney.toFixed(2);
-						countMum++;
-					}
-				});
+				
+				for (let i = 0; i < this.cartList.length; i++) {
+					// this.cartList && this.cartList[0] && 
+					this.cartList[i].goodsList.forEach(item => {
+						if (item.checked == true) {
+							newMoney += item.COUNTS *item.PRICE;
+							countMoney = newMoney.toFixed(2);
+							countMum++;
+						}
+					});
+				}
+				
 				return countMoney;
 			}
 			

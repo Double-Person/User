@@ -540,7 +540,7 @@
 			goSettlement() {
 				var arr = [];
 				if (parseFloat(this.titleAll)) {
-					console.log(this.selectArr)
+					
 					this.selectArr.map(item => {
 						item.list.map(item1 => {
 							arr.push(item1);
@@ -550,8 +550,11 @@
 					let list = this.selectArr.map(item => item.list);
 					
 					let temp = [].concat(...list);
-					
 					temp = temp.filter(item => item.num != 0)
+					temp.forEach((addShopId, index) => {
+						addShopId.SHOP_ID = this.vendor.SHOP_ID
+					})
+					
 					let obj = {};
 					let peon = temp.reduce((cur,next) => {
 					    obj[next.category] ? "" : obj[next.category] = true && cur.push(next);

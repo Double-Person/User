@@ -52,7 +52,7 @@
                         <view>添加图片</view>
                     </view>
                     <view class="right-img" :class="imgHide?'imgHide':''">
-                        <image :src="imgUrl" mode=""></image>
+                        <image :src="imgBaseUrl + imgUrl" mode=""></image>
                     </view>
     <!-- 				<view class="item">
                         <text class="iconfont icon-bofang"></text>
@@ -76,11 +76,12 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {addEvaluate, baseUrl} from "@/common/apis.js"
+    import {addEvaluate, baseUrl, imgBaseUrl} from "@/common/apis.js"
     import { pathToBase64, base64ToPath } from 'image-tools'
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				active:0,
 				inputNum:15,
 				tipsHide:false,

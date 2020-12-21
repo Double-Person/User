@@ -5,7 +5,7 @@
 
 		<view class="content">
 			<view class="fl-center-between user-info">
-				<image class="user-ava" :src="userInfo.FACEICON" mode=""></image>
+				<image class="user-ava" :src="imgBaseUrl + userInfo.FACEICON" mode=""></image>
 				<view class="fl-center-between info-icon">
 					<view class="user">
 						<view class="name">
@@ -16,19 +16,19 @@
 						</view>
 					</view>
 					<view class="icon" @click="userInfolick">
-						<image class="img" src="../../static/images/more.png" mode=""></image>
+						<image class="img" src="/static/images/more.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 
 			<view class="money">
-				<image class="img" src="../../static/images/money.png" mode=""></image>
+				<image class="img" src="/static/images/money.png" mode=""></image>
 				<view class="mask top-mask">
 					￥ {{userInfo.BALANCE}}
 					<!-- {{item.zbalance}} -->
 				</view>
 				<view class="mask bottom-mask">
-					￥ {{ kbalance || 0}}
+					￥ {{ kbalance || 0}} 
 					<!-- {{item.kbalance}} -->
 				</view>
 			</view>
@@ -85,12 +85,12 @@
 	</view>
 </template>
 
-<script>
+<script> 
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {
-		withdrawal,
-		backCardInfo
+		withdrawal,personal,
+		backCardInfo, imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		components: {
@@ -98,6 +98,7 @@
 		},
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				userInfo: {},
 				isShowChangeCard: false,
 				list: [],
@@ -108,7 +109,6 @@
 			};
 		},
 		onLoad(opt) {
-			// this.getBackCardInfo()
 			this.userInfo = uni.getStorageSync('userInfo');
 			this.kbalance = uni.getStorageSync('kbalance');
 			this.bindList = JSON.parse(opt.bindList)
@@ -122,6 +122,7 @@
 				}
 				return phone.substring(0, 5) + '***' + phone.substring(phoneStr.length - 3, phoneStr.length)
 			},
+			
 			// 选择提现的卡
 			changeCardId(card) {
 				this.cardNum = card
@@ -140,24 +141,29 @@
 				this.money = this.kbalance
 			},
 		
-			//  获取银行卡信息
-			getBackCardInfo() {
-				let userinfo_id = uni.getStorageSync('USERINFO_ID');
-				backCardInfo({
-					userinfo_id
-				}).then(res => {
-					console.log('获取银行卡信息', res.returnMsg)
-					this.list = res.returnMsg
-					if (res.returnMsg.length > 0) {
-						this.cardNum == res.returnMsg[0].card
-					}
-				})
-			},
+			
 			// 提现
 			getWithdrawal() {
 				let userinfo_id = uni.getStorageSync('USERINFO_ID');
+				if(this.kbalance == 0) {
+					return uni.showToast({
+						title: '暂无可提现金额',
+						icon: 'none'
+					})
+				}
 
 				this.money = Number(Number(this.money).toFixed(2))
+				if(this.kbalance < this.money) {
+					return uni.showToast({
+						title: '输入的提现金额大于可提现金额',
+						icon: 'none'
+					})
+				}
+				
+				
+					
+				
+				  
 				if (this.money <= 0) {
 
 					// this.money = null

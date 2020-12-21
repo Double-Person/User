@@ -22,7 +22,7 @@
 			</view>
 			<view class="oraderDetails-content-content" v-for="(item,index) in goodsList" :key="index">
 				<view class="left">
-					<image :src="item.goodsImg" mode=""></image>
+					<image v-if="item.goodsImg && item.goodsImg.length" :src="imgBaseUrl + item.goodsImg[0].IMG" mode=""></image>
 					<view>
 						<text class="left-title">
 							{{item.goodsName}}
@@ -55,7 +55,7 @@
 				订单编号：<text>{{orderData.orderSummaryId}}</text>
 			</view>
 			<view class="oraderDetails-content-pay">
-				付款方式：<text>{{orderData.payType==0&&'微信' || orderData.payType==1&&'支付宝' || orderData.payType==3&&'银行卡'}}</text>
+				付款方式：<text>{{orderData.payType== 0 &&'微信' || orderData.payType==1&&'支付宝' || orderData.payType==3&&'银行卡' || orderData.payType==2&&'余额支付'}}</text>
 			</view>
 			<view class="oraderDetails-content-shop">
 				联系商家：<text>{{orderData.shopPhone}}</text>
@@ -73,12 +73,13 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
-	// tabbar
+	// tabbar 
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {queryOrder,godaddy} from "@/common/apis.js"
+    import {queryOrder,godaddy, imgBaseUrl} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				orderData:{},
                 goodsList:[],
                 countAll:'',

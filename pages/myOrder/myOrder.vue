@@ -14,19 +14,19 @@
 				<view class="item" v-for="item in orderList" :key="item.id">
 					<view class="item-title">
 						<view class="left">
-							<image :src="item.faceicon.length>10?item.faceicon:'/static/images/cartLOGO.png'" mode=""></image>
+							<image :src="item.faceicon && item.faceicon.length>10? (imgBaseUrl + item.faceicon):'/static/images/cartLOGO.png'" mode=""></image>
 							<text>{{item.shopName}}</text>
 						</view>
 						<view class="right">
 							{{item.shopPhone}}
 						</view>
 					</view>
-                    <view class="item-code" v-if="item.address.length">
+                    <view class="item-code" >
                         收货地址：<text>{{item.address}}</text>
                     </view>
-					<view class="item-content" v-if="!item.address.length">
+					<view class="item-content" >
 						<view class="left">
-							<image :src="item.goodsImg" mode=""></image>
+							<image :src="imgBaseUrl + item.goodsImg" mode=""></image>
 							<view>
 								<text class="left-title">
 									{{item.goodsName}}
@@ -52,7 +52,7 @@
 					<view class="item-total">
 						<text></text>
 						<view>
-							共计 {{item.goodsCounts}} 商品
+							共计 {{item.counts}} 商品
 							<text>合计 ￥<text>{{item.amount}}</text></text>
 						</view>
 					</view>
@@ -67,49 +67,53 @@
 			<!-- 未付款 -->
 			<view class="myOrder-content-uncomplete commonStyle" :class="active===0?'show':''">
 				<view class="item" v-for="item in orderList" :key="item.id">
-					<view class="item-title">
-						<view class="left">
-							<image :src="item.goodsImg" mode=""></image>
-							<text>{{item.shopName}}</text>
+										
+					<view v-for="(shopItem,indey) in item.shop" :key="indey">
+						<view class="item-title">
+							<view class="left">
+								<image :src="imgBaseUrl + shopItem.FACEICON" mode=""></image>
+								<text>{{shopItem.SHOP_NAME}}</text>
+							</view>
+							<view class="right">
+								{{shopItem.PHONE}}
+							</view>
 						</view>
-						<view class="right">
-							{{item.shopPhone}}
-						</view>
-					</view>
-					<view class="item-content">
-						<view class="left">
-							<image :src="item.goodsImg" mode=""></image>
-							<view>
-								<text class="left-title">
-									{{item.goodsName}}
-								</text>
-								<view class="left-date">
-									下单时间：{{item.createTime}}
+						<view class="item-content">
+							<view v-for="(good,indez) in shopItem.goodes" 
+								  :key="indez" 
+								  style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
+								<view class="left">
+									<image :src="imgBaseUrl + good.IMG" mode=""></image>
+									<view>
+										<text class="left-title">
+											商品名称：{{good.GOODSNAME}}
+										</text>
+									
+										<view class="left-price">
+											单价：￥{{good.PRICE}}
+										</view>
+									</view>
 								</view>
-								<view class="left-price">
-									单价：￥{{item.price}}
+								<view class="right">
+									X{{good.COUTNS}}
 								</view>
 							</view>
 						</view>
-						<view class="right">
-							X{{item.counts}}
+						
+					</view>
+					
+					<view class="item-total" style="align-items: center;">
+						
+						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
+						<view style="font-size: 28rpx;">
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
-					<view class="item-code">
-						订单编号：<text>{{item.ORDERSUMMARY_ID}}</text>
-					</view>
-					<view class="item-pay">
-						付款方式：<text>无</text>
-					</view>
-					<view class="item-total">
-						<text></text>
-						<view>
-							共计{{item.counts}}商品
-							<text>合计 ￥<text>{{item.amount}}</text></text>
-						</view>
-					</view>
-					<view class="item-btn">
-						<text>待付款</text>
+					<view class="item-btn" style="display: flex;justify-content: space-between;align-items: center;">
+						
+						<view style="font-size: 24rpx;">下单时间：{{item.CREATETIME }}</view>
+						<text @click="toPay(item)">待付款</text>
 					</view>
 				</view>
 			</view>
@@ -118,7 +122,7 @@
 				<view class="item" v-for="item in orderList" :key="item.id">
 					<view class="item-title">
 						<view class="left">
-							<image :src="item.goodsImg ? item.goodsImg : '/static/images/cartLOGO.png'" mode=""></image>
+							<image :src="item.goodsImg ? (imgBaseUrl + item.goodsImg) : '/static/images/cartLOGO.png'" mode=""></image>
 							<text>{{item.shopName}}</text>
 						</view>
 						<view class="right">
@@ -127,7 +131,7 @@
 					</view>
 					<view url="../oraderDetails/oraderDetails" class="item-content">
 						<view class="left">
-							<image :src="item.goodsImg ? item.goodsImg : '/static/images/cartLOGO.png'" mode=""></image>
+							<image :src="item.goodsImg ? (imgBaseUrl + item.goodsImg) : '/static/images/cartLOGO.png'" mode=""></image>
 							<view>
 								<text class="left-title">
 									{{item.goodsName}}
@@ -165,7 +169,7 @@
 			</view>
 		</view>
 		<!-- 暂无提示 -->
-		<view class="myOrder-content-tips" v-if="orderList.length==0" style="textAlign: center;color: #666;paddingTop: 50rpx;">
+		<view class="myOrder-content-tips" v-if="orderList.length == 0" style="textAlign: center;color: #666;paddingTop: 50rpx;">
 			暂无订单！
 		</view>
 		<!-- tabbar -->
@@ -177,10 +181,11 @@
 	import commonHeader from"@/components/common-header/common-header";
 	import tabbar from"@/components/common-tabbar/common-tabbar";
 	
-	import {myOrder,submitOrder, orderRepeal} from "@/common/apis.js";
+	import {myOrder,submitOrder, orderRepeal, alipay, wxpay, imgBaseUrl} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				active:1,
 				orderList:[],
                 USERINFO_ID:''
@@ -194,6 +199,122 @@
 		    this.getOrderList(1)
 		},
 		methods:{
+			// 去支付
+			toPay(item){
+				let { BALANCE } = uni.getStorageSync('userInfo');
+				console.log(BALANCE)
+				console.log(item)
+				uni.showActionSheet({
+				    itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
+				    success: function (res) {
+				        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
+						if(res.tapIndex === 3 ) {
+							return uni.showToast({ title: '暂不支持银行卡支付',icon: 'none' })
+						}
+				    },
+				    fail: function (res) {
+				        console.log(res.errMsg);
+				    }
+				});
+			},
+			
+			pay(index) {
+						
+				// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
+				
+				let obj = {
+					payAmount: '216.0',// this.payAmount,  // 
+					orderSummaryId:  'D1601279104958'// this.orderID //
+				};
+				
+			
+				// 微信支付
+				if (this.payMode === 1) {
+					wxpay(obj).then(res => {
+						uni.requestPayment({// 现在都没进这个
+							provider: 'wxpay',
+							orderInfo: res.returnMsg, 
+							success :( res) =>{  
+								uni.showToast({
+									title: '支付成功!',
+									duration: 2000,
+									mask: true
+								});
+								setTimeout(() => {
+									uni.navigateTo({
+										url: '../index/index'
+									});
+								}, 2000);
+								console.log('success:' + JSON.stringify(res));
+							},
+							
+							fail :(err) =>{
+								uni.showToast({
+									title: '支付失败!',
+									icon: 'none',
+									duration: 2000,
+									mask: true
+								});
+								console.log('fail:' + JSON.stringify(err));
+							}
+						});
+					});
+				}
+				
+				// 支付宝支付
+				if (this.payMode === 2) {
+					alipay(obj).then(res1 => {
+						console.log('支付宝订单信息', JSON.stringify(res1.returnMsg));
+						uni.requestPayment({
+							provider: 'alipay',
+							orderInfo: res1.returnMsg,
+							// orderInfo: mockOrderInfo.returnMsg,
+							success: res => {
+								console.log('success支付宝:' + JSON.stringify(res));
+								// 隐藏当前支付方式选择
+							
+								uni.showToast({
+									title: '支付成功!',
+									duration: 2000,
+									mask: true
+								});
+								setTimeout(() => {
+									uni.navigateTo({
+										url: '../index/index'
+									});
+								}, 2000);
+							},
+							fail: err => {
+								uni.showToast({
+									title: '支付失败!',
+									icon: 'none',
+									duration: 2000,
+									mask: true
+								});
+								console.log('fail支付宝:' + JSON.stringify(err));
+							},
+						});
+					});
+				}
+				
+				// 餘額支付
+				
+				if(this.payMode === 0) {
+					
+				}
+				
+				
+				if (this.payMode === 3) {
+					uni.showToast({
+						title: '暂未开通此功能!',
+						duration: 2000,
+						// mask: true
+					})
+				}
+				// 显示密码输入
+				
+			},
+			
 			evaluation(orderId) {  // ORDERSUMMARY_ID
 				uni.navigateTo({
 					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order'
@@ -238,6 +359,7 @@
                 uni.getStorage({
                     key:'USERINFO_ID',
                     success:res => {
+						uni.showLoading({ title: '加载中', mask: true })
                         myOrder({STATE,USERINFO_ID: res.data}).then(res=>{
                         	if (res.returnMsg.status == '00') {
                         		this.orderList = res.returnMsg.list
@@ -251,7 +373,7 @@
                         	uni.showToast({
                         		title:'获取失败！'
                         	})
-                        })
+                        }).finally(() => uni.hideLoading())
                     }
                 })
             },
@@ -287,6 +409,12 @@
 </script>
 
 <style lang="less">
+	.myOrder-content-uncomplete{
+		.item-content{
+			display: block !important;
+			padding: 15px 0 0 0 !important;
+		}
+	}
 	.myOrder{
 		min-height: 100%;
 		background: #f6f7f8;
@@ -404,6 +532,7 @@
 						display: flex;
 						justify-content: space-between;
 						padding: 30rpx 0;
+						border-top: 1rpx solid #e0e0e0;
 						view{
 							>text{
 								color: #666;

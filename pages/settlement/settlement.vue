@@ -319,8 +319,10 @@ export default {
 				});
 				return false;
 			}
-			console.log('-----------',this.GOODS)
+
 			this.GOODS = this.GOODS.filter(ele => ele.COUTNS != 0)
+			console.log(this.GOODS)
+	
 			var obj = {
 				PAYABLE: this.total,
 				COUPON: this.yhqID,
@@ -491,6 +493,14 @@ export default {
 			// if(this.tradePass == '') {
 			// 	return uni.showToast({ title: '请输入交易密码', icon: 'none' })
 			// }
+			if(this.BALANCE == '0.00') {
+				return uni.showToast({ title: '余额不足', icon: 'none' })
+			}
+			if(this.tradePass == '') {
+				return uni.showToast({ title: '请输入支付密码', icon: 'none' })
+			}
+			
+			
 			this.inputPwd = false;
 			shopBygoodList({ orderSummaryId: this.orderID, tradePass: this.tradePass }).then(res => {
 				console.log(res)
@@ -507,10 +517,17 @@ export default {
 							icon: 'none'
 						})	
 					}else{
+						
 						uni.showToast({
 							title: '支付成功',
 							icon: 'none'
 						})	
+						this.inputPwd = true
+						setTimeout(() => {
+							uni.navigateTo({
+								url: '../index/index'
+							});
+						}, 2000);
 					}
 				}else{
 					uni.showToast({
@@ -598,16 +615,21 @@ export default {
 			
 				if(e.page == 'cart') {  // 从购物车中
 				var arr = JSON.parse(e.item);
+				console.log('===', arr)
 					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
 					
 					arr.map(item => {
-						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
+						this.GOODS.push({ GOODS_ID: item.GOODS_ID, COUTNS: item.COUNTS, PRICE: parseFloat(item.PRICE), SHOP_ID: item.SHOP_ID });
 					});
 				}else if(e.page == 'shopPage'){ //  从商店直接购买
 					var arr = JSON.parse(e.item);
+					console.log('===', arr);
 					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
+					arr.map(item => {
+						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
+					});
 				}
 	
 	

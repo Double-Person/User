@@ -15,7 +15,7 @@
 			<view class="personal-top">
 				<view class="personal-top-left">
 					<image 
-						:src="userInfo1.userInfo.FACEICON ? userInfo1.userInfo.FACEICON : '/static/images/cartLOGO.png'" 
+						:src="userInfo1.userInfo.FACEICON ? (imgBaseUrl + userInfo1.userInfo.FACEICON) : '/static/images/cartLOGO.png'" 
 						mode="" @tap="goSetting">
 					</image>
 					<view class="title">
@@ -81,10 +81,11 @@ import tabbar from '@/components/common-tabbar/common-tabbar';
 // 引入高德地图
 import amapPlugin from '@/components/initMap.js';
 
-import { personal, shopBank } from '@/common/apis.js';
+import { personal, shopBank, imgBaseUrl } from '@/common/apis.js';
 export default {
 	data() {
 		return {
+			imgBaseUrl: imgBaseUrl,
 			bindList: {},
 			menuList: [
 				{
@@ -148,14 +149,20 @@ export default {
 		uni.getStorage({
 			key: 'USERINFO_ID',
 			success: res => {
-				this._shopBank(res.data);
-				
+				uni.showLoading({
+					title:'加载中',
+					mask: true
+				})
+							
 				personal({ USERINFO_ID: res.data }).then(res => {
 					uni.setStorageSync('userInfo', res.returnMsg.userInfo)   // kbalance
 					uni.setStorageSync('kbalance', res.returnMsg.kbalance)   // kbalance
 			
 					if (res.msgType == 0) {
 						this.userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
+						let {DESC1, DESC2} = this.userInfo1.userInfo
+						this.bindList.Ali = DESC1
+						this.bindList.Wx = DESC2
 						// 判断交易密码是否存在
 						if (this.userInfo1.userInfo.TRADRPASS && this.userInfo1.userInfo.TRADRPASS.length > 0) {
 							getApp().globalData.isPwd = true;
@@ -167,7 +174,7 @@ export default {
 							icon: 'none'
 						});
 					}
-				});
+				}).finally(() => uni.hideLoading())
 			}
 		});
 	},
@@ -186,13 +193,7 @@ export default {
 				})
 			}
 		},
-		_shopBank(shop_id) {
-			shopBank({shop_id}).then(res => {
-				console.log(res)
-				this.bindList = res.returnMsg
-			})
-			
-		},
+	
 		goPage(index) {
 			if (index == 1) {
 				uni.navigateTo({

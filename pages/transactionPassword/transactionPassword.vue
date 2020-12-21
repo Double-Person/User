@@ -5,7 +5,7 @@
 		<view class="tips">
                 请输入交易密码
 		</view>
-		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="oldPwd" placeholder="请输入原密码" v-if="isEdit"/>
+		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="oldPwd" placeholder="请输入原密码" v-if="!isEdit"/>
 		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="newPwd" placeholder="请输入新密码"/>
 		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="pwd" placeholder="请再次输入新密码"/>
 		<view class="submit" @tap="submit">
@@ -39,7 +39,7 @@
 				})
 			},
 			submit(){
-				if (this.oldPwd  === '' && this.isEdit) {
+				if (this.oldPwd  === '' && !this.isEdit) {
 				    uni.showToast({
 				        title:'请完善信息！',
 				        icon:'none'
