@@ -12,62 +12,6 @@
 			<!-- 已付款 -->
 			<view class="myOrder-content-complete commonStyle" :class="active===1?'show':''">
 				<view class="item" v-for="item in orderList" :key="item.id">
-					<view class="item-title">
-						<view class="left">
-							<image :src="item.faceicon && item.faceicon.length>10? (imgBaseUrl + item.faceicon):'/static/images/cartLOGO.png'" mode=""></image>
-							<text>{{item.shopName}}</text>
-						</view>
-						<view class="right">
-							{{item.shopPhone}}
-						</view>
-					</view>
-                    <view class="item-code" >
-                        收货地址：<text>{{item.address}}</text>
-                    </view>
-					<view class="item-content" >
-						<view class="left">
-							<image :src="imgBaseUrl + item.goodsImg" mode=""></image>
-							<view>
-								<text class="left-title">
-									{{item.goodsName}}
-								</text>
-								<view class="left-date">
-									下单时间：{{item.createTime}}
-								</view>
-								<view class="left-price">
-									单价：￥{{item.price}}
-								</view>
-							</view>
-						</view>
-						<view class="right">
-							X{{item.counts}}
-						</view>
-					</view>
-					<view class="item-code">
-						订单编号：<text>{{item.ORDERSUMMARY_ID}}</text>
-					</view>
-					<view class="item-pay">
-						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
-					</view>
-					<view class="item-total">
-						<text></text>
-						<view>
-							共计 {{item.counts}} 商品
-							<text>合计 ￥<text>{{item.amount}}</text></text>
-						</view>
-					</view>
-					<view class="item-btn">
-						<text v-if="item.takeStatus == 'N'" @click="goOrderDetail(item.ORDERSUMMARY_ID)">申请退款</text>
-						<text v-if="item.takeStatus == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)">确认收货</text>
-						<text v-if="item.takeStatus != 'N'" @click="evaluation(item.ORDERSUMMARY_ID)">立即评价</text>
-						<text v-if="item.address!='线下支付'" @click="again(item.shopId)">再来一单</text>
-					</view>
-				</view>
-			</view>
-			<!-- 未付款 -->
-			<view class="myOrder-content-uncomplete commonStyle" :class="active===0?'show':''">
-				<view class="item" v-for="item in orderList" :key="item.id">
-										
 					<view v-for="(shopItem,indey) in item.shop" :key="indey">
 						<view class="item-title">
 							<view class="left">
@@ -79,16 +23,16 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" 
-								  :key="indez" 
-								  style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
+							<view 
+									v-for="(good,indez) in shopItem.goodes" 
+									:key="indez" style="width:100%; display: flex;justify-content: space-between;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
 										<text class="left-title">
 											商品名称：{{good.GOODSNAME}}
 										</text>
-									
+
 										<view class="left-price">
 											单价：￥{{good.PRICE}}
 										</view>
@@ -99,11 +43,69 @@
 								</view>
 							</view>
 						</view>
-						
+
+					</view>
+
+
+
+					<view class="item-pay">
+						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
 					</view>
 					
+					
 					<view class="item-total" style="align-items: center;">
-						
+
+						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
+						<view style="font-size: 28rpx;">
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
+						</view>
+					</view>
+					<view class="item-btn">
+						<text v-if="item.take_status == 'N'" @click="goOrderDetail(item.ORDERSUMMARY_ID)">申请退款</text>
+						<text v-if="item.take_status == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)">确认收货</text>
+						<text v-if="item.take_status != 'N'" @click="evaluation(item.ORDERSUMMARY_ID)">立即评价</text>
+						<text v-if="item.address!='线下支付'" @click="again(item.shopId)">再来一单</text>
+					</view>
+				</view>
+			</view>
+			<!-- 未付款 -->
+			<view class="myOrder-content-uncomplete commonStyle" :class="active===0?'show':''">
+				<view class="item" v-for="item in orderList" :key="item.id">
+					<view v-for="(shopItem,indey) in item.shop" :key="indey">
+						<view class="item-title">
+							<view class="left">
+								<image :src="imgBaseUrl + shopItem.FACEICON" mode=""></image>
+								<text>{{shopItem.SHOP_NAME}}</text>
+							</view>
+							<view class="right">
+								{{shopItem.PHONE}}
+							</view>
+						</view>
+						<view class="item-content">
+							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
+								<view class="left">
+									<image :src="imgBaseUrl + good.IMG" mode=""></image>
+									<view>
+										<text class="left-title">
+											商品名称：{{good.GOODSNAME}}
+										</text>
+
+										<view class="left-price">
+											单价：￥{{good.PRICE}}
+										</view>
+									</view>
+								</view>
+								<view class="right">
+									X{{good.COUTNS}}
+								</view>
+							</view>
+						</view>
+
+					</view>
+
+					<view class="item-total" style="align-items: center;">
+
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
 						<view style="font-size: 28rpx;">
 							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
@@ -111,7 +113,7 @@
 						</view>
 					</view>
 					<view class="item-btn" style="display: flex;justify-content: space-between;align-items: center;">
-						
+
 						<view style="font-size: 24rpx;">下单时间：{{item.CREATETIME }}</view>
 						<text @click="toPay(item)">待付款</text>
 					</view>
@@ -120,49 +122,55 @@
 			<!-- 退款售后 -->
 			<view class="myOrder-content-refund commonStyle" :class="active===2?'show':''">
 				<view class="item" v-for="item in orderList" :key="item.id">
-					<view class="item-title">
-						<view class="left">
-							<image :src="item.goodsImg ? (imgBaseUrl + item.goodsImg) : '/static/images/cartLOGO.png'" mode=""></image>
-							<text>{{item.shopName}}</text>
+					<view v-for="(shopItem,indey) in item.shop" :key="indey">
+						<view class="item-title">
+							<view class="left">
+								<image :src="imgBaseUrl + shopItem.FACEICON" mode=""></image>
+								<text>{{shopItem.SHOP_NAME}}</text>
+							</view>
+							<view class="right">
+								{{shopItem.PHONE}}
+							</view>
 						</view>
-						<view class="right">
-							{{item.shopPhone}}
-						</view>
-					</view>
-					<view url="../oraderDetails/oraderDetails" class="item-content">
-						<view class="left">
-							<image :src="item.goodsImg ? (imgBaseUrl + item.goodsImg) : '/static/images/cartLOGO.png'" mode=""></image>
-							<view>
-								<text class="left-title">
-									{{item.goodsName}}
-								</text>
-								<view class="left-date">
-									下单时间：{{item.createTime}}
+						<view class="item-content">
+							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%;display: flex;justify-content: space-between;">
+								<view class="left">
+									<image :src="imgBaseUrl + good.IMG" mode=""></image>
+									<view>
+										<text class="left-title">
+											商品名称：{{good.GOODSNAME}}
+										</text>
+				
+										<view class="left-price">
+											单价：￥{{good.PRICE}}
+										</view>
+									</view>
 								</view>
-								<view class="left-price">
-									单价：￥{{item.price}}
+								<view class="right">
+									X{{good.COUTNS}}
 								</view>
 							</view>
 						</view>
-						<view class="right">
-							X{{item.counts}}
-						</view>
+				
 					</view>
-					<view class="item-code">
-						订单编号：<text>{{item.ORDERSUMMARY_ID}}</text>
-					</view>
+				
+				
+				
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
 					</view>
-					<view class="item-total">
-						<text></text>
-						<view>
-							共计{{item.counts}}商品
-							<text>合计 ￥<text>{{item.amount}}</text></text>
+					
+					
+					<view class="item-total" style="align-items: center;">
+				
+						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
+						<view style="font-size: 28rpx;">
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
 					<view class="item-btn">
-						<text @click="again(item.shopId)">进入店铺</text>
+						<text @click="again(item.SHOP_ID)">进入店铺</text>
 						<text @click="cancelRefund(item)">撤销退款</text>
 					</view>
 				</view>
@@ -174,67 +182,86 @@
 		</view>
 		<!-- tabbar -->
 		<tabbar></tabbar>
+
+		<view class="input-pwd" v-if="inputPwd">
+
+			<view class="input-warp">
+				<view style="padding-top: 30rpx; font-size: 38rpx;">请输入密码</view>
+				<input class="input" v-model="tradePass" type="password" />
+				<view class="btn" @click="payByBalance">确定</view>
+			</view>
+		</view>
 	</view>
 </template>
 
 <script>
-	import commonHeader from"@/components/common-header/common-header";
-	import tabbar from"@/components/common-tabbar/common-tabbar";
-	
-	import {myOrder,submitOrder, orderRepeal, alipay, wxpay, imgBaseUrl} from "@/common/apis.js";
+	import commonHeader from "@/components/common-header/common-header";
+	import tabbar from "@/components/common-tabbar/common-tabbar";
+
+	import {
+		myOrder,
+		submitOrder,
+		orderRepeal,
+		alipay,
+		wxpay,
+		shopBygoodList,
+		imgBaseUrl
+	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
 				imgBaseUrl: imgBaseUrl,
-				active:1,
-				orderList:[],
-                USERINFO_ID:''
+				active: 1,
+				orderList: [],
+				USERINFO_ID: '',
+				inputPwd: false,
+				tradePass: '', // 交易密碼
+				orderId: '',
 			};
 		},
-		components:{
+		components: {
 			commonHeader,
 			tabbar
 		},
 		mounted() {
-		    this.getOrderList(1)
+			this.getOrderList(1)
 		},
-		methods:{
+		methods: {
 			// 去支付
-			toPay(item){
-				let { BALANCE } = uni.getStorageSync('userInfo');
-				console.log(BALANCE)
-				console.log(item)
+			toPay(item) {
+				let {
+					BALANCE
+				} = uni.getStorageSync('userInfo');
+				const _this = this;
+				this.orderId = item.ORDERSUMMARY_ID
+
 				uni.showActionSheet({
-				    itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
-				    success: function (res) {
-				        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
-						if(res.tapIndex === 3 ) {
-							return uni.showToast({ title: '暂不支持银行卡支付',icon: 'none' })
+					itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
+					success(res) {
+						if (res.tapIndex === 3) {
+							return uni.showToast({
+								title: '暂不支持银行卡支付',
+								icon: 'none'
+							})
 						}
-				    },
-				    fail: function (res) {
-				        console.log(res.errMsg);
-				    }
+						_this.pay(res.tapIndex, item.ACTUALPAY, item.ORDERSUMMARY_ID)
+					},
 				});
 			},
-			
-			pay(index) {
-						
+
+			pay(index, ACTUALPAY, ORDERSUMMARY_ID) {
 				// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
-				
 				let obj = {
-					payAmount: '216.0',// this.payAmount,  // 
-					orderSummaryId:  'D1601279104958'// this.orderID //
+					payAmount: ACTUALPAY, 
+					orderSummaryId: ORDERSUMMARY_ID 
 				};
-				
-			
 				// 微信支付
-				if (this.payMode === 1) {
+				if (index === 1) {
 					wxpay(obj).then(res => {
-						uni.requestPayment({// 现在都没进这个
+						uni.requestPayment({ // 现在都没进这个
 							provider: 'wxpay',
-							orderInfo: res.returnMsg, 
-							success :( res) =>{  
+							orderInfo: res.returnMsg,
+							success: (res) => {
 								uni.showToast({
 									title: '支付成功!',
 									duration: 2000,
@@ -245,34 +272,28 @@
 										url: '../index/index'
 									});
 								}, 2000);
-								console.log('success:' + JSON.stringify(res));
 							},
-							
-							fail :(err) =>{
+
+							fail: (err) => {
 								uni.showToast({
 									title: '支付失败!',
 									icon: 'none',
 									duration: 2000,
 									mask: true
 								});
-								console.log('fail:' + JSON.stringify(err));
 							}
 						});
 					});
 				}
-				
+
 				// 支付宝支付
-				if (this.payMode === 2) {
+				if (index === 2) {
 					alipay(obj).then(res1 => {
-						console.log('支付宝订单信息', JSON.stringify(res1.returnMsg));
 						uni.requestPayment({
 							provider: 'alipay',
 							orderInfo: res1.returnMsg,
 							// orderInfo: mockOrderInfo.returnMsg,
 							success: res => {
-								console.log('success支付宝:' + JSON.stringify(res));
-								// 隐藏当前支付方式选择
-							
 								uni.showToast({
 									title: '支付成功!',
 									duration: 2000,
@@ -291,131 +312,216 @@
 									duration: 2000,
 									mask: true
 								});
-								console.log('fail支付宝:' + JSON.stringify(err));
 							},
 						});
 					});
 				}
-				
+
 				// 餘額支付
-				
-				if(this.payMode === 0) {
-					
+
+				if (index === 0) {
+					this.inputPwd = true
 				}
-				
-				
-				if (this.payMode === 3) {
+
+
+				if (index === 3) {
 					uni.showToast({
 						title: '暂未开通此功能!',
 						duration: 2000,
-						// mask: true
 					})
 				}
 				// 显示密码输入
-				
+
 			},
-			
-			evaluation(orderId) {  // ORDERSUMMARY_ID
+
+			payByBalance() {
+				let isEnough = ['0.00', '0', '0.0'].includes(BALANCE);
+				let { BALANCE } = uni.getStorageSync('userInfo');
+				if (isEnough) return uni.showToast({ title: '余额不足', icon: 'none' })
+
+				if (this.tradePass == '') return uni.showToast({ title: '请输入支付密码', icon: 'none' })
+
+				this.inputPwd = false;
+				shopBygoodList({
+					orderSummaryId: this.orderId,
+					tradePass: this.tradePass
+				}).then(res => {
+					this.tradePass = '';
+					this.inputPwd = true
+					if (res.returnMsg) {
+						if (res.returnMsg.status == '01') {
+							uni.showToast({
+								title: '交易密码不正确或者未设置交易密码',
+								icon: 'none'
+							})
+						} else if (res.returnMsg.status == '02') {
+							uni.showToast({
+								title: '余额不足',
+								icon: 'none'
+							})
+						} else {
+							uni.showToast({
+								title: '支付成功',
+								icon: 'none'
+							})
+
+							setTimeout(() => {
+								uni.navigateTo({
+									url: '../index/index'
+								});
+							}, 2000);
+						}
+					} else {
+						uni.showToast({
+							title: '系统错误稍后再试',
+							icon: 'none'
+						})
+					}
+
+				})
+			},
+
+			evaluation(orderId) { // ORDERSUMMARY_ID
 				uni.navigateTo({
 					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order'
 				})
 			},
-			changeTitle(index){
+			changeTitle(index) {
 				this.active = index;
-                this.getOrderList(index)
+				this.getOrderList(index)
 			},
-            // 申请退款
-            goOrderDetail(id){
-                uni.navigateTo({
-                    url:"../oraderDetails/oraderDetails?orderID="+id
-                })
-            },
-            // 确认收货
-            subOrder(orderId){
-                submitOrder({ORDERSUMMARY_ID:orderId}).then(res => {
-                    console.log(res)
-                    if (res.returnMsg.status == '00') {
-                        uni.showToast({
-                            title:'确认收货成功！'
-                        })
-                        this.getOrderList(1)
-                    }else if(res.returnMsg.status == '01'){
-                        uni.showToast({
-                            title:'订单号不存在！'
-                        })
-                    }else if(res.returnMsg.status == '03'){
-                        uni.showToast({
-                            title:'退款中，不能确认收货！'
-                        })
-                    }else{
-                        uni.showToast({
-                            title:'确认失败！'
-                        })
-                    }
-                })
-            },
-            // 请求订单
-            getOrderList(STATE){
-                uni.getStorage({
-                    key:'USERINFO_ID',
-                    success:res => {
-						uni.showLoading({ title: '加载中', mask: true })
-                        myOrder({STATE,USERINFO_ID: res.data}).then(res=>{
-                        	if (res.returnMsg.status == '00') {
-                        		this.orderList = res.returnMsg.list
-                        	}else{
-                        		uni.showToast({
-                        		    title:'数据获取失败!',
-                                    icon:'none'
-                        		})
-                        	}
-                        }).catch(err=>{
-                        	uni.showToast({
-                        		title:'获取失败！'
-                        	})
-                        }).finally(() => uni.hideLoading())
-                    }
-                })
-            },
-            // 再来一单
-            again(shopId){
-				console.log(shopId)
-                uni.navigateTo({
-                    url:"../shopPage/shopPage?shopId="+shopId
-                })
-            },
-			cancelRefund(item) {
-				console.log(item)
-				orderRepeal({ORDERSUMMARY_ID: item.ORDERSUMMARY_ID}).then(res => {
-					if(res.msgType == 0) {
+			// 申请退款
+			goOrderDetail(id) {
+				uni.navigateTo({
+					url: "../oraderDetails/oraderDetails?orderID=" + id
+				})
+			},
+			// 确认收货
+			subOrder(orderId) {
+				submitOrder({
+					ORDERSUMMARY_ID: orderId
+				}).then(res => {
+					if (res.returnMsg.status == '00') {
 						uni.showToast({
-							title:'取消退款成功',
-							icon: "none"
+							title: '确认收货成功！'
 						})
-						this.active = 2
-						this.getOrderList(2)
-					}else{
+						this.getOrderList(1)
+					} else if (res.returnMsg.status == '01') {
 						uni.showToast({
-							title:'取消退款失败',
-							icon: "none"
+							title: '订单号不存在！'
+						})
+					} else if (res.returnMsg.status == '03') {
+						uni.showToast({
+							title: '退款中，不能确认收货！'
+						})
+					} else {
+						uni.showToast({
+							title: '确认失败！'
 						})
 					}
-					
+				})
+			},
+			// 请求订单
+			getOrderList(STATE) {
+				uni.getStorage({
+					key: 'USERINFO_ID',
+					success: res => {
+						uni.showLoading({
+							title: '加载中',
+							mask: true
+						})
+						myOrder({
+							STATE,
+							USERINFO_ID: res.data
+						}).then(res => {
+							if (res.returnMsg.status == '00') {
+								this.orderList = res.returnMsg.list
+							} else {
+								uni.showToast({
+									title: '数据获取失败!',
+									icon: 'none'
+								})
+							}
+						}).catch(err => {
+							uni.showToast({
+								title: '获取失败！'
+							})
+						}).finally(() => uni.hideLoading())
+					}
+				})
+			},
+			// 再来一单
+			again(shopId) {
+				uni.navigateTo({
+					url: "../shopPage/shopPage?shopId=" + shopId
+				})
+			},
+			cancelRefund(item) {
+				orderRepeal({
+					ORDERSUMMARY_ID: item.ORDERSUMMARY_ID
+				}).then(res => {
+					if (res.returnMsg.status == '00') {
+						uni.showToast({ title: '取消退款成功', icon: "none" })
+						this.active = 2
+						this.getOrderList(2)
+					} else if (res.returnMsg.status == '01') {
+						uni.showToast({ title: '订单号不存在', icon: "none" })
+					}else if (res.returnMsg.status == '02') {
+						uni.showToast({ title: '取消退款失败', icon: "none" })
+					}else{
+						uni.showToast({ title: '取消退款失败', icon: "none" })
+					}
+
 				})
 			}
 		},
-		
+
 	}
 </script>
 
 <style lang="less">
-	.myOrder-content-uncomplete{
-		.item-content{
+	.input-pwd {
+		position: fixed;
+		z-index: 999;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, .5);
+
+		.input-warp {
+			background: #fff;
+			margin-top: 500rpx;
+			margin-left: 10%;
+			border-radius: 30rpx;
+			height: 500rpx;
+			width: 80%;
+			text-align: center;
+
+			input {
+				border: 1rpx solid #000;
+				border-radius: 10rpx;
+				height: 90rpx;
+				width: 80%;
+				margin-left: 10%;
+				margin-top: 100rpx;
+			}
+
+			.btn {
+				margin-top: 30rpx;
+			}
+		}
+	}
+
+	.myOrder-content-uncomplete,
+	.myOrder-content-complete, .myOrder-content-refund {
+		.item-content {
 			display: block !important;
 			padding: 15px 0 0 0 !important;
 		}
 	}
-	.myOrder{
+
+	.myOrder {
 		min-height: 100%;
 		background: #f6f7f8;
 		padding: 210rpx 0;
@@ -425,8 +531,9 @@
 		/* #endif */
 		/* #ifdef MP-WEIXIN */
 		padding-top: 250rpx;
+
 		/* #endif */
-		.myOrder-title{
+		.myOrder-title {
 			font-size: 32rpx;
 			display: flex;
 			justify-content: space-around;
@@ -442,117 +549,145 @@
 			/* #endif */
 			width: 100%;
 			z-index: 9999;
-			text{
-				padding:35rpx 0;
+
+			text {
+				padding: 35rpx 0;
 			}
-			.active{
+
+			.active {
 				border-bottom: 8rpx solid #FF5904;
 				font-weight: bold;
 			}
 		}
-		.myOrder-content{
-			.show{
+
+		.myOrder-content {
+			.show {
 				display: block;
 			}
-			>view{
+
+			>view {
 				display: none;
-				
+
 			}
-			.commonStyle{
+
+			.commonStyle {
 				width: 95%;
 				margin: auto;
 				font-size: 30rpx;
-				.item{
+
+				.item {
 					background: #fff;
 					margin-top: 20rpx;
 					border-radius: 20rpx;
 					padding: 0 20rpx 30rpx 20rpx;
-					.item-title{
+
+					.item-title {
 						display: flex;
 						justify-content: space-between;
 						align-items: center;
 						padding: 30rpx 0;
 						border-bottom: 1px solid #e0e0e0;
-						.left{
+
+						.left {
 							font-size: 32rpx;
 							font-weight: bold;
 							display: flex;
 							align-items: center;
-							image{
+
+							image {
 								width: 50rpx;
 								height: 50rpx;
 								border-radius: 50%;
 								margin-right: 20rpx;
 							}
 						}
-						.right{
+
+						.right {
 							font-size: 38rpx;
 							color: #999;
 						}
 					}
-					.item-content{
+
+					.item-content {
 						display: flex;
 						padding: 30rpx 0;
 						justify-content: space-between;
-						.left{
+
+						.left {
 							display: flex;
-							image{
+
+							image {
 								width: 180rpx;
 								height: 152rpx;
 								border-radius: 20rpx;
 								margin-right: 20rpx;
 							}
-							>view{
-								.left-title{
+
+							>view {
+								.left-title {
 									font-size: 32rpx;
 								}
-								view{
+
+								view {
 									font-size: 28rpx;
 									color: #666;
 									margin-top: 10rpx;
 								}
 							}
 						}
-						.right{
+
+						.right {
 							font-size: 28rpx;
 							color: #666;
 						}
 					}
-					.item-code,.item-pay{
+
+					.item-code,
+					.item-pay {
 						padding: 20rpx 0;
-						text{
+
+						text {
 							color: #666;
 							margin-left: 30rpx;
 						}
 					}
-					.item-pay{
+
+					.item-pay {
 						border-bottom: 1px solid #e0e0e0;
 					}
-					.item-total{
+
+					.item-total {
 						display: flex;
 						justify-content: space-between;
 						padding: 30rpx 0;
 						border-top: 1rpx solid #e0e0e0;
-						view{
-							>text{
+
+						view {
+							>text {
 								color: #666;
 								margin-left: 40rpx;
-								text{color: #FF5904;}
+
+								text {
+									color: #FF5904;
+								}
 							}
 						}
 					}
-					.item-btn{
+
+					.item-btn {
 						display: flex;
 						justify-content: flex-end;
-						text{
+
+						text {
 							padding: 8rpx 30rpx;
 							border: 1px solid #FF6504;
 							border-radius: 40rpx;
 							color: #FF6504;
 							margin-right: 30rpx;
 						}
-						text:last-child{
-							background:linear-gradient(231deg,rgba(255,178,10,1) 0%,rgba(255,127,4,1) 60%,rgba(255,89,4,1) 100%);
+
+						text:last-child {
+							background: linear-gradient(231deg, rgba(255, 178, 10, 1) 0%, rgba(255, 127, 4, 1) 60%, rgba(255, 89, 4, 1) 100%);
 							color: #fff;
 							border: 0;
 							margin-right: 10rpx;

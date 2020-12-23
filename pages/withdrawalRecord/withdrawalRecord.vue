@@ -39,7 +39,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-else style="text-align: center;color: #999;padding-top: 150rpx;">改天没有记录哦！</view>
+		<view v-else style="text-align: center;color: #999;padding-top: 150rpx;">暂时没有记录哦！</view>
 		<!-- tabbar -->
 		<tabbar></tabbar>
 	</view>

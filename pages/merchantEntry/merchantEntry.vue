@@ -246,8 +246,7 @@
 				}
 				 
 				let res = await shopAuth(obj)
-				console.log(obj);
-				console.log(res);
+
 				if(res.msgType == 0) {
 					uni.showToast({
 						title: '申请提交成功',

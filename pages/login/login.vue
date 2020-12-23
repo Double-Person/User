@@ -20,7 +20,7 @@
 				<text @tap="register">立即注册</text>
 			</view>
 		</view>
-		<button class="login-content-btn" :disabled="btnState" :class="btnState?'btnState':''" @tap="goIndex" >登录</button>
+		<button class="login-content-btn" :disabled="btnState" :class="btnState?'btnState':''" @tap="goIndex">登录</button>
 		<view class="login-tipsText">
 			根据国家网络实名的相关规定，自2017年10月1日起，
 			您需要绑定手机才能享受正常服务。
@@ -61,7 +61,7 @@
 	export default {
 		data() {
 			return {
-		
+
 				codeText: "获取验证码",
 				btnState: true,
 				phone: "18398207590", // 13258188656
@@ -72,23 +72,35 @@
 				saveObj: '',
 			}
 		},
-	
-		
+
+
 		mounted() {
+
+
 			// uni.clearStorageSync()
 			// 获取本地存储登录信息 
 			uni.getStorage({
 				key: 'name',
 				success: (data) => {
 					let that = this;
-					let { PHONE, PASSWORD, openId = '', nickName = '' } = JSON.parse(data.data);
-					this.phone =PHONE;
+					let {
+						PHONE,
+						PASSWORD,
+						openId = '',
+						nickName = ''
+					} = JSON.parse(data.data);
+					this.phone = PHONE;
 					this.pwd = PASSWORD;
 					this.phoneState = true;
 					this.pwdState = true;
 					this.loginState();
-					login({ PHONE, PASSWORD, openId, nickName }).then(res => {
-						
+					login({
+						PHONE,
+						PASSWORD,
+						openId,
+						nickName
+					}).then(res => {
+
 						if (res.returnMsg.status == '00') {
 							uni.showToast({
 								title: '登陆成功',
@@ -118,8 +130,8 @@
 								icon: 'none'
 							})
 						}
-					}).catch(err =>{
-						console.log(JSON.stringify('登录错误--',JSON.stringify(err)))
+					}).catch(err => {
+						console.log(JSON.stringify('登录错误--', JSON.stringify(err)))
 					})
 				}
 			})
@@ -134,7 +146,7 @@
 				} else {
 					this.phoneState = false;
 				}
-				
+
 			},
 			// 获取登录密码
 			inputPwd(e) {
@@ -145,15 +157,15 @@
 				} else {
 					this.pwdState = false;
 				}
-				
-				
+
+
 			},
 			// 判断登录按钮状态
 			loginState() {
 				// if (this.phoneState && this.pwdState) {
 				if (this.pwd.length === 6 && this.phone.length === 11) {
 					this.btnState = false;
-					
+
 					this.$forceUpdate()
 				} else {
 					this.btnState = true;
@@ -188,10 +200,10 @@
 				// 登录请求
 				console.log(that.saveObj)
 				login(that.saveObj).then(res => {
-					
+
 					uni.showToast({
 						title: res.errMsg,
-						icon:'none'
+						icon: 'none'
 					})
 					console.log(that.saveObj)
 					console.log(res)
@@ -202,8 +214,8 @@
 							data: res.returnMsg.USERINFO_ID
 						});
 						that.rememberPwdHide = false;
-					
-						
+
+
 						// alert('登录-')
 						uni.getStorage({
 							key: 'saveStata',
@@ -213,7 +225,7 @@
 									uni.redirectTo({
 										url: '/pages/index/index'
 									})
-				
+
 								} else {
 									// 提示保存密码
 									that.rememberPwdHide = false;
@@ -227,8 +239,8 @@
 						// uni.redirectTo({
 						// 	url: '/pages/index/index'
 						// })
-					
-					
+
+
 					} else if (res.returnMsg.status == '01') {
 						uni.showToast({
 							title: '账号不存在!',
@@ -250,8 +262,8 @@
 							icon: 'none'
 						})
 					}
-				}).catch(err =>{
-					console.log(JSON.stringify('登录错误--',JSON.stringify(err)))
+				}).catch(err => {
+					console.log(JSON.stringify('登录错误--', JSON.stringify(err)))
 				})
 			},
 
@@ -321,58 +333,64 @@
 					success: function(res) {
 						console.log(JSON.stringify(res.provider))
 						// if (res.provider.indexOf('weixin')) {
-							// uni.showLoading({
-							// 	title: '登录中...'
-							// })
-							uni.login({
-								provider: 'weixin',
-								success: (loginRes) => {
-									console.log(JSON.stringify(loginRes))
-									getApp().globalData.openid = loginRes.authResult.openid;
-									uni.hideLoading()
-									wxLogin({
-										"openId": loginRes.authResult.openid,
-										"code": '',
-										"accessToken": loginRes.authResult.access_token
-									}).then(res => {
-										console.log('WDX', res)
-										getApp().globalData.nickName = res.returnMsg.nickName;
-										if (res.returnMsg.status == '00') {
-											uni.setStorage({
-												key: 'USERINFO_ID',
-												data: res.returnMsg.USERINFO_ID
-											});
-											// 如果已绑定手机跳转至首页
-											uni.reLaunch({
-												url: '../index/index'
-											})
-										} else if (res.returnMsg.status == '01') {
-											// 否则跳转注册
-											uni.navigateTo({
-												url: '../register/register'
-											})
-										}
-									}).catch(err => {
-										uni.showToast({
-											title: '登录失败！',
-											icon: 'none'
+						// uni.showLoading({
+						// 	title: '登录中...'
+						// })
+						uni.login({
+							provider: 'weixin',
+							success: (loginRes) => {
+								console.log(JSON.stringify(loginRes))
+								console.log(loginRes)
+								uni.getUserInfo({
+								      provider: 'weixin',
+								      success: function (infoRess) {
+								        console.log('用户昵称为：' , infoRess);
+								      }
+								    });
+								getApp().globalData.openid = loginRes.authResult.openid;
+								uni.hideLoading()
+								wxLogin({
+									"openId": loginRes.authResult.openid,
+									"code": '',
+									"accessToken": loginRes.authResult.access_token
+								}).then(res => {
+									console.log('WDX', res)
+									getApp().globalData.nickName = res.returnMsg.nickName;
+									if (res.returnMsg.status == '00') {
+										uni.setStorage({
+											key: 'USERINFO_ID',
+											data: res.returnMsg.USERINFO_ID
+										});
+										// 如果已绑定手机跳转至首页
+										uni.reLaunch({
+											url: '../index/index'
 										})
-									})
-								},
-								fail: (err) => {
+									} else if (res.returnMsg.status == '01') {
+										// 否则跳转注册
+										uni.navigateTo({
+											url: '../register/register'
+										})
+									}
+								}).catch(err => {
 									uni.showToast({
-										title: '您还未安装或登录！',
+										title: '登录失败！',
 										icon: 'none'
 									})
-									console.log(JSON.stringify(err))
-								}
-							});
+								})
+							},
+							fail: (err) => {
+								uni.showToast({
+									title: '您还未安装或登录！',
+									icon: 'none'
+								})
+								console.log(JSON.stringify(err))
+							}
+						});
 						// }
 					}
 				});
 			},
 			// #endif
-
 		},
 
 	}

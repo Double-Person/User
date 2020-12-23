@@ -15,7 +15,7 @@
 				</view>
 				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
 					<view class="left">
-						<image :src="item.faceicon" mode=""></image>
+						<image :src="imgBaseUrl + item.faceicon" mode=""></image>
 					</view>
 					<view class="right">
 						<view class="right-title">
@@ -51,17 +51,19 @@
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	// banner
-	import specialBanner from '../../components/specialBanner.vue'
+	import specialBanner from '@/components/specialBanner.vue'
 	// 评分组件
 	import uniRate from '@/components/uni-rate/uni-rate.vue'
 	import {
 		pushShop,
 		getBanner,
-		getPush
+		getPush,
+		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				bannerList: [],
 				onloadObj: {},
 				swiperConfig: {
@@ -86,7 +88,6 @@
 		},
 	
 		onLoad(e) {
-			console.log(e)
 			var obj = {
 				longitude: e.longitude,
 				latitude: e.latitude,
@@ -100,11 +101,10 @@
 			
 		},
 		methods: {
-			handelShop(shopId) { // shopId
-		
+			handelShop(shopId) { // shopId	  9e98a5b1afb64ac6a00fc805c678e1e3
 				uni.navigateTo({
 					url: 'localPreferencesDetail?shopId=' + shopId
-				}).then(res => console.log(res)).catch(err => console.log(err))
+				})
 			
 			},
 			// 本地优惠

@@ -321,7 +321,6 @@ export default {
 			}
 
 			this.GOODS = this.GOODS.filter(ele => ele.COUTNS != 0)
-			console.log(this.GOODS)
 	
 			var obj = {
 				PAYABLE: this.total,
@@ -404,7 +403,8 @@ export default {
 			// 微信支付
 			if (this.payMode === 1) {
 				wxpay(obj).then(res => {
-					uni.requestPayment({// 现在都没进这个
+					console.log()
+					uni.requestPayment({
 						provider: 'wxpay',
 						orderInfo: res.returnMsg, 
 						success :( res) =>{  

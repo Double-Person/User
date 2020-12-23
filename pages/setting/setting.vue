@@ -155,11 +155,8 @@
 		},
 		onLoad() {
 			this.isPwd = getApp().globalData.isPwd;
-			console.log(getApp().globalData)
-			//  
 			let info = uni.getStorageSync('name');
 			this.phone = JSON.parse(info).PHONE;
-			console.log()
 		},
 	
 		methods: {
@@ -276,9 +273,6 @@
 			// 获取输入交易密码、
 			getPwd1(val){
                 var pwd = md5(val)
-				
-				console.log('---', getApp().globalData.pwd)
-				console.log('---', pwd)
 				if(val==getApp().globalData.pwd){
 					this.hideBox1 = true;
 					if(this.type1){

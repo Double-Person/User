@@ -257,8 +257,6 @@
 		onLoad(e) {
 			// 获取店铺id
 			this.shopId = e.shopId;
-			console.log(this.shopId)
-			
 			uni.getSystemInfo({
 				success: res => {
 					/* 设置当前滚动容器的高，若非窗口的告诉，请自行修改 */
@@ -279,8 +277,6 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
-				console.log(res)
-				
 			});
 			// 获取userid
 			uni.getStorage({
@@ -320,7 +316,6 @@
 			// 发送请求添加到购物车
 			saveCard(data) {
 				addCarts(data).then(({msgType}) => {
-					console.log(msgType)
 					if(msgType == 0) {
 						uni.showToast({
 							title:'添加购物车成功'
@@ -464,7 +459,6 @@
 							scheme: "weixin://"
 						},
 						function(e) {
-							console.log("Open system default browser failed: " + e.message);
 							uni.showToast({
 								title: "您可能还未安装该应用",
 								duration: 2000,
@@ -560,7 +554,6 @@
 					    obj[next.category] ? "" : obj[next.category] = true && cur.push(next);
 					    return cur;
 					},[])
-					console.log(peon)
 					let stringifyArr = JSON.stringify(peon)
 					
 				

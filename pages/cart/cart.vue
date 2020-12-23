@@ -191,7 +191,7 @@
 				var arr = [];
 				console.log(this.cartList );
 				// 全部商品选中过滤
-				let arr1 = this.cartList.filter(item => item.checked)
+				let arr1 = this.cartList //this.cartList.filter(item => item.checked)
 				let temp = [];
 				for (let i = 0; i < arr1.length; i++) {
 					temp = arr1[i].goodsList.filter(item => item.checked)

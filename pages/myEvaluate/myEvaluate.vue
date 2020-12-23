@@ -10,7 +10,7 @@
 				</view>
 				<view class="content">
 					<view class="content-left">
-						<image :src="item.goodsImg" mode=""></image>
+						<image :src="imgBaseUrl + item.goodsImg" mode=""></image>
 					</view>
 					<view class="content-right">
 						<text>下单时间：{{item.createTime}}</text>
@@ -39,10 +39,11 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {evaluateList,delEvaluate} from "@/common/apis.js"
+    import {evaluateList,delEvaluate, imgBaseUrl} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				myEvaluateList:[],
                 USERINFO_ID:''
 			};
@@ -50,9 +51,7 @@
 		methods:{
 			// 删除
 			deleteEvaluate(id){
-                var obj = {
-                    EVALUATE_ID: id
-                }
+                var obj = { EVALUATE_ID: id }
                 delEvaluate(obj).then(res =>  {
                     if (res.returnMsg.status == '00'){
                         uni.showToast({
@@ -83,11 +82,10 @@
                 uni.getStorage({
                     key:'USERINFO_ID',
                     success:res => {
-                        console.log(res)
+						uni.showLoading({ title: '加载中', mask: true })
                         evaluateList({"USERINFO_ID":res.data}).then(res => {
-                            console.log('456465',res.returnMsg.evaluate)
                             this.myEvaluateList = res.returnMsg.evaluate
-                        })
+                        }).finally(() => uni.hideLoading())
                     }
                 })
             }

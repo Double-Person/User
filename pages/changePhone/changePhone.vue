@@ -91,7 +91,7 @@
 			},
 			// 获取验证码
 			gettestcode(e){
-				if(e.detail.value.length===6){
+				if(e.detail.value.length === 6){
 					this.codeState = true;
 					this.code = e.detail.value;
 				}else{
@@ -216,8 +216,18 @@
                             title:'更换失败!',
                             icon:'none'
                         })
-                    }
-                })
+                    }else {
+						uni.showToast({
+						    title:'更换失败!',
+						    icon:'none'
+						})
+					}
+                }).catch(() => {
+					uni.showToast({
+					    title:'更换失败!',
+					    icon:'none'
+					})
+				})
             }
 		},
         mounted() {

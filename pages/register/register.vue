@@ -12,21 +12,22 @@
 			</view>
 			<view class="login-content-item">
 				<text>验证码</text>
-				<input type="text" :value="testCode" maxlength="6" placeholder="请输入验证码" placeholder-style="color:#999" @blur="inputTestCode"/>
+				<input type="text" :value="testCode" maxlength="6" placeholder="请输入验证码" placeholder-style="color:#999" @blur="inputTestCode" />
 				<button class="testCode" :class="selectCode?'selectCode':''" :disabled="disabled" @tap="getCode">{{codeText}}</button>
 			</view>
 			<view class="login-content-item password">
 				<text>新密码</text>
-				<input type="password" :value="password" maxlength="6" placeholder="请输入6位数密码" placeholder-style="color:#999;" @input="inputPwd"/>
+				<input type="password" :value="password" maxlength="6" placeholder="请输入6位数密码" placeholder-style="color:#999;"
+				 @input="inputPwd" />
 			</view>
 			<view class="login-content-item password">
 				<text>确认密码</text>
-				<input type="password" :value="password1" maxlength="6" placeholder="请再次输入密码" placeholder-style="color:#999;" @blur="inputPwd1"/>
+				<input type="password" :value="password1" maxlength="6" placeholder="请再次输入密码" placeholder-style="color:#999;" @blur="inputPwd1" />
 			</view>
 			<!-- 用户协议 -->
 			<view class="login-content-userTreaty">
 				<label class="radio" :class="treatyHide?'treatyHide':''" @tap="checked=!checked">
-					<radio value="" :checked="checked" style="transform:scale(0.7)"/>
+					<radio value="" :checked="checked" style="transform:scale(0.7)" />
 					<text>用户协议</text>
 				</label>
 				<view class="radio" :class="codeHide?'codeHide':''">
@@ -54,35 +55,47 @@
 
 <script>
 	// header
-	import commonHeader from"@/components/common-header/common-header";
+	import commonHeader from "@/components/common-header/common-header";
 	// 注册接口
-	import {register,sendCode} from "@/common/apis.js";
+	import {
+		register,
+		sendCode
+	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
+				key: 'f0d8604522a34fea7af419d353f98e8f',
 				selectCode: false,
 				codeText: "获取验证码",
 				disabled: false,
 				treatyHide: false,
 				codeHide: true,
 				btnState: true,
-				checked:true,
-				phone:"",
-				testCode:"",
-				password:"",
-				password1:"",
-				phoneState:false,
-				testCodeState:false,
-				passwordState:false,
-				password1State:false,
+				checked: true,
+				phone: "",
+				testCode: "",
+				password: "",
+				password1: "",
+				phoneState: false,
+				testCodeState: false,
+				passwordState: false,
+				password1State: false,
+				point: {}
 			}
+		},
+		
+		components: {
+			commonHeader
+		},
+		onLoad() {
+			this.getPoint()
 		},
 		methods: {
 			// 获取输入手机号
 			inputPhone(e) {
-				if(!this.checked){
+				if (!this.checked) {
 					uni.showToast({
-						title:'请先勾选用户协议！'
+						title: '请先勾选用户协议！'
 					})
 					return false;
 				}
@@ -100,10 +113,10 @@
 				this.loginBtnState();
 			},
 			// 获取输入验证码
-			inputTestCode(e){
-				if(e.detail.value.length === 6){
+			inputTestCode(e) {
+				if (e.detail.value.length === 6) {
 					this.testCodeState = true;
-				}else{
+				} else {
 					this.testCodeState = false;
 				}
 				this.testCode = e.detail.value;
@@ -111,10 +124,10 @@
 				this.loginBtnState();
 			},
 			// 获取输入的密码
-			inputPwd(e){
-				if(e.detail.value.length === 6){
+			inputPwd(e) {
+				if (e.detail.value.length === 6) {
 					this.passwordState = true;
-				}else{
+				} else {
 					this.passwordState = false;
 				}
 				this.password = e.detail.value;
@@ -122,15 +135,15 @@
 				this.loginBtnState();
 			},
 			// 确认输入密码
-			inputPwd1(e){
+			inputPwd1(e) {
 				this.password1 = e.detail.value;
-				if(this.password1 === this.password){
+				if (this.password1 === this.password) {
 					this.password1State = true;
-				}else{
+				} else {
 					this.password1State = false;
 					uni.showToast({
-						title:'两次密码不一致！',
-						icon:'none'
+						title: '两次密码不一致！',
+						icon: 'none'
 					})
 				}
 				// console.log(e.detail.value)
@@ -144,22 +157,24 @@
 					var time = 59;
 					this.codeText = time + 's后重新获取';
 					// 发送验证码
-					sendCode({MOBILE:this.phone}).then(res=>{
-						if(res.returnMsg.status=='00'){
+					sendCode({
+						MOBILE: this.phone
+					}).then(res => {
+						if (res.returnMsg.status == '00') {
 							uni.showToast({
-								title:'发送成功！',
-								icon:'none'
+								title: '发送成功！',
+								icon: 'none'
 							})
-						}else{
+						} else {
 							uni.showToast({
-								title:'发送失败！',
-								icon:'none'
+								title: '发送失败！',
+								icon: 'none'
 							})
 						}
-					}).catch(err=>{
+					}).catch(err => {
 						uni.showToast({
-							title:'发送失败！',
-							icon:'none'
+							title: '发送失败！',
+							icon: 'none'
 						})
 					})
 					var setTime = setInterval(() => {
@@ -175,72 +190,93 @@
 				}
 			},
 			// 判断登录按钮状态
-			loginBtnState(){
-				if(this.phoneState&&this.testCodeState&&this.passwordState&&this.password1State){
+			loginBtnState() {
+				if (this.phoneState && this.testCodeState && this.passwordState && this.password1State) {
 					this.btnState = false;
-				}else{
+				} else {
 					this.btnState = true;
 				}
 			},
 			// 注册
 			goIndex() {
-        uni.showLoading({
-            title: '加载中...'
-        });
+				uni.showLoading({ title: '加载中...', mask: true });
 				let obj = {
-					"PHONE":this.phone,
-					"code":this.testCode,
-					"PASSWORD":this.password,
-					"PASSWORD1":this.password1,
-					"openId":getApp().globalData.openid?getApp().globalData.openid:'',
-                    "nickName":getApp().globalData.nickName?getApp().globalData.nickName:''
+					"PHONE": this.phone,
+					"code": this.testCode,
+					"PASSWORD": this.password,
+					"PASSWORD1": this.password1,
+					"openId": getApp().globalData.openid ? getApp().globalData.openid : '',
+					"nickName": getApp().globalData.nickName ? getApp().globalData.nickName : '',
+					...this.point
 				}
-				register(obj).then(res=>{
+				if(!this.point.CITY) {
+					uni.showToast({ title: '定位失败', icon: 'none' })
+					this.getPoint()
+					return false;
+				}
+				register(obj).then(res => {
 					console.log(res)
-                    uni.hideLoading();
-					if(res.returnMsg.status=='00'){
+					console.log(obj)
+					uni.hideLoading();
+					if (res.returnMsg.status == '00') {
 						uni.showToast({
-							title:'注册成功！'
+							title: '注册成功！'
 						})
-                        setTimeout(()=>{
-                            uni.reLaunch({
-                            	url:'../login/login'
-                            })
-                        },1000)
-					}else if(res.returnMsg.status=='01'){
+						setTimeout(() => {
+							uni.reLaunch({
+								url: '../login/login'
+							})
+						}, 1000)
+					} else if (res.returnMsg.status == '01') {
 						uni.showToast({
-							title:'验证码不正确！',
-							icon:'none'
+							title: '验证码不正确！',
+							icon: 'none'
+						})
+					} else if (res.returnMsg.status == '02') {
+						uni.showToast({
+							title: '验证码超时！',
+							icon: 'none'
+						})
+					} else if (res.returnMsg.status == '03') {
+						uni.showToast({
+							title: '此账号已注册,前往登录！',
+							icon: 'none'
 						})
 					}
-					else if(res.returnMsg.status=='02'){
-						uni.showToast({
-							title:'验证码超时！',
-							icon:'none'
-						})
-					}else if(res.returnMsg.status=='03'){
-						uni.showToast({
-							title:'此账号已注册,前往登录！',
-							icon:'none'
-						})
-					}
-				}).catch(err=>{
+				}).catch(err => {
 					uni.showToast({
-						title:'注册失败！',
-						icon:'none'
+						title: '注册失败！',
+						icon: 'none'
 					})
 				})
 			},
 			// 前往登录
-			gologinPage(){
+			gologinPage() {
 				uni.reLaunch({
-					url:'../login/login'
+					url: '../login/login'
 				})
+			},
+			
+			// 获取定位
+			getPoint() {
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
+					success: ({ longitude, latitude, address: {province, city, district}}) => {
+						console.log('===', longitude, latitude,province, city, district)
+						this.point = { CITY: city, AREA: district }
+					},
+					fail(err) {
+						uni.showToast({
+							title: '定位失败',
+							icon: 'none'
+						})
+						
+					}
+				});
 			}
 		},
-		components:{
-			commonHeader
-		}
+		
 	}
 </script>
 
@@ -314,6 +350,7 @@
 			.password {
 				justify-content: space-between;
 				display: flex;
+
 				input {
 					flex: 1;
 					margin-right: 30rpx;

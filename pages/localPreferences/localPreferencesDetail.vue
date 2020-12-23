@@ -1,7 +1,7 @@
 <template>
 	<view class="local-preferences-detail">
 		<view class="warp" v-if="hotInfo.activity">
-			<image class="bg-img" :src="hotInfo.activity.PICTURE ? hotInfo.activity.PICTURE : '/static/images/youhui.png'" mode=""></image>
+			<image class="bg-img" :src="hotInfo.activity.PICTURE ? (imgBaseUrl + hotInfo.activity.PICTURE) : '/static/images/youhui.png'" mode=""></image>
 		</view>
 		
 		<view class="info"  v-if="hotInfo.activity">
@@ -56,12 +56,14 @@
 		pushShop,
 		getBanner,
 		getPush,
-		shopActivityGoods
+		shopActivityGoods,
+		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
-				hotInfo: {}
+				hotInfo: {},
+				imgBaseUrl: imgBaseUrl,
 			};
 		},
 		components: {
