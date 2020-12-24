@@ -81,16 +81,12 @@
 		},
 
 		onLoad(opetion) {
-			//    
-			console.log(opetion)
 			shopDetails({
 				goodsId: opetion.shopId
 			}).then(res => {
-				console.log('商品详情', res.returnMsg)
 				this.Detail = res.returnMsg.newevaluate
 
 			}).catch(err => {
-				console.log(err)
 				uni.showToast({
 					title: '请求失败！',
 					icon: 'none'

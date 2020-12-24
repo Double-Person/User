@@ -131,7 +131,6 @@
 				uni.showLoading({
 					title: '上传中...'
 				});
-				console.log(this.imgUrl1);
 				var obj = {
 					USERINFO_ID: this.USERINFO_ID,
 					NAME: this.username,
@@ -169,7 +168,6 @@
 								var pagelength = getCurrentPages();
 								if (pagelength.length === 1) {
 									var path = pagelength[0].route;
-									// console.log(path)
 									uni.reLaunch({
 										url: '/' + path
 									});
@@ -196,7 +194,6 @@
 			personal({
 				USERINFO_ID: this.USERINFO_ID
 			}).then(res => {
-				console.log('获取个人资料', res);
 				this.userInfo = res.returnMsg.userInfo
 				this.username = res.returnMsg.userInfo.USERNAME ? res.returnMsg.userInfo.USERNAME : '';
 				if (res.returnMsg.userInfo.IDCARDFRONT) {

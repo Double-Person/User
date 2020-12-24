@@ -88,7 +88,6 @@
 			bindsucc() {
 				if (this.addCardHide) {
 					this.phoneMaskShow = true;
-					console.log(111)
 				} else {
 					uni.navigateTo({
 						url: "../addBankCard/addBankCard"
@@ -97,7 +96,6 @@
 			},
 			// 删除银行卡
 			delCard() {
-				console.log(111)
 			},
 			// 确认注销
 			submit() {
@@ -117,7 +115,6 @@
 			}
 		},
 		onLoad(info) {
-			console.log(info, this.addCardHide)
 			// 
 			let isCard = (Object.keys(info.info || {})).length ? true: false
 			// return false;
@@ -125,7 +122,6 @@
 			
 				this.cardInfo = JSON.parse(info.info)
 				this.cardInfo = this.cardInfo && this.cardInfo.length && this.cardInfo[0]
-				console.log('银行卡',this.cardInfo)
 				this.addCardHide = this.cardInfo && this.cardInfo.length > 0 ? true : false
 			}else{
 				this.addCardHide = false

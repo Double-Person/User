@@ -99,7 +99,6 @@
 			tabbar
 		},
 		onLoad(e){
-			console.log(e)
 			this.ORDERSUMMARY_ID = e.ORDERSUMMARY_ID
 			if(e.from == 'order') {
 				this.fromPath = e.from
@@ -137,9 +136,7 @@
                         //     this.imgUrl = base64
                         //     this.imgHide = false
                         //   })
-                        //   .catch(error => {
-                        //     console.error(error)
-                        //   })
+         
 						const tempFilePaths = res.tempFilePaths;
 						uni.uploadFile({
 							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址

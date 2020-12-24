@@ -63,9 +63,7 @@
 		methods:{
 			// 取消收藏
 			cancel(shopId){
-				console.log(shopId)
                 delCollec({COLLECTIONS_ID:shopId}).then(res => {
-                    console.log(res)
                     if (res.returnMsg.status == '00'){
                         uni.showToast({
                             title:'取消收藏成功!',
@@ -84,7 +82,6 @@
                     key:'USERINFO_ID',
                     success:res => {
                         collections({USERINFO_ID:res.data}).then(res => {
-                            console.log(res)
                             this.collectShopList = res.returnMsg.list
                         })
                     }

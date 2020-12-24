@@ -41,7 +41,6 @@
 		},
 		onLoad(option) {
 			let {id} = option
-			console.log(option.id)
 			this.getMessageInfo(id)
 		},
 		methods : {

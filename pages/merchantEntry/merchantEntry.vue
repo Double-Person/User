@@ -218,7 +218,6 @@
 			// 邮箱
 			getEmail(e) {
 				this.email = e.detail.value;
-				console.log(this.email)
 			},
 			// 提交
 			async submit() {
@@ -295,7 +294,6 @@
 	
 						this.longitude = res.longitude
 						this.latitude = res.latitude
-						console.log('---------', res)
 						this.conversionPoint(res)
 					}
 				})

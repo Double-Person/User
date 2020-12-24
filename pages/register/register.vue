@@ -120,7 +120,6 @@
 					this.testCodeState = false;
 				}
 				this.testCode = e.detail.value;
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 获取输入的密码
@@ -131,7 +130,6 @@
 					this.passwordState = false;
 				}
 				this.password = e.detail.value;
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 确认输入密码
@@ -146,7 +144,6 @@
 						icon: 'none'
 					})
 				}
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 获取验证码
@@ -215,8 +212,6 @@
 					return false;
 				}
 				register(obj).then(res => {
-					console.log(res)
-					console.log(obj)
 					uni.hideLoading();
 					if (res.returnMsg.status == '00') {
 						uni.showToast({
@@ -263,7 +258,6 @@
 					type: 'wgs84',
 					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
 					success: ({ longitude, latitude, address: {province, city, district}}) => {
-						console.log('===', longitude, latitude,province, city, district)
 						this.point = { CITY: city, AREA: district }
 					},
 					fail(err) {

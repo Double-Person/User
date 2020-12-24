@@ -72,7 +72,6 @@
 					this.testCode = 2;
 					this.selectCode = false;
 				}else if(e.detail.value.length===11){
-					console.log(e.detail.value, this.oldPhone1)
                     if(e.detail.value == this.oldPhone1) {
                         uni.showToast({
                             title:'更换手机与原手机号码相同!',
@@ -113,7 +112,6 @@
 			},
 			// 获取输入密码
 			getPwd(val) {
-				console.log(val)
 				if(val==888888){
 					this.hideBox = true;
 					this.phoneMaskShow=true;
@@ -176,7 +174,6 @@
                 }
 				
 		
-				console.log(obj);
                 changePhone(obj).then(res=>{
                     this.phoneMaskShow = false;
                     uni.hideLoading()
@@ -236,7 +233,6 @@
                 key: 'name',
                 success:  (res)=> {
                     this.oldPhone1 = JSON.parse(res.data).PHONE
-                    console.log(this.oldPhone1)
                     this.oldPhone = JSON.parse(res.data).PHONE.substr(0,3) + "****" + JSON.parse(res.data).PHONE.substr(7)
                 }
             });

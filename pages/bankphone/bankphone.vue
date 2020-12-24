@@ -102,7 +102,6 @@
 					this.testCodeState = false;
 				}
 				this.testCode = e.detail.value;
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 获取输入的密码
@@ -113,7 +112,6 @@
 					this.passwordState = false;
 				}
 				this.password = e.detail.value;
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 确认输入密码
@@ -128,7 +126,6 @@
 						icon:'none'
 					})
 				}
-				// console.log(e.detail.value)
 				this.loginBtnState();
 			},
 			// 获取验证码

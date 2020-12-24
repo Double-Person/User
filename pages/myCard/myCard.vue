@@ -135,7 +135,6 @@
 			tabbar
 		},
 		onLoad() {
-			console.log(getApp().globalData.cardStata)
 			this.cardStata = getApp().globalData.cardStata;
 		},
 		mounted() {
@@ -147,7 +146,6 @@
 					myCard({
 						USERINFO_ID: res.data
 					}).then(res => {
-						console.log(res)
 						this.wxName = res.returnMsg.wx
 						this.AlipayName = res.returnMsg.zfb
 						this.cardNum = res.returnMsg.bank
@@ -158,10 +156,7 @@
 						this.redpackgeList = res.returnMsg.userCoupons
 					})
 					shopBank({shop_id: res.data}).then(res => {
-						console.log('银行卡绑定信息', res)
 						this.info = res.returnMsg
-					}).catch(err => {
-						console.log('---',err)
 					})
 				}
 			})
@@ -175,13 +170,10 @@
 						shopBank({
 							shop_id: res.data
 						}).then(result => {
-							console.log('检查绑定', result)
 							this.info = result.returnMsg
 						})
 					},
-					fail: (err) => {
-						console.log('+++', err)
-					}
+					
 				});
 
 			},

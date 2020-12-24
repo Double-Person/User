@@ -71,9 +71,6 @@
 				uni.openLocation({
 					latitude: JSON.parse(this.latitude),
 					longitude: JSON.parse(this.longitude),
-					success: function() {
-						console.log('success');
-					}
 				});
 			}
 		}

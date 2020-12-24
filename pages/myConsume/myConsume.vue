@@ -78,7 +78,6 @@
 				this.date = `${arr[0]}年${arr[1]}月${arr[2]}日`;
 				// this.timeStamp = new Date(`${arr[0]}-${arr[1]}-${arr[2]}`).getTime()
 				this.timeStamp = `${arr[0]}-${arr[1]}-${arr[2]}`
-				console.log(this.timeStamp)
 				this.getData(this.timeStamp)
 			},
 			getDate(type) {
@@ -109,7 +108,6 @@
 						}
 						// obj 传参过去不得行
 						myConsume(obj).then(res => {
-							console.log(res)
 							this.listData = res.returnMsg.varList
 						}).catch(err => {
 							uni.showToast({

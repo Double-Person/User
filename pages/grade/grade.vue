@@ -53,7 +53,6 @@
                 res.returnMsg.list.map(item => {
                    item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
                 })
-                console.log(res)
                 this.gradeList = res.returnMsg.list
             })
         }

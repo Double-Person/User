@@ -99,7 +99,6 @@
 						}
 						// 暂时未传参,展示全部数据 obj
 						myBalance(obj).then(res => {
-							console.log(res)
 							this.listData = res.returnMsg.varList
 						}).catch(err => {
 							uni.showToast({

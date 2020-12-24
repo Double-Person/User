@@ -58,9 +58,7 @@
 			},
             // 设置默认地址
             setDefault(ADDRESS_ID){
-                console.log(111)
                 setDeAdress({USERINFO_ID:this.USERINFO_ID,ADDRESS_ID}).then(res => {
-                    console.log(res)
                     this.getAddressList()
                 })
             },
@@ -71,7 +69,6 @@
 			// 删除选中
 			delAddress(id){
                 delAddress({ADDRESS_ID:id}).then(res => {
-                    console.log(res)
                     if(res.returnMsg.status == '00'){
                         uni.showToast({
                             title:'删除成功！'
@@ -86,7 +83,6 @@
 				if(this.state){
                     getApp().globalData.address = item
                     getApp().globalData.addressState = true
-                    console.log('返回地址', getApp().globalData.address)
                     uni.navigateBack({
                         delta:1
                     })
@@ -112,14 +108,12 @@
                 key: 'USERINFO_ID',
                 success: res => {
                     this.USERINFO_ID = res.data
-                    console.log('地址', res.data)
                     this.getAddressList()
                 }
             })
         },
         onLoad(e){
             this.state = e.state
-            console.log("状态", this.state)
         }
 	}
 </script>

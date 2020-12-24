@@ -81,7 +81,6 @@
                     "code": this.code
                 }
                 bandApliy(obj).then(res => {
-                    console.log(res)
                     if (res.returnMsg.status == '00') {
                         uni.showToast({
                             title: "绑定成功!",

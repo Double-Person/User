@@ -84,7 +84,6 @@
 			// 获取地址
 			getAddress(e){
 				this.address = e.detail.value;
-				console.log(e.detail.value)
 			},
 			// 获取门牌号
 			getRoomNum(e){

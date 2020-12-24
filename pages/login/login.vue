@@ -130,9 +130,10 @@
 								icon: 'none'
 							})
 						}
-					}).catch(err => {
-						console.log(JSON.stringify('登录错误--', JSON.stringify(err)))
-					})
+					}).catch(err => uni.showToast({
+						title: '系统错误!',
+						icon: 'none'
+					}))
 				}
 			})
 		},
@@ -182,7 +183,6 @@
 					PHONE: that.phone,
 					PASSWORD: that.pwd
 				}
-				console.log('===', that.saveObj)
 
 				try {
 					that.saveObj.openId = getApp().globalData.openid ? getApp().globalData.openid : '';
@@ -198,15 +198,13 @@
 			loginSendData() {
 				let that = this;
 				// 登录请求
-				console.log(that.saveObj)
 				login(that.saveObj).then(res => {
 
 					uni.showToast({
 						title: res.errMsg,
 						icon: 'none'
 					})
-					console.log(that.saveObj)
-					console.log(res)
+
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局
 						uni.setStorage({
@@ -220,7 +218,6 @@
 						uni.getStorage({
 							key: 'saveStata',
 							success: (res) => {
-								console.log('缓存', res)
 								if (res.data == "true") {
 									uni.redirectTo({
 										url: '/pages/index/index'
@@ -262,9 +259,11 @@
 							icon: 'none'
 						})
 					}
-				}).catch(err => {
-					console.log(JSON.stringify('登录错误--', JSON.stringify(err)))
-				})
+				}).catch(err =>
+					catch (err => uni.showToast({
+						title: '系统错误!',
+						icon: 'none'
+					})))
 			},
 
 
@@ -331,7 +330,6 @@
 				uni.getProvider({
 					service: 'oauth',
 					success: function(res) {
-						console.log(JSON.stringify(res.provider))
 						// if (res.provider.indexOf('weixin')) {
 						// uni.showLoading({
 						// 	title: '登录中...'
@@ -339,14 +337,7 @@
 						uni.login({
 							provider: 'weixin',
 							success: (loginRes) => {
-								console.log(JSON.stringify(loginRes))
-								console.log(loginRes)
-								uni.getUserInfo({
-								      provider: 'weixin',
-								      success: function (infoRess) {
-								        console.log('用户昵称为：' , infoRess);
-								      }
-								    });
+								
 								getApp().globalData.openid = loginRes.authResult.openid;
 								uni.hideLoading()
 								wxLogin({
@@ -354,7 +345,6 @@
 									"code": '',
 									"accessToken": loginRes.authResult.access_token
 								}).then(res => {
-									console.log('WDX', res)
 									getApp().globalData.nickName = res.returnMsg.nickName;
 									if (res.returnMsg.status == '00') {
 										uni.setStorage({
@@ -383,7 +373,6 @@
 									title: '您还未安装或登录！',
 									icon: 'none'
 								})
-								console.log(JSON.stringify(err))
 							}
 						});
 						// }

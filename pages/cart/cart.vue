@@ -99,7 +99,6 @@
 						cartList({
 							userId: res.data
 						}).then(res => {
-							console.log('购物车', res.returnMsg)
 							if (res.returnMsg.status == '00') {
 								// res.returnMsg.carts.map(item => {
 								// 	item.num = item.num
@@ -151,7 +150,6 @@
 					this.allChecked = true;
 					this.cartList[i].checked = true;
 				}
-				// console.log(index)
 			},
 
 			// 全选改变状态
@@ -169,7 +167,6 @@
 			},
 			// 改变数量
 			changeNun(num, index1, index2, goodsInfo) {
-				console.log(num, index1, index2, goodsInfo);
 				this.cartList.forEach((item, index) => {
 					if (index === index1) {
 						item.goodsList.forEach((goods, $goods) => {
@@ -189,7 +186,6 @@
 					return uni.showToast({ title: '没有商品!', icon: 'none' });		 
 				}
 				var arr = [];
-				console.log(this.cartList );
 				// 全部商品选中过滤
 				let arr1 = this.cartList //this.cartList.filter(item => item.checked)
 				let temp = [];
@@ -198,7 +194,6 @@
 					arr.push(...temp)
 				}
 				
-				console.log(arr );			
 				// return false;
 				
 				if (arr.length==0) {

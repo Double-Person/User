@@ -72,7 +72,6 @@
 			},
 			// 前往评价页
 			goEvaluate(item){
-				console.log(item)
 				uni.navigateTo({
 					url:"../evaluate/evaluate?ORDERSUMMARY_ID="+item.ORDERSUMMARY_ID+'&goodsId='+item.goodsId
 				})

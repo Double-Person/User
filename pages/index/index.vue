@@ -219,9 +219,7 @@
 					})
 
 				},
-				fail(err) {
-					console.log(JSON.stringify(err))
-				}
+				
 			});
 
 			// #endif
@@ -280,7 +278,6 @@
 						} = data.data.regeocode.addressComponent
 						// province +
 						this.newCity =  city + district
-						console.log(city , district)
 						this.getBannerList(city , district)
 						this.getPositonData(this.latitude, this.longitude, this.area)
 					},
@@ -327,7 +324,6 @@
 					var geoc = new BMap.Geocoder();
 					geoc.getLocation(point, function(rs) {
 						var addComp = rs.addressComponents;
-						console.log('app定位', addComp);
 						this.newCity(addComp.city);
 						setCityLocation(addComp.city);
 					});
@@ -436,7 +432,6 @@
 								item.distance = Math.round(item.distance);
 							});
 							this.menuList = res.data.varList;
-							console.log(this.menuList)
 						}
 					},
 					fail: () => {
