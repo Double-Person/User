@@ -187,14 +187,14 @@
 			<view class="content">
 				<view class="content-top">
 					优惠详情
-					<text class="iconfont icon-shanchu" @tap="setCouponHide = true"></text>
+					<text class="iconfont icon-shanchu" @tap="closeCard"></text>
 				</view>
 				<view class="redpackge">
 					<view class="redpackge-title">
 						<label
 							class="radio"
 							@tap="
-								ljsy(0);
+								notUseCard();
 								checkedradio = !checkedradio;
 							"
 						>
@@ -203,13 +203,17 @@
 						</label>
 					</view>
 					<view v-if="redpackgeList.length > 0">
-						<view class="redpackge-item" v-for="item in redpackgeList" :key="item.id">
+						<view class="redpackge-item" v-for="(item, indey) in redpackgeList" :key="item.id">
+							<view class="isUseCard">
+								<image :src="item.useCard ? '/static/images/checked.png' : '/static/images/notChecked.png'" mode=""></image>
+							</view>
+						
 							<view class="left">
 								<view class="left-quan">
 									<view class="price">
 										<text>￥</text>
 										<text>{{ item.MONEY }}</text>
-										<view>{{ item.TYPE == 1 && '抵扣券' }}</view>
+										<view>{{ item.TYPE == 1 && '抵扣券' || '' }}</view>
 									</view>
 								</view>
 								<view class="left-title">
@@ -218,7 +222,7 @@
 									<text>使用规则</text>
 								</view>
 							</view>
-							<view class="right" @tap="ljsy(item)">立即使用</view>
+							<view class="right" @tap="ljsy(item, indey)">立即使用</view>
 						</view>
 					</view>
 					<view v-else style="text-align: center;">暂无优惠券</view>
@@ -231,7 +235,11 @@
 			<view class="input-warp">
 				<view style="padding-top: 30rpx; font-size: 38rpx;">请输入密码</view>
 				<input class="input" v-model="tradePass" type="password" />
-				<view class="btn" @click="payByBalance">确定</view>
+				<view style="display: flex; justify-content: center;">
+					<view class="btn" @click="payByBalance">确定</view>
+					<view class="btn" @click="inputPwd = false">取消</view>
+				</view>
+				
 			</view>
 		</view>
 	
@@ -333,21 +341,26 @@ export default {
 				ADDRESS_ID: this.ADDRESS_ID,
 				SHOP_ID: this.shopId
 			};
-			// console.log(obj)
-			orderPay(obj)
-				.then(res => {
-					if (res.returnMsg.status == '00') {
-						this.payMaskHide = false;
-						this.orderID = res.returnMsg.ORDERSUMMARY_ID;
-						this.payAmount = res.returnMsg.ACTUALPAY;
-					} else {
-						uni.showToast({
-							title: '亲，支付金额不能小于零！',
+			orderPay(obj).then(res => {
+					if(res.msgType != '0') {
+						return uni.showToast({
+							title: '提交失败！',
 							icon: 'none',
 							duration: 2000,
 							mask: true
 						});
 					}
+					
+					this.orderID = res.returnMsg.ORDERSUMMARY_ID;
+					this.payAmount = res.returnMsg.ACTUALPAY;
+
+					if(this.submitTotal*1 <= 0) {
+						this.pay(0)
+					}else {
+						this.payMaskHide = false;
+					}
+					
+					
 				})
 				.catch(err => {
 					uni.showToast({
@@ -544,9 +557,42 @@ export default {
 			// 隐藏密码输入
 			this.payPwdMaskHide = true;
 		},
+		// 不使用优惠券
+		notUseCard() {
+			this.yhqTetx = '不使用优惠劵';
+			this.yhqMoney = 0;
+			this.yhqID = '';
+			this.setCouponHide = true;
+		},
 		// 立即使用优惠券
-		ljsy(item) {
-			console.log('立即使用优惠券', item);
+		ljsy(item, indey) {
+			item.useCard = !item.useCard
+			this.redpackgeList[indey] = item
+			this.$forceUpdate()
+		},
+		// 关闭优惠卷弹窗
+		closeCard() {
+			let checkCards = this.redpackgeList.filter(ele => ele.useCard);
+			if(checkCards.length === 0) {
+				this.yhqTetx = '不使用优惠券'
+				this.yhqMoney = 0
+			}else if(checkCards.length === 1) {
+				let [{title, MONEY}] = checkCards
+				this.yhqTetx =  title;
+				this.yhqMoney = MONEY;
+			}else {
+				this.yhqMoney = checkCards.reduce((pre, nex) => pre.MONEY * 1 + nex.MONEY *1);
+				this.yhqTetx = checkCards.map(item => item.MONEY).join('元,') + '优惠券'
+			}
+			this.yhqID = checkCards.map(item => item.USERCOUPONS_ID).join(',');
+			this.checkedradio = false;
+			this.setCouponHide = true;
+			// this.yhqMoney = item.MONEY;
+			// this.yhqID = item.USERCOUPONS_ID;
+		},
+		
+		ljsy11(item) {
+			
 			if (item) {
 				this.yhqTetx = item.title;
 				this.checkedradio = false;
@@ -578,21 +624,28 @@ export default {
 				
 				this.phone = res.returnMsg.phone
 				this.redpackgeList = res.returnMsg.userCoupons;
-				this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')
-				
+				this.redpackgeList.forEach(item => item.useCard = false)
+				this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')				
 			});
 		},
 		// 获取星币
 		_personal(USERINFO_ID) {
 			personal({ USERINFO_ID }).then(res => {
-				if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
-					if (this.total <= 1) {
-					} else {
-						this.XBMoneyValid = Math.ceil(this.total - 1);
-					}
-				} else {
+				// if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
+				// 	if (this.total <= 1) {
+				// 	} else {
+				// 		this.XBMoneyValid = Math.ceil(this.total - 1);
+				// 	}
+				// } else {
+				// 	this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
+				// }
+				// 星币可全部抵扣
+				if(res.returnMsg.userInfo.STARCOINS < this.submitTotal) {
 					this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
+				}else {
+					this.XBMoneyValid =this.submitTotal;
 				}
+				
 				this.XBMoney = res.returnMsg.userInfo.STARCOINS;
 				//  显示余额
 				this.BALANCE = res.returnMsg.BALANCE || '0' ;
@@ -615,7 +668,6 @@ export default {
 			
 				if(e.page == 'cart') {  // 从购物车中
 				var arr = JSON.parse(e.item);
-				console.log('===', arr)
 					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
 					
@@ -704,6 +756,7 @@ export default {
 			}
 			.btn{
 				margin-top: 30rpx;
+				width: 100rpx;
 			}
 		}
 	}
@@ -1128,6 +1181,16 @@ export default {
 				width: 86%;
 				margin: 0 auto 20rpx;
 				box-shadow: 0 4rpx 20rpx #999;
+				position: relative;
+				.isUseCard{
+					position: absolute;
+					top: 15rpx;
+					right: 15rpx;
+					image {
+						width: 30rpx;
+						height: 30rpx;
+					}
+				}
 				.left {
 					display: flex;
 					.left-quan {

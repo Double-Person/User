@@ -95,11 +95,11 @@
 			</view>
 		</view>
 		<!-- 退出登录 -->
-		
+
 		<view class="submit-btn" @tap="outLogin;hideBox=false;type=0">
 			退出登录
 		</view>
-	
+
 		<!-- tabbar -->
 		<tabbar></tabbar>
 		<!-- 验证登录密码蒙层 -->
@@ -133,7 +133,11 @@
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	import testCode from '@/components/testCode/testCode';
-    import md5 from "@/common/md5.js"
+	import md5 from "@/common/md5.js"
+
+	import {
+		pwdInfo
+	} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
@@ -141,25 +145,35 @@
 				phoneMaskShow: false,
 				hideBox: true,
 				hideBox1: true,
-				hideTips:false,
-				hideTips1:false,
-				type:0,
-				type1:false,
-				isPwd:''
+				hideTips: false,
+				hideTips1: false,
+				type: 0,
+				type1: false,
+				isPwd: '',
 			};
 		},
-	
+
 		components: {
 			tabbar,
 			testCode
 		},
 		onLoad() {
-			this.isPwd = getApp().globalData.isPwd;
+			// this.isPwd = getApp().globalData.isPwd;
+			this.judgeTradingPwd()
 			let info = uni.getStorageSync('name');
 			this.phone = JSON.parse(info).PHONE;
 		},
-	
+
 		methods: {
+
+			judgeTradingPwd() {
+				let userinfo_id = uni.getStorageSync('USERINFO_ID');
+				pwdInfo({
+					userinfo_id
+				}).then(res => {
+					this.isPwd = (res.returnMsg == "已经设置交易密码")
+				})
+			},
 			backPage() {
 				// #ifdef H5
 				let canBack = true;
@@ -189,14 +203,15 @@
 			},
 			// 前往更换页面
 			goChangePhone() {
-				if(getApp().globalData.isPwd){
+
+				if (this.isPwd /* getApp().globalData.isPwd */ ) {
 					this.hideBox1 = false;
-				}else{
+				} else {
 					uni.showToast({
-						title:'请先设置交易密码'
+						title: '请先设置交易密码'
 					})
 				}
-				
+
 			},
 			// 前往登录密码
 			goLoginPassword() {
@@ -205,9 +220,9 @@
 				})
 			},
 			// 前往设置交易密码
-			goSetPwd(){
+			goSetPwd() {
 				uni.navigateTo({
-					url:"../setTransactionPwd/setTransactionPwd"
+					url: "../setTransactionPwd/setTransactionPwd"
 				})
 			},
 			// 前往交易密码
@@ -217,9 +232,9 @@
 				})
 			},
 			// 前往找回密码
-			goPasswordBack(){
+			goPasswordBack() {
 				uni.navigateTo({
-					url:"../passwordback/passwordback"
+					url: "../passwordback/passwordback"
 				})
 			},
 			// 前往实名认证
@@ -230,87 +245,91 @@
 			},
 			// 确认注销
 			submit() {
-				if(getApp().globalData.pwd == '') {
-					uni.removeStorage({key:'saveStata'})
+				if (getApp().globalData.pwd == '') {
 					uni.removeStorage({
-						key:'name',
-						success:()=>{
+						key: 'saveStata'
+					})
+					uni.removeStorage({
+						key: 'name',
+						success: () => {
 							uni.showToast({
 								title: '注销成功',
 								icon: 'none'
 							})
 							setTimeout(() => {
 								uni.reLaunch({
-									url:'../login/login'
+									url: '../login/login'
 								})
 							}, 500)
 						}
 					})
-				}else {
+				} else {
 					// 关闭确认弹窗
 					this.phoneMaskShow = false;
 					// 弹出交易密码验证
-					this.hideBox1=false;
+					this.hideBox1 = false;
 				}
 			},
 			// 获取输入登录密码
 			getPwd(val) {
 				let info = uni.getStorageSync('name');
 				let PASSWORD = JSON.parse(info).PASSWORD;
-				if(val == PASSWORD){
+				if (val == PASSWORD) {
 					this.hideBox = true;
-					if(this.type===2||this.type===0){
-						this.phoneMaskShow=true;
+					if (this.type === 2 || this.type === 0) {
+						this.phoneMaskShow = true;
 						uni.clearStorageSync();
 						uni.reLaunch({
-							url:"../login/login"
+							url: "../login/login"
 						})
 					}
-				}else{
+				} else {
 					this.hideTips = true;
 				}
 			},
 			// 获取输入交易密码、
-			getPwd1(val){
-                var pwd = md5(val)
-				if(val==getApp().globalData.pwd){
+			getPwd1(val) {
+				var pwd = md5(val)
+				if (val == getApp().globalData.pwd) {
 					this.hideBox1 = true;
-					if(this.type1){
+					if (this.type1) {
 						// 前往修改手机号
 						uni.navigateTo({
 							url: "../changePhone/changePhone"
 						})
-					}else{
-						uni.removeStorage({key:'saveStata'})
+					} else {
 						uni.removeStorage({
-							key:'name',
-							success:()=>{
+							key: 'saveStata'
+						})
+						uni.removeStorage({
+							key: 'name',
+							success: () => {
 								uni.reLaunch({
-									url:'../login/login'
+									url: '../login/login'
 								})
 							}
 						})
-						
+
 					}
-					
-				}else{
+
+				} else {
 					this.hideTips1 = true;
 				}
 			},
 			// 关于我们
-			goAbout(){
+			goAbout() {
 				uni.navigateTo({
-					url:'../about/about'
+					url: '../about/about'
 				})
 			},
 			// 退出登录
-			outLogin(){
+			outLogin() {
 				uni.reLaunch({
-					url:"../login/login"
+					url: "../login/login"
 				})
 			}
 		},
-		
+
 	}
 </script>
 
@@ -342,9 +361,11 @@
 			margin-top: 20rpx;
 			background: #fff;
 			padding-left: 30rpx;
-			.ispwd{
+
+			.ispwd {
 				display: none !important;
 			}
+
 			.setting-content-item {
 				display: flex;
 				justify-content: space-between;
@@ -447,12 +468,14 @@
 		padding-top: 100rpx;
 		top: 0;
 		background: #fff;
-		.back{
+
+		.back {
 			font-size: 30rpx;
 			margin-left: 30rpx;
 			margin-top: 30rpx;
 			color: #FF5A2C;
 		}
+
 		.shopManage-testPwd-title {
 			margin-top: 300rpx;
 			text-align: center;
@@ -472,16 +495,17 @@
 			display: block;
 		}
 	}
-	.submit-btn{
-			width: 95%;
-			background:linear-gradient(243deg,rgba(255,153,96,1) 0%,rgba(255,90,44,1) 100%);
-			height: 88rpx;
-			border-radius: 10rpx;
-			color: #fff;
-			font-size: 40rpx;
-			margin: 50rpx auto 90rpx;
-			text-align: center;
-			line-height: 88rpx;
-			box-shadow: 0 10rpx 20rpx #FF9960;
-		}
+
+	.submit-btn {
+		width: 95%;
+		background: linear-gradient(243deg, rgba(255, 153, 96, 1) 0%, rgba(255, 90, 44, 1) 100%);
+		height: 88rpx;
+		border-radius: 10rpx;
+		color: #fff;
+		font-size: 40rpx;
+		margin: 50rpx auto 90rpx;
+		text-align: center;
+		line-height: 88rpx;
+		box-shadow: 0 10rpx 20rpx #FF9960;
+	}
 </style>

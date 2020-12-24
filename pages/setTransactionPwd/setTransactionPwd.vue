@@ -49,7 +49,6 @@
                     "USERINFO_ID": this.USERINFO_ID,
 					"TRADRPASS": this.pwd
 				}).then(res=>{
-					console.log(res)
                     uni.hideLoading()
 					if (res.returnMsg.status == '00') {
 						uni.showToast({

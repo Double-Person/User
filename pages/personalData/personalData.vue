@@ -14,7 +14,7 @@
 						<view>添加图片</view>
 					</view>
 					<view class="right-img" :class="imgHide?'imgHide':''">
-						<image :src="imgUrl" mode=""></image>
+						<image :src="imgBaseUrl + imgUrl" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -49,11 +49,13 @@
 		setPassword,
 		personal,
 		editInfo,
-		baseUrl
+		baseUrl,
+		imgBaseUrl
 	} from '@/common/apis.js';
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				imgHide: true, // 隐藏/显示图片
 				imgUrl: '', // 图片地址
 				username: '',
@@ -141,24 +143,26 @@
 				key: 'USERINFO_ID',
 				success: res => this.USERINFO_ID = res.data
 			})
+			uni.showLoading({
+				title: '加载中', mask: true
+			})
 			personal({
 				USERINFO_ID: this.USERINFO_ID
 			}).then(res => {
-				console.log(res)
 				if (res.returnMsg.status == '00') {
-					if (res.returnMsg.userInfo.FACEICON) {
-						this.imgUrl = res.returnMsg.userInfo.FACEICON
+					let { FACEICON, USERNAME } = res.returnMsg.userInfo
+					if (FACEICON) {
+						this.imgUrl = FACEICON
 						this.imgHide = false;
-						console.log(this.imgUrl)
 					}
-					this.username = res.returnMsg.userInfo.USERNAME
+					this.username = USERNAME
 				} else {
 					uni.showToast({
 						title: '网络出小差了！',
 						icon: 'none'
 					})
 				}
-			})
+			}).finally(() => uni.hideLoading())
 		}
 	}
 </script>

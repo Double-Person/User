@@ -12,22 +12,22 @@
 		<view class="certification-upload">
 			<view class="certification-upload-zhang" @tap="zheng">
 				<view class="top" :class="imgHide1 ? '' : 'imgHide'">
-					<image :src="userInfo.IDCARDFRONT ? userInfo.IDCARDFRONT :'/static/images/renzheng01.png'" mode=""></image>
+					<image :src="userInfo.IDCARDFRONT ? (imgBaseUrl + userInfo.IDCARDFRONT) :'/static/images/renzheng01.png'" mode=""></image>
 					<view>请上传身份证正面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
 				<view class="img" :class="imgHide1 ? 'imgHide' : ''">
-					<image :src="imgUrl1" mode=""></image>
+					<image :src="imgBaseUrl + imgUrl1" mode=""></image>
 				</view>
 			</view>
 			<view class="certification-upload-fan" @tap="fan">
 				<view class="top" :class="imgHide2 ? '' : 'imgHide'">
-					<image :src="userInfo.IDCARDBACK ? userInfo.IDCARDBACK : '/static/images/renzheng02.png'" mode=""></image>
+					<image :src="userInfo.IDCARDBACK ? (imgBaseUrl + userInfo.IDCARDBACK) : '/static/images/renzheng02.png'" mode=""></image>
 					<view>请上传身份证反面</view>
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
 				<view class="img" :class="imgHide2 ? 'imgHide' : ''">
-					<image :src="imgUrl2" mode=""></image>
+					<image :src="imgBaseUrl + imgUrl2" mode=""></image>
 				</view>
 			</view>
 		</view>
@@ -49,7 +49,8 @@
 		Authentication,
 		personal,
 		uploadImag,
-		baseUrl
+		baseUrl,
+		imgBaseUrl
 	} from '@/common/apis.js';
 	import {
 		pathToBase64,
@@ -58,6 +59,7 @@
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				imgHide1: true,
 				imgHide2: true,
 				imgUrl1: '',
@@ -190,6 +192,10 @@
 				key: 'USERINFO_ID',
 				success: res => (this.USERINFO_ID = res.data)
 			});
+			uni.showLoading({
+				title: '加载中', 
+				mask:true
+			})
 			// 获取个人资料
 			personal({
 				USERINFO_ID: this.USERINFO_ID
@@ -204,7 +210,7 @@
 					this.imgHide2 = false;
 					this.imgUrl2 = res.returnMsg.userInfo.IDCARDBACK;
 				}
-			});
+			}).finally(() => uni.hideLoading())
 		}
 	};
 </script>

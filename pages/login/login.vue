@@ -175,7 +175,7 @@
 
 			// 前往首页
 			goIndex() {
-				let that = this;
+				const that = this;
 				uni.showLoading({
 					title: '登录中...'
 				})
@@ -259,11 +259,10 @@
 							icon: 'none'
 						})
 					}
-				}).catch(err =>
-					catch (err => uni.showToast({
-						title: '系统错误!',
-						icon: 'none'
-					})))
+				}).catch(err => uni.showToast({
+					title: '系统错误!',
+					icon: 'none'
+				}))
 			},
 
 
@@ -337,7 +336,7 @@
 						uni.login({
 							provider: 'weixin',
 							success: (loginRes) => {
-								
+
 								getApp().globalData.openid = loginRes.authResult.openid;
 								uni.hideLoading()
 								wxLogin({
