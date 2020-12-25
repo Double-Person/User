@@ -148,19 +148,19 @@
 		},
 
 		created() {
-			uni.login({
-			  provider: 'weixin',
-			  success: function (loginRes) {
-			    console.log(loginRes.authResult);
-			    // 获取用户信息
-			    uni.getUserInfo({
-			      provider: 'weixin',
-			      success: function (infoRes) {
-			        console.log('用户昵称为：' , infoRes.userInfo);
-			      }
-			    });
-			  }
-			});
+			// uni.login({
+			//   provider: 'weixin',
+			//   success: function (loginRes) {
+			//     console.log(loginRes.authResult);
+			//     // 获取用户信息
+			//     uni.getUserInfo({
+			//       provider: 'weixin',
+			//       success: function (infoRes) {
+			//         console.log('用户昵称为：' , infoRes.userInfo);
+			//       }
+			//     });
+			//   }
+			// });
 			let that = this;
 			// #ifdef APP-PLUS
 			// plus 获取经纬度
@@ -406,6 +406,10 @@
 			},
 			// 根据定位请求数据
 			getPositonData(longitude, latitude, area, CATEGORY_ID) {
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
 				uni.request({
 					url: baseUrl + '/api/ordersummary/push/newvendor',
 					header: {
@@ -435,10 +439,13 @@
 						}
 					},
 					fail: () => {
-						uni.showToast({
+						uni.showLoading({
 							title: '获取数据失败！',
 							icon: 'none'
 						});
+					},
+					complete() {
+						uni.hideLoading()
 					}
 				})
 
@@ -518,6 +525,7 @@
 					success: res => {
 						let shopId = res.result;
 						getShopPay({ SHOP_ID: shopId}).then(res => {
+							
 							if (res.returnMsg.status != '00') {
 								return uni.showToast({
 									title: '条码错误!',

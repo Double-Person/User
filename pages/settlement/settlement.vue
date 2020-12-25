@@ -222,7 +222,8 @@
 									<text>使用规则</text>
 								</view>
 							</view>
-							<view class="right" @tap="ljsy(item, indey)">立即使用</view>
+							<view class="right" :class="{activeBtn: item.STATES == 1}" 
+								  @tap="ljsy(item, indey)">{{ item.STATES == 0 ? '立即使用' : '已使用' }}</view>
 						</view>
 					</view>
 					<view v-else style="text-align: center;">暂无优惠券</view>
@@ -563,10 +564,12 @@ export default {
 			this.yhqMoney = 0;
 			this.yhqID = '';
 			this.setCouponHide = true;
+			this.redpackgeList.forEach(item => item.useCard = false)
 		},
 		// 立即使用优惠券
 		ljsy(item, indey) {
 			item.useCard = !item.useCard
+			this.checkedradio = false;
 			this.redpackgeList[indey] = item
 			this.$forceUpdate()
 		},
@@ -616,6 +619,10 @@ export default {
 		},
 		// 获取优惠券
 		_myCard(USERINFO_ID) {
+			uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
 			
 			myCard({ USERINFO_ID }).then(res => {
 				res.returnMsg.userCoupons.map(item => {
@@ -626,7 +633,7 @@ export default {
 				this.redpackgeList = res.returnMsg.userCoupons;
 				this.redpackgeList.forEach(item => item.useCard = false)
 				this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')				
-			});
+			}).finally(() => uni.hideLoading())
 		},
 		// 获取星币
 		_personal(USERINFO_ID) {
@@ -1187,8 +1194,8 @@ export default {
 					top: 15rpx;
 					right: 15rpx;
 					image {
-						width: 30rpx;
-						height: 30rpx;
+						width: 40rpx;
+						height: 40rpx;
 					}
 				}
 				.left {
@@ -1233,6 +1240,9 @@ export default {
 					line-height: 60rpx;
 					background: linear-gradient(244deg, rgba(255, 137, 36, 1) 0%, rgba(255, 90, 45, 1) 100%);
 					border-radius: 40rpx;
+				}
+				.activeBtn{
+					background: #d1d1d1 !important;
 				}
 			}
 		}

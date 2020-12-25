@@ -177,7 +177,8 @@
 			goIndex() {
 				const that = this;
 				uni.showLoading({
-					title: '登录中...'
+					title: '登录中...',
+					mask: true
 				})
 				that.saveObj = {
 					PHONE: that.phone,
@@ -200,10 +201,7 @@
 				// 登录请求
 				login(that.saveObj).then(res => {
 
-					uni.showToast({
-						title: res.errMsg,
-						icon: 'none'
-					})
+					uni.showToast({ title: res.errMsg, icon: 'none' })
 
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局

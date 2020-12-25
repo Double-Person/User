@@ -40,7 +40,7 @@
 					</view>
 				</view>
 				<!-- 招商银行卡 -->
-				<view class="myCard-content-item">
+				<view class="myCard-content-item" v-if="false">
 					<view class="left">
 						<text class="iconfont icon-bangdingshezhiyinxingqiabangding" style="color: #FF9707;"></text>
 						<view class="text">
@@ -63,7 +63,7 @@
 				红包/抵用券
 			</view>
 
-			<view class="redpackge-item" v-for="item in redpackgeList" :key="item.id">
+			<view class="redpackge-item" v-for="item in redpackgeList" :key="item.COUPONS_ID">
 				<view class="left">
 					<view class="left-quan">
 						<view class="price">
@@ -109,20 +109,7 @@
 				info: {
 
 				},
-				redpackgeList: [{
-						id: "01",
-						price: 8,
-						title: "5元剪发券",
-						date: "2019-12-31"
-					},
-					{
-						id: "02",
-						price: 10,
-						title: "5元剪发券",
-						date: "2019-12-31"
-					},
-
-				],
+				redpackgeList: [],
 				cardStata: false,
 				wxName: '',
 				AlipayName: '',
@@ -153,7 +140,7 @@
 							item.title = '通用抵扣券' + item.MONEY + '元'
 						})
 
-						this.redpackgeList = res.returnMsg.userCoupons
+						this.redpackgeList = res.returnMsg.userCoupons;
 					})
 					shopBank({shop_id: res.data}).then(res => {
 						this.info = res.returnMsg

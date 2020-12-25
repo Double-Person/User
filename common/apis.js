@@ -1,10 +1,10 @@
 // 引入封装的request
 // import request from './request.js';
 import request from './ajax.js'
-// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-export const baseUrl = 'http://192.168.0.114:8081'
-// export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-export const imgBaseUrl = 'http://192.168.0.114:8081/'
+export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+// export const baseUrl = 'http://192.168.0.112:8081'
+export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
+// export const imgBaseUrl = 'http://192.168.0.112:8081/'
 
 
 
