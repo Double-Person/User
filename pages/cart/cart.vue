@@ -67,7 +67,7 @@
 	// 引入公用头部
 	import commonHeader from "@/components/common-header/common-header";
 	import {
-		cartList, imgBaseUrl
+		cartList, deletecarts, imgBaseUrl
 	} from "@/common/apis.js"
 	export default {
 		name: 'ShopCart',
@@ -174,6 +174,7 @@
 								goods.COUNTS = Number(goods.COUNTS) + num
 								if (goods.COUNTS < 1) {
 									item.goodsList.splice($goods, 1)
+									deletecarts({GOODS_ID: goodsInfo.GOODS_ID})
 								}
 							}
 						})

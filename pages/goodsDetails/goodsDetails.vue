@@ -222,6 +222,7 @@
 						.text {
 							font-size: 30rpx;
 							letter-spacing: 5rpx;
+							word-break:break-all;
 						}
 					}
 				}

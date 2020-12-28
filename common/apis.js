@@ -1,10 +1,10 @@
 // 引入封装的request
 // import request from './request.js';
 import request from './ajax.js'
-export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-// export const baseUrl = 'http://192.168.0.112:8081'
-export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-// export const imgBaseUrl = 'http://192.168.0.112:8081/'
+// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+export const baseUrl = 'http://192.168.0.106:8081'
+// export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
+export const imgBaseUrl = 'http://192.168.0.106:8081/'
 
 
 
@@ -174,6 +174,10 @@ export const shopActivityGoods = params => request.get('/api/ordersummary/shopAc
 
 // 余额支付
 export const shopBygoodList = params => request.get('/api/ordersummary/balance/pay', { params })
+
+//  删除购物车
+export const deletecarts = params => request.post('/api/ordersummary/me/deletecarts', params)
+
 
 
 

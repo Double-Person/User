@@ -4,20 +4,25 @@
 		<commonHeader headerTitl="收藏店铺" xingHide=true lingHide=true></commonHeader>
 		<!-- 内容开始 -->
 		<view class="collectShop-content" v-if="collectShopList.length > 0">
-			<view class="collectShop-content-item" v-for="item in collectShopList" :key="item.id">
-				<view class="title">
-					<view class="title-left">
-						<image :src="item.bgImg" mode=""></image>
-						<text>{{item.shopName}}</text>
-					</view>
-					<view class="title-right">
-						<!-- 已收藏 -->
-						<view class="btn">
-							<text @tap="cancel(item.collectionsId)">取消收藏</text>
-							<!-- <text>再来一单</text> -->
+			<view class="collectShop-content-item" v-for="item in collectShopList" :key="item.id" @click="toShop(item.shopId)">
+				<view class="title" :style="{'background':'url('+imgBaseUrl + item.bgImg+')'}">
+					<view class="shop">
+						<view class="title-left">
+							<image :src="imgBaseUrl + item.faceicon" mode=""></image>
+							<text>{{item.shopName}}</text>
+							
+						</view>
+						<view class="title-right">
+							<!-- 已收藏 -->
+							<view class="btn">
+								<text @tap.stop="cancel(item.collectionsId)">取消收藏</text>
+								<!-- <text>再来一单</text> -->
+							</view>
 						</view>
 					</view>
+					<text class="time">关注时间：{{ item.creates }}</text>
 				</view>
+				
 				<!-- <view class="content">
 					<view class="content-left">
 						<image :src="item.shopImg" mode=""></image>
@@ -46,13 +51,12 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {collections,delCollec} from"@/common/apis.js"
+    import {collections,delCollec, imgBaseUrl} from"@/common/apis.js"
 	export default {
 		data() {
 			return {
-				collectShopList:[
-					{id:"01",imgUrl:"../../static/images/cartLOGO.png",title:"豆浆油条先生","goodsUrl":"../../static/images/content01.png",date:"2019-11-11 08:11",price:"20.99"},
-				],
+				imgBaseUrl: imgBaseUrl,
+				collectShopList:[],
                 USERINFO_ID:''
 			};
 		},
@@ -61,6 +65,13 @@
 			tabbar
 		},
 		methods:{
+			// 去店铺
+			toShop(shopId) {
+			
+				uni.navigateTo({
+					url:'../shopPage/shopPage?shopId=' + shopId
+				})
+			},
 			// 取消收藏
 			cancel(shopId){
                 delCollec({COLLECTIONS_ID:shopId}).then(res => {
@@ -108,23 +119,32 @@
 		/* #endif */
 		.collectShop-content{
 			.collectShop-content-item{
-				background: #fff;
-				padding: 0 20rpx;
+				// background: #fff;
+				background-size: contain;
+				padding: 0 0rpx;
 				width: 90%;
 				margin: 0 auto 30rpx;
 				border-radius: 20rpx;
 				color: #333;
-				.title{
-					padding: 30rpx 0;
+				.shop{
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
+				}
+				.time{
+					font-size: 28rpx;
+					margin-left: 20rpx;
+				}
+				.title{
+					padding: 30rpx 0;
+					
 					border-bottom: 1px solid #e0e0e0;
 					font-weight: bold;
 					.title-left{
 						font-size: 32rpx;
 						display: flex;
 						align-items: center;
+						margin-left: 20rpx;
 						image{
 							width: 50rpx;
 							height: 50rpx;
@@ -137,6 +157,8 @@
 						color: #999;
 						display: flex;justify-content: center;
 						align-items: center;
+						position: relative;
+						z-index: 666;
 					}
 				}
 				.content{

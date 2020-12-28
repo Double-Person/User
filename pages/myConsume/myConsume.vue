@@ -19,14 +19,14 @@
 			<view class="mybalance-content-item" v-for="item in listData" :key="item.id">
 				<view class="content">
 					<text class="left">
-						<image :src="item.faceicon" mode="" v-if="item.faceicon.length> 10"></image>
+						<image :src="imgBaseUrl + item.faceicon" mode="" v-if="item.faceicon.length> 10"></image>
 						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue" v-else></text>
 						
 					</text>
 					<view class="right">
 						<view class="top">
 							<view class="name">
-								<text>{{item.shopName ? item.shopName : '线下支付'}}</text>
+								<text>{{item.orderno ? item.orderno : '线下支付'}}</text>
 								<view v-if="item.goodsName">
 									{{item.goodsName}}
 								</view>
@@ -36,7 +36,7 @@
 							</view>
 						</view>
 						<view class="bottom">
-							{{item.createTime}}
+							{{item.createTime}} 到期时间：{{ item.endtime }}
 						</view>
 					</view>
 				</view>
@@ -55,7 +55,7 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 
 	import {
-		myConsume
+		myConsume, imgBaseUrl
 	} from '@/common/apis.js';
 	export default {
 		data() {
@@ -63,6 +63,7 @@
 				format: true
 			})
 			return {
+				imgBaseUrl: imgBaseUrl,
 				headerTitl: "我的消费金",
 				listData: [],
 				// 日期选择
@@ -233,7 +234,7 @@
 						}
 
 						.bottom {
-							font-size: 30rpx;
+							font-size: 24rpx;
 							color: #999;
 						}
 					}

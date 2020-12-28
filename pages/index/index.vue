@@ -20,8 +20,8 @@
 			</view>
 		</view>
 
-		<!-- 广告 -->
-		<view @click="goPreferencesPage" class="index-poster">
+		<!-- 广告 @click="goPreferencesPage" -->
+		<view  class="index-poster">
 			<specialBanner :banner-list="bannerList" :swiper-config="swiperConfig"></specialBanner>
 			<!-- <image src="../../static/images/banner.png" mode=""></image> -->
 		</view>
@@ -491,14 +491,19 @@
 					CATEGORY: 0, // 0 首页轮播 1 优惠活动
 				};
 				getBanner(data).then(res => {
+					console.log(res.returnMsg.banner)
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
+							shopId: item.SHOP_ID,
+							types: item.TYPES, // 0 外部 1 商品
 							picture: item.IMG,
 							title: '',
 							description: '',
 							path: item.URL
 						}
 					})
+					
+					console.log('轮播', this.bannerList.length, this.bannerList)
 
 				}).catch(err => console.log(err))
 			},

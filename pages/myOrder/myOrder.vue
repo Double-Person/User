@@ -25,7 +25,9 @@
 						<view class="item-content">
 							<view 
 									v-for="(good,indez) in shopItem.goodes" 
-									:key="indez" style="width:100%; display: flex;justify-content: space-between;">
+									:key="indez" 
+									@click="toShop(good.SHOP_ID)"
+									style="width:100%; display: flex;justify-content: space-between;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
@@ -50,6 +52,16 @@
 
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
+					</view>
+					
+					<view class="item-pay">
+						下单时间：{{ item.CREATETIME }}
+					</view>
+					<view class="item-pay" v-if="item.REMARKS">
+						备注：{{ item.REMARKS }}
+					</view>
+					<view class="item-pay border-bottom">
+						收获地址：{{ item.ADDRESS }}
 					</view>
 					
 					
@@ -83,8 +95,11 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
-								<view class="left">
+							<view v-for="(good,indez) in shopItem.goodes" 
+							:key="indez" 
+							@click="toShop(good.SHOP_ID)"
+							style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
+								<view class="left" >
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
 										<text class="left-title">
@@ -102,6 +117,15 @@
 							</view>
 						</view>
 
+					</view>
+					<view class="item-pay">
+						下单时间：{{ item.CREATETIME }}
+					</view>
+					<view class="item-pay" v-if="item.REMARKS">
+						备注：{{ item.REMARKS }}
+					</view>
+					<view class="item-pay border-bottom">
+						收获地址：{{ item.ADDRESS }}
 					</view>
 
 					<view class="item-total" style="align-items: center;">
@@ -133,7 +157,9 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%;display: flex;justify-content: space-between;">
+							<view v-for="(good,indez) in shopItem.goodes" 
+							:key="indez" @click="toShop(good.SHOP_ID)"
+							 style="width:100%;display: flex;justify-content: space-between;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
@@ -158,6 +184,15 @@
 				
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
+					</view>
+					<view class="item-pay">
+						下单时间：{{ item.CREATETIME }}
+					</view>
+					<view class="item-pay" v-if="item.REMARKS">
+						备注：{{ item.REMARKS }}
+					</view>
+					<view class="item-pay border-bottom">
+						收获地址：{{ item.ADDRESS }}
 					</view>
 					
 					
@@ -227,26 +262,49 @@
 			this.getOrderList(1)
 		},
 		methods: {
+			// 去店铺
+			toShop(shopId) {
+				uni.navigateTo({
+					url:'../shopPage/shopPage?shopId=' + shopId
+				})
+			},
 			// 去支付
 			toPay(item) {
-				let {
-					BALANCE
-				} = uni.getStorageSync('userInfo');
-				const _this = this;
-				this.orderId = item.ORDERSUMMARY_ID
+				
+				console.log(item)
+				let goodsInfo = item.shop.map(ele => ele.goodes);
+				console.log(goodsInfo)
+				item.goodsInfo = [...goodsInfo]
+				
+				
+				
+				
+				uni.setStorageSync('myOrderPayment', JSON.stringify(item));
+				// page == 'myOrder'
+				uni.navigateTo({
+					url: '../settlement/settlement?page=myOrder'
+				})
+				return false;
+				
+				
+				// let {
+				// 	BALANCE
+				// } = uni.getStorageSync('userInfo');
+				// const _this = this;
+				// this.orderId = item.ORDERSUMMARY_ID
 
-				uni.showActionSheet({
-					itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
-					success(res) {
-						if (res.tapIndex === 3) {
-							return uni.showToast({
-								title: '暂不支持银行卡支付',
-								icon: 'none'
-							})
-						}
-						_this.pay(res.tapIndex, item.ACTUALPAY, item.ORDERSUMMARY_ID)
-					},
-				});
+				// uni.showActionSheet({
+				// 	itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
+				// 	success(res) {
+				// 		if (res.tapIndex === 3) {
+				// 			return uni.showToast({
+				// 				title: '暂不支持银行卡支付',
+				// 				icon: 'none'
+				// 			})
+				// 		}
+				// 		_this.pay(res.tapIndex, item.ACTUALPAY, item.ORDERSUMMARY_ID)
+				// 	},
+				// });
 			},
 
 			pay(index, ACTUALPAY, ORDERSUMMARY_ID) {
@@ -480,6 +538,9 @@
 </script>
 
 <style lang="less">
+	.border-bottom{
+		border-bottom: 1px solid #e0e0e0;
+	}
 	.input-pwd {
 		position: fixed;
 		z-index: 999;
@@ -644,7 +705,7 @@
 
 					.item-code,
 					.item-pay {
-						padding: 20rpx 0;
+						padding: 14rpx 0;
 
 						text {
 							color: #666;
@@ -653,8 +714,9 @@
 					}
 
 					.item-pay {
-						border-bottom: 1px solid #e0e0e0;
+						font-size: 28rpx;
 					}
+					
 
 					.item-total {
 						display: flex;

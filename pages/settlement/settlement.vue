@@ -12,7 +12,7 @@
 						<text>{{ address.USERNAME }}</text>
 						<text>{{ address.PHONE }}</text>
 					</view>
-					<view class="text">{{ address.AREA + address.FULLADD }}</view>
+					<view class="text">{{ address.addressDetailed }}</view>
 				</view>
 				<view v-else class="setting-content-top-right" style="color: #999;font-size: 30rpx;">选择地址</view>
 			</view>
@@ -308,9 +308,104 @@ export default {
 		};
 	},
 	
+	components: {
+		commonHeader,
+		tabbar
+	},
+	onLoad(e) {
+			// this.Allprice=e.allTotal		
+		this.shopId = e.shopId;
+		this.getAddressInfo(e.page);
+		uni.getStorage({
+			key: 'USERINFO_ID',
+			success: res => {
+				this.USERINFO_ID = res.data;
+			
+				if(e.page == 'cart') {  // 从购物车中
+				var arr = JSON.parse(e.item);
+					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
+					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
+					
+					arr.map(item => {
+						this.GOODS.push({ GOODS_ID: item.GOODS_ID, COUTNS: item.COUNTS, PRICE: parseFloat(item.PRICE), SHOP_ID: item.SHOP_ID });
+					});
+				}else if(e.page == 'shopPage'){ //  从商店直接购买
+					var arr = JSON.parse(e.item);
+					console.log('===', arr);
+					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
+					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
+					arr.map(item => {
+						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price), SHOP_ID:e.shopId });
+					});
+				}else if(e.page == 'myOrder'){ //  待支付订单
+					let myOrderPaymentJson = uni.getStorageSync('myOrderPayment');
+					let myOrderPayment = JSON.parse(myOrderPaymentJson);
+					this.shopNum = myOrderPayment.number
+					this.total = myOrderPayment.PAYABLE
+					this.GOODS = myOrderPayment.goodsInfo[0]
+			
+				}
+	
+	
+				// 获取优惠券
+				this._myCard(res.data)
+				// 获取星币
+				this._personal(res.data)
+		
+				
+			}
+		});
+		
+	},
+	computed: {
+		submitTotal() {
+			if (this.checked) {
+				var all = (this.total - this.yhqMoney - this.XBMoneyValid) >= 0 ? (this.total - this.yhqMoney - this.XBMoneyValid) : 0;
+			} else {
+				var all = (this.total - this.yhqMoney) >= 0 ? this.total - this.yhqMoney : 0;
+			}
+			return all;
+		}
+	},
 	
 	
 	methods: {
+		// 获取收货地址
+		getAddressInfo(page) {
+			if(page == 'myOrder') {
+				let myOrderPaymentJson = uni.getStorageSync('myOrderPayment');
+				let myOrderPayment = JSON.parse(myOrderPaymentJson);
+				this.address = {
+					addressDetailed: myOrderPayment.ADDRESS,
+					PHONE: myOrderPayment.PHONE,
+					USERNAME: myOrderPayment.USERNAME
+				};
+				this.ADDRESS_ID = myOrderPayment.ADDRESS_ID;
+				this.addressState = true;
+				return false;
+			}
+			
+			this.addressState = getApp().globalData.addressState;
+			// 判断是否选择地址
+			if (getApp().globalData.addressState === true) {
+				this.address = getApp().globalData.address;
+				this.ADDRESS_ID = getApp().globalData.address.ADDRESS_ID;
+				this.addressState = true;
+			} else {
+				// 查询收获地址
+				uni.getStorage({
+					key: 'USERINFO_ID',
+					success: res => {
+						getAddress({ USERINFO_ID: res.data }).then(res => {
+							this.address = res.returnMsg.list[0];
+							this.address.addressDetailed = this.address.AREA + this.address.FULLADD
+							this.ADDRESS_ID = res.returnMsg.list[0].ADDRESS_ID;
+							this.addressState = true;
+						});
+					}
+				});
+			}
+		},
 		// 前往地址
 		goAddress() {
 			uni.navigateTo({
@@ -336,7 +431,7 @@ export default {
 				COUPON: this.yhqID,
 				STARCOINS: this.checked ? this.XBMoneyValid : 0,
 				REMARKS: this.remarks,
-				ADDRESS: this.address.AREA + this.address.FULLADD,
+				ADDRESS: this.address.addressDetailed,
 				USERINFO_ID: this.USERINFO_ID,
 				GOODS: JSON.stringify(this.GOODS),
 				ADDRESS_ID: this.ADDRESS_ID,
@@ -659,80 +754,7 @@ export default {
 			});
 		}
 	},
-	components: {
-		commonHeader,
-		tabbar
-	},
-	onLoad(e) {
-
-			// this.Allprice=e.allTotal
-		
-		this.shopId = e.shopId;
-		uni.getStorage({
-			key: 'USERINFO_ID',
-			success: res => {
-				this.USERINFO_ID = res.data;
-			
-				if(e.page == 'cart') {  // 从购物车中
-				var arr = JSON.parse(e.item);
-					this.shopNum =  arr.map(ele => Number(ele.COUNTS)).reduce((prev, cur)=> prev + cur);
-					this.total =  arr.map(ele => ele.COUNTS * ele.PRICE).reduce((prev, cur)=> prev + cur);
-					
-					arr.map(item => {
-						this.GOODS.push({ GOODS_ID: item.GOODS_ID, COUTNS: item.COUNTS, PRICE: parseFloat(item.PRICE), SHOP_ID: item.SHOP_ID });
-					});
-				}else if(e.page == 'shopPage'){ //  从商店直接购买
-					var arr = JSON.parse(e.item);
-					console.log('===', arr);
-					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
-					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
-					arr.map(item => {
-						this.GOODS.push({ GOODS_ID: item.goodsId, COUTNS: item.num, PRICE: parseFloat(item.price) });
-					});
-				}
 	
-	
-				// 获取优惠券
-				this._myCard(res.data)
-				// 获取星币
-				this._personal(res.data)
-		
-				
-			}
-		});
-	},
-	computed: {
-		submitTotal() {
-			if (this.checked) {
-				var all = (this.total - this.yhqMoney - this.XBMoneyValid) >= 0 ? (this.total - this.yhqMoney - this.XBMoneyValid) : 0;
-			} else {
-				var all = (this.total - this.yhqMoney) >= 0 ? this.total - this.yhqMoney : 0;
-			}
-			return all;
-		}
-	},
-	onShow() {
-		// 获取收货地址
-		this.addressState = getApp().globalData.addressState;
-		// 判断是否选择地址
-		if (getApp().globalData.addressState === true) {
-			this.address = getApp().globalData.address;
-			this.ADDRESS_ID = getApp().globalData.address.ADDRESS_ID;
-			this.addressState = true;
-		} else {
-			// 查询收获地址
-			uni.getStorage({
-				key: 'USERINFO_ID',
-				success: res => {
-					getAddress({ USERINFO_ID: res.data }).then(res => {
-						this.address = res.returnMsg.list[0];
-						this.ADDRESS_ID = res.returnMsg.list[0].ADDRESS_ID;
-						this.addressState = true;
-					});
-				}
-			});
-		}
-	}
 };
 </script>
 

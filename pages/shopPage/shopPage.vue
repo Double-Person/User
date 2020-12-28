@@ -1,6 +1,6 @@
 <template>
 	<view class="shopPage">
-		<view class="shopPage-Top" :style="{'background':'url('+vendor.BGIMG+')'}">
+		<view class="shopPage-Top" :style="{'background':'url('+imgBaseUrl + vendor.BGIMG+')'}">
 			<view class="shopPage-Top-header">
 				<view class="left">
 					<text class="iconfont icon-zuojiantou" @tap="backPage"></text>
@@ -38,7 +38,7 @@
 					地址：{{(vendor.CITY || '')+ (vendor.FULLADD || '')}}
 					<text class="iconfont icon-yiliaohangyedeICON-" @tap="goMap"></text>
 				</view>
-				
+
 				<view class="tips">
 					<text class="notice" :style="{height: open ? '140rpx': ''}">公告：{{vendor.NOTICE}}</text>
 					<view style="text-align: right; padding-right: 30rpx;" @click="getMoreInfo" v-if="!open">查看更多></view>
@@ -68,8 +68,8 @@
 						</view>
 						<view class="shopPage-content-right-item" v-for="(item1,index1) in item.list" :key="index1">
 							<view class="left" @tap="goDetails(item1.goodsId)">
-								<image :src="imgBaseUrl + item1.img" mode="aspectFit" /> 
-								
+								<image :src="imgBaseUrl + item1.img" mode="aspectFit" />
+
 							</view>
 							<view class="right">
 								<text class="title" @tap="goDetails(item1.goodsId)">{{item1.shopName}}</text>
@@ -119,8 +119,8 @@
 					</view>
 				</view>
 				<view class="cartMask-content-item">
-					<view v-for="(item,index) in selectArr" :key="index">
-						<view class="item" v-for="(item1,index1) in item.list" :key="index1">
+					<!-- <view v-for="(item,index) in addCartShow" :key="index"> -->
+						<view class="item" v-for="(item1,index1) in addCartShow" :key="index1">
 							<view class="item-left">{{item1.shopName}}</view>
 							<view class="item-right">
 								<view class="item-right-price">
@@ -128,19 +128,16 @@
 									<text>{{item1.price}}</text>
 								</view>
 								<view class="item-right-num">
-									<text class="iconfont icon-jian1" @tap="changeNum(item1.goodsId,-1,item.title)"></text>
+									<text class="iconfont icon-jian1" v-if="item1.num > 1" @tap="changeNum(item1.goodsId, -1,item.title)"></text>
 									{{item1.num}}
-									<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId,+1,item.title)"></text>
+									<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId, 1,item.title)"></text>
 								</view>
 							</view>
 						</view>
-					</view>
+					<!-- </view> -->
 				</view>
 
-				<view class="cartMask-content-other">
-					<text>餐盒</text>
-					<text>5</text>
-				</view>
+
 			</view>
 		</view>
 		<!-- 添加微信 -->
@@ -255,6 +252,10 @@
 			};
 		},
 		onLoad(e) {
+			uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
 			// 获取店铺id
 			this.shopId = e.shopId;
 			uni.getSystemInfo({
@@ -277,7 +278,7 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
-			});
+			}).finally(() => uni.hideLoading())
 			// 获取userid
 			uni.getStorage({
 				key: "USERINFO_ID",
@@ -297,7 +298,7 @@
 				let list = this.selectArr.map(item => item.list);
 				let arr = [].concat(...list);
 				let arrJson = JSON.parse(JSON.stringify(arr));
-				let filterArr = arrJson.filter( item => item.num )
+				let filterArr = arrJson.filter(item => item.num)
 				let obj = {};
 				let cardList = filterArr.map(ele => {
 					return {
@@ -311,18 +312,20 @@
 				}, []).forEach(send => {
 					this.saveCard(send)
 				})
-				
+
 			},
 			// 发送请求添加到购物车
 			saveCard(data) {
-				addCarts(data).then(({msgType}) => {
-					if(msgType == 0) {
+				addCarts(data).then(({
+					msgType
+				}) => {
+					if (msgType == 0) {
 						uni.showToast({
-							title:'添加购物车成功'
+							title: '添加购物车成功'
 						})
-					}else{
+					} else {
 						uni.showToast({
-							title:'添加购物车失败'
+							title: '添加购物车失败'
 						})
 					}
 				})
@@ -504,7 +507,7 @@
 			// 前往地图
 			goMap() {
 				uni.navigateTo({
-					url: "../address/address?vendor="+JSON.stringify(this.vendor)
+					url: "../address/address?vendor=" + JSON.stringify(this.vendor)
 				});
 			},
 			// 改变数量
@@ -515,7 +518,12 @@
 						if (item.title == title) {
 							item.list.map(item1 => {
 								if (item1.goodsId == id) {
+
+									if (num == -1 && item1.num == 0) {
+										return false;
+									}
 									item1.num += num;
+
 								}
 							});
 						}
@@ -534,7 +542,6 @@
 			goSettlement() {
 				var arr = [];
 				if (parseFloat(this.titleAll)) {
-					
 					this.selectArr.map(item => {
 						item.list.map(item1 => {
 							arr.push(item1);
@@ -542,23 +549,24 @@
 					});
 
 					let list = this.selectArr.map(item => item.list);
-					
+
 					let temp = [].concat(...list);
 					temp = temp.filter(item => item.num != 0)
 					temp.forEach((addShopId, index) => {
 						addShopId.SHOP_ID = this.vendor.SHOP_ID
 					})
-					
+
 					let obj = {};
-					let peon = temp.reduce((cur,next) => {
-					    obj[next.category] ? "" : obj[next.category] = true && cur.push(next);
-					    return cur;
-					},[])
+					let peon = temp.reduce((cur, next) => {
+						obj[next.category] ? "" : obj[next.category] = true && cur.push(next);
+						return cur;
+					}, [])
 					let stringifyArr = JSON.stringify(peon)
-					
-				
+
+
 					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId + '&page=shopPage'
+						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
+							'&page=shopPage'
 					})
 					// uni.navigateTo({
 					// 	url: "../settlement/settlement?item=" +
@@ -729,7 +737,7 @@
 				// 筛选已选
 				this.mainArray.map((item, index) => {
 					item.list.map((item1, index1) => {
-						if (item1.num) {
+						if (item1.num > 0) {
 							arr.push({
 								title: item.title,
 								list: item.list
@@ -738,6 +746,30 @@
 					});
 				});
 				return arr;
+			},
+			addCartShow() {
+				var arr = [];
+				this.mainArray.map((item, index) => {
+					item.list.map((item1, index1) => {
+						if (item1.num > 0) {
+							arr.push({
+								title: item.title,
+								list: item.list
+							});
+						}
+					});
+				});
+				let list = arr.map(item => item.list);
+				let temp = [].concat(...list);
+				var obj = {};
+				temp = temp.reduce(function(item, next) {
+					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
+					return item;
+				}, []);
+				
+				let showList = temp.filter(ele => ele.num)
+				return showList
+
 			},
 			// 计算总价
 			titleAll() {
@@ -887,7 +919,7 @@
 
 					.notice {
 						box-sizing: border-box;
-						
+
 						// overflow: scroll;
 						overflow-y: auto;
 					}
@@ -1091,7 +1123,8 @@
 				align-items: center;
 				justify-content: center;
 			}
-			.add-card{
+
+			.add-card {
 				background: #ff8777;
 			}
 		}
@@ -1188,20 +1221,7 @@
 					}
 				}
 
-				.cartMask-content-other {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					padding: 20rpx 30rpx;
-					background: #fff;
-					border-bottom: 1px solid #eee;
 
-					text:last-child {
-						color: #ff5339;
-						font-weight: bold;
-						margin-right: 170rpx;
-					}
-				}
 			}
 		}
 
@@ -1267,7 +1287,7 @@
 					view {
 						margin-bottom: 10rpx;
 					}
-					
+
 				}
 
 				.img {
