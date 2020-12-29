@@ -526,8 +526,10 @@
 				// 允许从相机和相册扫码
 				// #ifdef APP-PLUS
 				uni.scanCode({
-					scanType: ['qrCode', 'barCode'],
+					scanType: ['qrCode'],
 					success: res => {
+						console.log(res)
+						return false;
 						let shopId = res.result;
 						getShopPay({ SHOP_ID: shopId}).then(res => {
 							
@@ -544,6 +546,9 @@
 							});
 							// plus.runtime.openURL('https://uniapp.dcloud.io/api/system/barcode');
 						});
+					},
+					fail(err) {
+						console.log(err)
 					}
 				});
 				// #endif

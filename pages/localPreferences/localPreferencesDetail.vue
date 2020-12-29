@@ -72,7 +72,7 @@
 
 		onLoad(options) {
 			console.log(options)
-			let shopId = options.shopId || '9e98a5b1afb64ac6a00fc805c678e1e3';  // 'b542d78940b04df7a37800b91e508bb31';// options.shopId
+			let shopId = options.shopId ;//|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId
 			shopActivityGoods({shop_id: shopId}).then( res => {
 				this.hotInfo = res.returnMsg				
 				this.hotInfo.glist = res.returnMsg.glist.slice(0, 5)
