@@ -191,13 +191,7 @@
 				</view>
 				<view class="redpackge">
 					<view class="redpackge-title">
-						<label
-							class="radio"
-							@tap="
-								notUseCard();
-								checkedradio = !checkedradio;
-							"
-						>
+						<label class="radio" @tap="notUseCard();checkedradio = !checkedradio;">
 							<radio value="" :checked="checkedradio" />
 							<text>不使用优惠券</text>
 						</label>

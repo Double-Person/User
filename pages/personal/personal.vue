@@ -260,22 +260,29 @@ export default {
 			// 允许从相机和相册扫码
 			// #ifdef APP-PLUS
 			uni.scanCode({
-				success: res => {
-					var shopId = res.result;
-					getShopPay({ SHOP_ID: res.result }).then(res => {
-						if (res.returnMsg.status == '00') {
-							uni.navigateTo({
-								url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
-							});
-						} else {
-							uni.showToast({
+				scanType: ['qrCode'],
+				success: ({ result }) => {
+					let {shopId, money} = JSON.parse(result);
+					getShopPay({ SHOP_ID: shopId, money}).then(res => {
+						console.log(res)
+						
+						if (res.returnMsg.status != '00') {
+							return uni.showToast({
 								title: '条码错误!',
 								icon: 'none',
 								duration: 2000,
 								mask: true
 							});
-						}
+						} 
+						uni.navigateTo({
+							// url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId+ '&money=' + money
+							url: `../scanPay/scanPay?shopName=${res.returnMsg.shop.SHOP_NAME}&shopId=${shopId}&money=${money}`
+						});
+						// plus.runtime.openURL('https://uniapp.dcloud.io/api/system/barcode');
 					});
+				},
+				fail(err) {
+					console.log(err)
 				}
 			});
 			// #endif

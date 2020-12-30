@@ -2,9 +2,9 @@
 // import request from './request.js';
 import request from './ajax.js'
 // export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-export const baseUrl = 'http://192.168.0.112:8081'
+export const baseUrl = 'http://192.168.0.113:8081'
 // export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-export const imgBaseUrl = 'http://192.168.0.112:8081/'
+export const imgBaseUrl = 'http://192.168.0.113:8081/'
 
 
 

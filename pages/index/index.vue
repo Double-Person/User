@@ -527,11 +527,10 @@
 				// #ifdef APP-PLUS
 				uni.scanCode({
 					scanType: ['qrCode'],
-					success: res => {
-						console.log(res)
-						return false;
-						let shopId = res.result;
-						getShopPay({ SHOP_ID: shopId}).then(res => {
+					success: ({ result }) => {
+						let {shopId, money} = JSON.parse(result);
+						getShopPay({ SHOP_ID: shopId, money}).then(res => {
+							console.log(res)
 							
 							if (res.returnMsg.status != '00') {
 								return uni.showToast({
@@ -542,7 +541,8 @@
 								});
 							} 
 							uni.navigateTo({
-								url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
+								// url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId+ '&money=' + money
+								url: `../scanPay/scanPay?shopName=${res.returnMsg.shop.SHOP_NAME}&shopId=${shopId}&money=${money}`
 							});
 							// plus.runtime.openURL('https://uniapp.dcloud.io/api/system/barcode');
 						});

@@ -151,9 +151,10 @@
                            title:'输入星币有误!',
                            icon:'none'
                        })
-                   }
-                   console.log(res)
-               }) 
+                   }else {
+					    uni.hideLoading()
+				   }
+               }).catch(() => uni.hideLoading())
             }
 		},
         mounted() {
@@ -167,9 +168,9 @@
             })
             // 获取用户等级规则
             level({USERINFO_ID: this.USERINFO_ID}).then(res=>{
-                res.returnMsg.list.map(item => {
-                   item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
-                })
+                // res.returnMsg.list.map(item => {
+                //    item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
+                // })
                 this.gradeList = res.returnMsg.list
             })
         }
