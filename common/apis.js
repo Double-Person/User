@@ -1,10 +1,10 @@
-// 引入封装的request
+// 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js'
-// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-export const baseUrl = 'http://192.168.0.113:8081'
-// export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-export const imgBaseUrl = 'http://192.168.0.113:8081/'
+export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+// export const baseUrl = 'http://192.168.0.113:8081'
+export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
+// export const imgBaseUrl = 'http://192.168.0.113:8081/'
 
 
 
@@ -213,6 +213,14 @@ export const editInfo = params => request.post('/api/ordersummary/editInfo', par
 export const orderRepeal = params => request.post('/api/ordersummary/order/repeal', params);
 
 export const uploadImag = params => request.post('/api/ordersummary/upload/imag', params);
+
+// 扫码 订单结算
+export const offlinetradingService = params => request.post('/api/ordersummary/offlinetradingService', params);
+
+// 扫码 支付
+export const offlinetradingServicePay = params => request.post('/api/ordersummary/offlinetradingService/pay', params);
+
+
 
 
 

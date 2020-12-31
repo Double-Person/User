@@ -10,7 +10,8 @@
 					金额
 					<view class="money-text-input">
 						<text>￥</text>
-						<input v-model="money" type="number" placeholder="输入金额" placeholder-style="fontSize:28rpx" />
+						<input v-model="money" type="number" @input="copeWith = money" :disabled="disabled" placeholder="输入金额"
+						 placeholder-style="fontSize:28rpx" />
 					</view>
 				</view>
 				<view class="money-text-yhq" @tap="setCouponHide=false">
@@ -21,7 +22,8 @@
 					</view>
 				</view>
 				<view class="money-text-dk">
-					<view class="text">您有{{XBMoney}}个星币，抵扣可省{{XBMoneyValid}}元，是否抵扣</view>
+					<!-- ，抵扣可省{{XBMoneyValid}}元 -->
+					<view class="text">您有{{XBMoney}}个星币，是否抵扣</view>
 					<view class="radio-area">
 						<label class="radio">
 							<radio value="" :checked="isRadio" style="transform:scale(0.7)" @click="isRadio=!isRadio" />
@@ -34,7 +36,8 @@
 					</view>
 				</view>
 			</view>
-			<!-- 付款方式 -->
+
+			<!-- 付款方式  应付  实付 -->
 			<view class="payMode">
 				<text>应付：{{copeWith}}元</text>
 				<view class="right">
@@ -65,7 +68,7 @@
 							<view class="isUseCard">
 								<image :src="item.useCard ? '/static/images/checked.png' : '/static/images/notChecked.png'" mode=""></image>
 							</view>
-						
+
 							<view class="left">
 								<view class="left-quan">
 									<view class="price">
@@ -80,8 +83,7 @@
 									<text>使用规则</text>
 								</view>
 							</view>
-							<view class="right" :class="{activeBtn: item.STATES == 1}" 
-								  @tap="ljsy(item, indey)">{{ item.STATES == 0 ? '立即使用' : '已使用' }}</view>
+							<view class="right" :class="{activeBtn: item.STATES == 1}" @tap="ljsy(item, indey)">{{ item.STATES == 0 ? '立即使用' : '已使用' }}</view>
 						</view>
 					</view>
 					<view v-else style="text-align: center;">暂无优惠券</view>
@@ -93,40 +95,19 @@
 		<view class="payMask" :class="payMaskHide?'payMaskHide':''">
 			<view class="payMask-content">
 				<view class="title">
-					<text class="iconfont icon-zuojiantou" @tap="payMaskHide=true"></text>请选择支付方式
+					<text class="iconfont icon-zuojiantou" @tap="payMaskHide=true; payMode = 0"></text>请选择支付方式
 				</view>
-				<view class="item" @tap="pay(0)">
+
+				<view class="item" @tap="pay(item.id)" v-for="item in payMaskInfo" :key='item.id'>
 					<view class="item-left">
-						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue" style="color: #FF5A32;"></text>余额支付
+						<text class="iconfont" :class="item.iconClass" :style="{color: item.iconColor}"></text>{{item.title}}
+						<text v-if="item.id == 0" style="font-size: 30rpx;">（{{ BALANCE }}）</text>
 					</view>
 					<view class="item-right">
 						<text class="iconfont icon-youjiantou"></text>
 					</view>
 				</view>
-				<view class="item" @tap="pay(1)">
-					<view class="item-left">
-						<text class="iconfont icon-weixin" style="color: #09BB07;"></text>微信支付
-					</view>
-					<view class="item-right">
-						<text class="iconfont icon-youjiantou"></text>
-					</view>
-				</view>
-				<view class="item" @tap="pay(2)">
-					<view class="item-left">
-						<text class="iconfont icon-zhifubao" style="color: #06B4FD;"></text>支付宝支付
-					</view>
-					<view class="item-right">
-						<text class="iconfont icon-youjiantou"></text>
-					</view>
-				</view>
-				<view class="item" @tap="pay(3)">
-					<view class="item-left">
-						<text class="iconfont icon-bangdingshezhiyinxingqiabangding" style="color: #F7601C;"></text>银行卡支付
-					</view>
-					<view class="item-right">
-						<text class="iconfont icon-youjiantou"></text>
-					</view>
-				</view>
+
 			</view>
 		</view>
 
@@ -134,17 +115,17 @@
 		<view class="payPwdMask" :class="payPwdMaskHide?'payPwdMaskHide':''">
 			<view class="payPwdMask-content">
 				<view class="title">
-					<text class="iconfont icon-shanchu" @tap="backPay"></text>请输入支付密码
+					<text class="iconfont icon-shanchu" @tap="payPwdMaskHide = true"></text>请输入支付密码
 				</view>
 				<view class="content">
-					<text>向某某商家支付</text>
-					<view>￥9.9</view>
+					<text>向{{shopName}}支付</text>
+					<view>￥{{ ACTUALPRICE }}</view>
 				</view>
 				<view class="pwdinput">
 					<view class="mode">
 						<view class="modeLeft">支付方式</view>
 						<view class="modeRight" @tap="backPay">
-							{{payMode}}
+							{{ payMaskInfo[payMode].title }}
 							<text class="iconfont icon-youjiantou"></text>
 						</view>
 					</view>
@@ -205,11 +186,13 @@
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {
-		orderPay,
 		myCard,
 		personal,
 		alipay,
-		wxpay
+		wxpay,
+		shopBygoodList,
+		offlinetradingService,
+		offlinetradingServicePay
 	} from "@/common/apis.js";
 	export default {
 		props: {
@@ -226,6 +209,9 @@
 		},
 		data() {
 			return {
+				ACTUALPRICE: -1, // 实际支付
+				BALANCE: 0, // 余额
+				disabled: false,
 				copeWith: 0, // 应付 金额
 				money: '',
 				// 优惠弹窗
@@ -239,9 +225,9 @@
 				// 支付密码
 				payPwdMaskHide: true,
 				// 支付方式
-				payMode: "",
+				payMode: 0,
 				// 支付自动聚焦
-				focusStata: false,
+				focusStata: true,
 				val: "", //输入框的值
 				codeIndex: 1, //下标
 				codeArr: [],
@@ -252,7 +238,33 @@
 				yhqID: "",
 				USERINFO_ID: "",
 				orderID: "",
-				payAmount: ""
+				payAmount: "",
+				payMaskInfo: [ // 支付方式
+					{
+						id: 0,
+						iconClass: 'icon-shouzhimingxicaifuhongbaoyue',
+						iconColor: '#FF5A32',
+						title: '余额支付'
+					},
+					{
+						id: 1,
+						iconClass: 'icon-weixin',
+						iconColor: '#09BB07',
+						title: '微信支付'
+					},
+					{
+						id: 2,
+						iconClass: 'icon-zhifubao',
+						iconColor: '#06B4FD',
+						title: '支付宝支付'
+					},
+					{
+						id: 3,
+						iconClass: 'icon-bangdingshezhiyinxingqiabangding',
+						iconColor: '#F7601C',
+						title: '银行卡支付'
+					},
+				]
 			};
 		},
 		components: {
@@ -261,6 +273,9 @@
 		methods: {
 			// 返回支付选择
 			backPay() {
+				if(this.ACTUALPRICE == 0) {
+					return false;
+				}
 				// 显示支付方式选择
 				this.payMaskHide = false;
 				// 隐藏密码输入
@@ -269,15 +284,18 @@
 			// 关闭优惠卷弹窗
 			closeCard() {
 				let checkCards = this.redpackgeList.filter(ele => ele.useCard);
-				if(checkCards.length === 0) {
+				if (checkCards.length === 0) {
 					this.yhqTetx = '不使用优惠券'
 					this.YHMoney = 0
-				}else if(checkCards.length === 1) {
-					let [{title, MONEY}] = checkCards
-					this.yhqTetx =  title;
+				} else if (checkCards.length === 1) {
+					let [{
+						title,
+						MONEY
+					}] = checkCards
+					this.yhqTetx = title;
 					this.YHMoney = MONEY * 1;
-				}else {
-					this.YHMoney = checkCards.reduce((pre, nex) => pre.MONEY * 1 + nex.MONEY *1);
+				} else {
+					this.YHMoney = checkCards.reduce((pre, nex) => pre.MONEY * 1 + nex.MONEY * 1);
 					this.yhqTetx = checkCards.map(item => item.MONEY).join('元,') + '优惠券'
 				}
 				this.yhqID = checkCards.map(item => item.USERCOUPONS_ID).join(',');
@@ -300,160 +318,231 @@
 				this.redpackgeList[indey] = item
 				this.$forceUpdate()
 			},
-			ljsy11(item) {
-				if (item) {
-					this.yhqTetx = item.title;
-					this.checkedradio = false;
-					this.setCouponHide = true;
-					this.YHMoney = item.MONEY * 1;
-					this.yhqID = item.USERCOUPONS_ID;
-				} else {
-					this.yhqTetx = "暂无优惠券";
-					this.yhqID = "";
-					// this.setCouponHide = true;
-				}
-			},
+
 			// 提交支付
 			submitPay() {
-				try{
+				try {
 					this.money = Number(this.money)
-				}catch(e){
+				} catch (e) {
 					this.money = 0
 				}
-				var obj = {
-					PAYABLE: this.money,  // 支付金额
-					COUPON: this.yhqID, // 优惠券
-					STARCOINS: this.isRadio ? this.XBMoneyValid : 0,
-					REMARKS: "", // 备注
-					ADDRESS: "线下支付",
-					USERINFO_ID: this.USERINFO_ID,
-					SHOP_ID: this.shopId
-				};
-				console.log(obj)
-				
-				return false;
-				orderPay(obj)
-					.then(res => {
-						console.log("提交订单", res);
-						if (res.returnMsg.status == "00") {
-							this.payMaskHide = false;
-							this.orderID = res.returnMsg.ORDERSUMMARY_ID;
-							this.payAmount = res.returnMsg.ACTUALPAY;
-						} else {
-							uni.showToast({
-								title: "亲，支付金额不能小于零！",
-								icon: "none",
-								duration: 2000,
-								mask: true
-							});
-						}
+				if(!this.money) {
+					return uni.showToast({
+						title: '请输入正确的付款金额',
+						icon: 'none'
 					})
-					.catch(err => {
+				}
+			
+				/* * 
+				 * MONEY   总价
+				 * USERINFO_ID  用户ID
+				 * COUPON      优惠卷字符串 ，分割
+				 * SHOP_ID  商家ID
+				 * STARCOINS 星币 */
+				let query = {
+					MONEY: this.money,
+					USERINFO_ID: this.USERINFO_ID,
+					SHOP_ID: this.shopId,
+					COUPON: this.yhqID,
+					STARCOINS: this.isRadio ? this.XBMoneyValid : 0,
+				}
+				offlinetradingService(query).then(res => {
+					console.log(res)
+					if (res.msgType == 0) {
+						let moneyTemp = Number(res.returnMsg.ACTUALPRICE)
+						this.ACTUALPRICE = moneyTemp < 0 ? 0 : moneyTemp
+						if(this.ACTUALPRICE == 0) {
+							this.payPwdMaskHide = false;
+							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
+						}
+						if (this.payMode == 0) {
+							this.payPwdMaskHide = false;
+							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
+						} else {
+							this.payPwdMaskHide = true;
+							this.finallyPay()
+						}
+
+
+					} else {
 						uni.showToast({
-							title: "提交失败，请稍后再试!",
-							icon: "none"
-						});
-					});
+							title: '支付失败',
+							icon: true
+						})
+					}
+					// this.payPwdMaskHide = false
+				})
+				return false;
+
+
 			},
 			// 支付
+			finallyPay() {
+				// * TYPES 0余额、1微信、2支付宝
+				// * OFFLINETRADING_ID   ID  tradePass
+
+				offlinetradingServicePay({
+					OFFLINETRADING_ID: this.OFFLINETRADING_ID,
+					TYPES: this.payMode,
+					tradePass: this.val
+				}).then(res => {
+					console.log(res)
+					uni.hideLoading()
+					
+					if(this.payMode == 1) {
+						this.weChatPay(res.returnMsg)
+						return false;
+					}
+					if(this.payMode == 2) {
+						this.aliPayFn(res.returnMsg)
+						return false;
+					}
+					
+					
+					if (res.returnMsg.status == '01') {
+						setTimeout(() => {
+							uni.showToast({title: '交易密码不正确', icon: 'none' })
+						}, 1000)
+					} else if (res.returnMsg.status == '02') {
+						setTimeout(() => {
+							uni.showToast({title: '余额不足', icon: 'none' })
+						}, 1000)
+						
+					}else {
+						uni.showToast({
+							title: '支付成功',
+							icon: 'none'
+						})
+					}
+				})
+
+			},
 			// 支付
 			pay(index) {
-				if (index === 0) {
-					this.payMode = 0;
-				}
-				if (index === 1) {
-					this.payMode = 1;
-				}
-				if (index === 2) {
-					this.payMode = 2;
-				}
-				if (index === 3) {
-					this.payMode = 3;
-				}
-				var obj = {
-					payAmount: this.payAmount,
-					orderSummaryId: this.orderID
-				};
-				// 微信支付
-				if (this.payMode === 1) {
-					wxpay(obj).then(res => {
-						console.log("微信支付", res.returnMsg);
-						uni.requestPayment({
-							provider: "wxpay",
-							orderInfo: JSON.stringify(res.returnMsg),
-							success: res => {
-								// 隐藏当前支付方式选择
-								this.payMaskHide = true;
-								uni.showToast({
-									title: "支付成功!",
-									duration: 2000,
-									mask: true
-								});
-								setTimeout(() => {
-									uni.navigateTo({
-										url: "../index/index"
-									});
-								}, 2000);
-								console.log("success:" + JSON.stringify(res));
-							},
-							fail: err => {
-								uni.showToast({
-									title: "支付失败!",
-									icon: "none",
-									duration: 2000,
-									mask: true
-								});
-								console.log("fail:" + JSON.stringify(err));
-							}
-						});
-					});
-				}
-				// 支付宝支付
-				if (this.payMode === 2) {
-					alipay(obj).then(res => {
-						console.log("支付宝", res.returnMsg);
-						uni.requestPayment({
-							provider: "alipay",
-							orderInfo: res.returnMsg,
-							success: res => {
-								console.log("success:" + JSON.stringify(res));
-								// 隐藏当前支付方式选择
-								this.payMaskHide = true;
-								uni.showToast({
-									title: "支付成功!",
-									duration: 2000,
-									mask: true
-								});
-								setTimeout(() => {
-									uni.navigateTo({
-										url: "../index/index"
-									});
-								}, 2000);
-							},
-							fail: err => {
-								uni.showToast({
-									title: "支付失败!",
-									icon: "none",
-									duration: 2000,
-									mask: true
-								});
-								console.log("fail:" + JSON.stringify(err));
-							},
-							complete: end => {
-								console.log(end);
-							}
-						});
-					});
-				}
-				if (this.payMode === 3 || this.payMode === 0) {
+				this.payMode = index;
+				if (this.payMode === 3) {
 					uni.showToast({
 						title: "暂未开通此功能!",
 						duration: 2000,
 						mask: true
 					});
+				}else {
+					this.finallyPay()
 				}
 				// 显示密码输入
 				// this.payPwdMaskHide = false
+			},
+			// 微信支付
+			weChatPay(orderInfo) {
+				uni.requestPayment({
+					provider: "wxpay",
+					orderInfo: orderInfo,
+					success: res => {
+						// 隐藏当前支付方式选择
+						this.payMaskHide = true;
+						uni.showToast({
+							title: "支付成功!",
+							duration: 2000,
+							mask: true
+						});
+						setTimeout(() => {
+							uni.navigateTo({
+								url: "../index/index"
+							});
+						}, 2000);
+						console.log("success:" + JSON.stringify(res));
+					},
+					fail: err => {
+						uni.showToast({
+							title: "支付失败!",
+							icon: "none",
+							duration: 2000,
+							mask: true
+						});
+					},
+					complete() {
+						this.payMode = 0
+					}
+				});
+			},
+			// 支付宝支付
+			aliPayFn(orderInfo) {
+				uni.requestPayment({
+					provider: "alipay",
+					orderInfo: orderInfo,
+					success: res => {
+						console.log("success:" + JSON.stringify(res));
+						// 隐藏当前支付方式选择
+						this.payMaskHide = true;
+						uni.showToast({
+							title: "支付成功!",
+							duration: 2000,
+							mask: true
+						});
+						setTimeout(() => {
+							uni.navigateTo({
+								url: "../index/index"
+							});
+						}, 2000);
+					},
+					fail: err => {
+						uni.showToast({
+							title: "支付失败!",
+							icon: "none",
+							duration: 2000,
+							mask: true
+						});
+						console.log("fail:" + JSON.stringify(err));
+					},
+					complete: end => {
+						console.log(end);
+						this.payMode = 0
+					}
+				});
+			},
+			// 余额支付
+			balancePay(tradePass) {
+				shopBygoodList({
+					orderSummaryId: this.orderID,
+					tradePass
+				}).then(res => {
+					console.log(res)
+					uni.hideLoading();
+					this.tradePass = '';
+					if (res.returnMsg) {
+
+						if (res.returnMsg.status == '01') {
+							uni.showToast({
+								title: '交易密码不正确或者未设置交易密码',
+								icon: 'none'
+							})
+						} else if (res.returnMsg.status == '02') {
+							uni.showToast({
+								title: '余额不足',
+								icon: 'none'
+							})
+						} else {
+
+
+							this.inputPwd = true
+							setTimeout(() => {
+								uni.showToast({
+									title: '支付成功',
+									icon: 'none'
+								})
+								uni.navigateTo({
+									url: '../index/index'
+								});
+							}, 2000);
+						}
+					} else {
+						uni.showToast({
+							title: '系统错误稍后再试',
+							icon: 'none'
+						})
+					}
+
+				})
 			},
 			//取值
 			getVal(e) {
@@ -465,99 +554,92 @@
 				this.codeIndex = arr.length + 1;
 				this.codeArr = arr;
 				console.log(this.val);
-				if (this.val == 888888) {
+				if (this.val.length === 6) {
 					uni.showLoading({
 						title: "支付中...",
 						mask: true
 					});
-					setTimeout(() => {
-						uni.showToast({
-							title: "支付成功",
-							success: () => {
-								uni.hideLoading();
-							}
-						});
-						uni.reLaunch({
-							url: "../index/index"
-						});
-					}, 2000);
+					console.log(this.val)
+					this.payPwdMaskHide = true;
+					// this.balancePay(this.val)
+					this.finallyPay()
 				}
+
+			},
+
+			async getInfo(USERINFO_ID) {
+				await uni.showLoading({ title: '加载中', mask: true })
+				await myCard({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(res => {
+					res.returnMsg.userCoupons.map(item => { item.title = "通用抵扣券" + item.MONEY + "元"; });
+					this.redpackgeList = res.returnMsg.userCoupons;
+				})
+				// 获取星币
+				await personal({ USERINFO_ID: this.USERINFO_ID }).then(({ returnMsg: { BALANCE, userInfo } }) => {
+					this.BALANCE = BALANCE
+					this.XBMoney = userInfo.STARCOINS;
+				})
+				await uni.hideLoading()
 			}
 		},
 		onLoad(e) {
 			this.shopName = e.shopName;
 			this.shopId = e.shopId;
-			this.copeWith = e.money;
+			let passMoney = Number(e.money || 0);
+
+			if (passMoney > 0) {
+				this.copeWith = passMoney;
+				this.money = passMoney;
+				this.disabled = true
+			} else {
+				this.copeWith = passMoney;
+				this.disabled = false
+			}
 			uni.getStorage({
 				key: "USERINFO_ID",
 				success: res => {
+
 					this.USERINFO_ID = res.data;
-					// 获取优惠券
-					myCard({
-						USERINFO_ID: res.data
-					}).then(res => {
-						res.returnMsg.userCoupons.map(item => {
-							item.title = "通用抵扣券" + item.MONEY + "元";
-						});
-						this.redpackgeList = res.returnMsg.userCoupons;
-					});
-					// 获取星币
-					personal({
-						USERINFO_ID: res.data
-					}).then(res => {
-						this.XBMoney = res.returnMsg.userInfo.STARCOINS;
-					});
-				}
+					this.getInfo()
+				},
+
 			});
 		},
 		computed: {
 			// 可抵扣星币金额
 			XBMoneyValid() {
-				// if (this.XBMoney < this.money - 1) return this.XBMoney;
-				// if (this.money > 1.5) {
-				// 	return Math.ceil(this.money - 1);
-				// } else {
-				// 	return 0;
-				// }
-				
-				if(this.XBMoney >= this.copeWith) {
+				if (this.XBMoney >= this.copeWith) {
 					return this.copeWith
-				}else {
+				} else {
 					return this.XBMoney * 0.75
 				}
-				
+
 			},
 			// 实付金额
 			ActualPayment() {
-				// if (this.isRadio) {
-				// 	console.log(this.money, this.XBMoneyValid);
-				// 	return (
-				// 		this.money -
-				// 		parseFloat(this.XBMoneyValid) -
-				// 		parseFloat(this.YHMoney)
-				// 	).toFixed(2);
-				// } else {
-				// 	return (this.money - parseFloat(this.YHMoney)).toFixed(2);
-				// }
-				let xb = 0;  // 星币
-				if(this.isRadio) {
-					(this.XBMoney * 1 >= this.copeWith) ? (xb = this.copeWith) : (xb = this.XBMoney)
-				}else {
+
+				let xb = 0; // 星币
+				if (this.isRadio) {
+					(this.XBMoney * 1 >= this.copeWith * 1) ? (xb = this.copeWith * 1) : (xb = this.XBMoney * 1)
+				} else {
 					xb = 0
 				}
-				
-				
-				let yh = 0;  // 优惠
-					(this.YHMoney >= this.copeWith) ? (yh = this.copeWith): (yh = this.YHMoney)
-				console.log('星币',xb, '优惠金额', this.YHMoney, '输入金额', this.money)
-				
-				 
-				let payMoney = this.copeWith - this.money * 1 - xb - yh
-				if(payMoney >= 0) {
+				console.log(this.isRadio, xb)
+
+
+				let yh = 0; // 优惠
+				(this.YHMoney * 1 >= this.copeWith * 1) ? (yh = this.copeWith * 1) : (yh = this.YHMoney * 1)
+				console.log('星币', xb, '优惠金额', yh, this.YHMoney, '输入金额', this.money)
+
+
+				let payMoney = this.copeWith - xb - yh
+				if (payMoney >= 0) {
 					return payMoney
+				} else {
+					return 0 // this.copeWith || 0
 				}
-				return 0
-				
+
 			}
 		}
 	};
@@ -740,10 +822,12 @@
 					margin: 0 auto 20rpx;
 					box-shadow: 0 4rpx 20rpx #999;
 					position: relative;
-					.isUseCard{
+
+					.isUseCard {
 						position: absolute;
 						top: 15rpx;
 						right: 15rpx;
+
 						image {
 							width: 40rpx;
 							height: 40rpx;
@@ -820,7 +904,7 @@
 			top: 0;
 			left: 0;
 			background: rgba(1, 1, 1, 0.5);
-			z-index: 999999;
+			z-index: 11;
 			color: #000;
 
 			.payMask-content {
