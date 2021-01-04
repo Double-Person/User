@@ -81,7 +81,7 @@ import tabbar from '@/components/common-tabbar/common-tabbar';
 // 引入高德地图
 import amapPlugin from '@/components/initMap.js';
 
-import { personal, shopBank, imgBaseUrl } from '@/common/apis.js';
+import { personal, shopBank, getShopPay, imgBaseUrl } from '@/common/apis.js';
 export default {
 	data() {
 		return {
@@ -293,7 +293,9 @@ export default {
 					scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
 					success: function(res) {
 						var shopId = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-						getShopPay({ SHOP_ID: res.result }).then(res => {
+						getShopPay({
+							SHOP_ID: res.result
+						}).then(res => {
 							if (res.returnMsg.status == '00') {
 								uni.navigateTo({
 									url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId

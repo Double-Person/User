@@ -1,10 +1,10 @@
 // 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js'
-export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-// export const baseUrl = 'http://192.168.0.113:8081'
-export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-// export const imgBaseUrl = 'http://192.168.0.113:8081/'
+// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+export const baseUrl = 'http://192.168.0.107:8081'
+// export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
+export const imgBaseUrl = 'http://192.168.0.107:8081/'
 
 
 
@@ -219,6 +219,11 @@ export const offlinetradingService = params => request.post('/api/ordersummary/o
 
 // 扫码 支付
 export const offlinetradingServicePay = params => request.post('/api/ordersummary/offlinetradingService/pay', params);
+// 微信提现
+/**
+ * money 金额  types  0用户、1商家   id 用户或商家的id   openid  
+ */
+export const wxtx = params => request.post('/api/tx/wxtx', params);
 
 
 

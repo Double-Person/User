@@ -28,7 +28,7 @@
 					<!-- {{item.zbalance}} -->
 				</view>
 				<view class="mask bottom-mask">
-					￥ {{ kbalance || 0}} 
+					￥ {{ kbalance || 0}}
 					<!-- {{item.kbalance}} -->
 				</view>
 			</view>
@@ -38,15 +38,15 @@
 				<input type="text" class="input" v-model.number="money" placeholder="输入提现金额" />
 				<text class="all" @click="balanceAll()">全部</text>
 			</view>
-	
+
 			<view class="fl-center-between from" v-if="bindList.Wx || bindList.Ali">
 				<view class="bank">
 					<view class="info-text from-item">
 						提现到
 					</view>
 					<view class="info-text">
-						
-						<text>{{ cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝' || cardNum == '' && '请选择' }}  {{ cardNum }}</text>
+
+						<text>{{ cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝' || cardNum == '' && '请选择' }} {{ cardNum }}</text>
 						<!-- 招商银行（8707） -->
 						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
@@ -76,7 +76,7 @@
 				<view>
 					预计2个工作日内到账，请注意查收
 				</view>
-				
+
 			</view>
 			<view class="btn" @click="getWithdrawal"> 提现 </view>
 		</view>
@@ -85,12 +85,15 @@
 	</view>
 </template>
 
-<script> 
+<script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {
-		withdrawal,personal,
-		backCardInfo, imgBaseUrl
+		withdrawal,
+		personal,
+		wxtx,
+		backCardInfo,
+		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		components: {
@@ -106,12 +109,14 @@
 				money: null,
 				cardNum: '', // 卡号
 				kbalance: 0, // uni.setStorageSync('kbalance')
+				openid: 'ofTYkxBM2Jh0KluonnXzNpLLxYuA'
 			};
 		},
 		onLoad(opt) {
 			this.userInfo = uni.getStorageSync('userInfo');
 			this.kbalance = uni.getStorageSync('kbalance');
 			this.bindList = JSON.parse(opt.bindList)
+			this.getOpenIdByWchat();
 		},
 		methods: {
 			//  转银行卡账号 和手机号
@@ -122,7 +127,7 @@
 				}
 				return phone.substring(0, 5) + '***' + phone.substring(phoneStr.length - 3, phoneStr.length)
 			},
-			
+
 			// 选择提现的卡
 			changeCardId(card) {
 				this.cardNum = card
@@ -140,12 +145,13 @@
 			balanceAll() {
 				this.money = this.kbalance
 			},
-		
-			
+
+
 			// 提现
 			getWithdrawal() {
+				
 				let userinfo_id = uni.getStorageSync('USERINFO_ID');
-				if(this.kbalance == 0) {
+				if (this.kbalance == 0) {
 					return uni.showToast({
 						title: '暂无可提现金额',
 						icon: 'none'
@@ -153,57 +159,77 @@
 				}
 
 				this.money = Number(Number(this.money).toFixed(2))
-				if(this.kbalance < this.money) {
+				if (this.kbalance < this.money) {
 					return uni.showToast({
 						title: '输入的提现金额大于可提现金额',
 						icon: 'none'
 					})
 				}
-				
-				
-					
-				
-				  
-				if (this.money <= 0) {
 
-					// this.money = null
-					uni.showToast({
-						duration: 2000,
+
+				if (this.money <= 0) {
+					return uni.showToast({
 						title: '请输入正确的提现金额',
 						icon: 'none'
 					})
-					return false;
 				}
-
 				if (!this.cardNum) {
-					this.cardNum = this.list[0].CARDNO
+					return uni.showToast({
+						title: '请选择提现位置',
+						icon: 'none'
+					})
 				}
 				let obj = {
 					userinfo_id, // 参数userinfo_id  用户id
-					amount: Number(this.money), // amount  金额  
-					cardNum: this.cardNum // cardNum卡号  this.cardNum == 
+					types: 0, // 0用户、1商家
+					money: Number(this.money), // amount  金额  
+					openid: this.openid
 				}
 				console.log(obj)
-				withdrawal(obj).then(res => {
+				// 微信提现
+				if(this.cardNum) {
+					this.weChatWithdrawal(obj)
+				}
+				
+			},
+			// 微信提现
+			weChatWithdrawal(obj) {
+				wxtx(obj).then(res => {
 					console.log(res)
-					if(res.msgType == 0) {
+					if (res.msgType == 0) {
 						uni.showToast({
 							title: '提现申请已提交',
 							icon: 'none'
 						})
-					}else {
+					} else {
 						uni.showToast({
 							title: res.errMsg,
 							icon: 'none'
 						})
 					}
-					
+				
 					setTimeout(() => {
 						uni.navigateTo({
 							url: '/pages/personal/personal'
 						})
 					}, 1000)
 				})
+			},
+			
+			// 获取微信openId
+			getOpenIdByWchat() {
+				uni.login({
+					provider: 'weixin',
+					success: function(loginRes) {
+						uni.getUserInfo({
+							provider: 'weixin',
+							success: function(infoRes) {
+								console.log('用户昵称为：', infoRes.userInfo);
+								this.openid = infoRes.userInfo.openId
+							}
+						});
+					}
+				});
 			}
 
 		}
