@@ -139,6 +139,7 @@
 					<view class="item-btn" style="display: flex;justify-content: space-between;align-items: center;">
 
 						<view style="font-size: 24rpx;">下单时间：{{item.CREATETIME }}</view>
+						<text @click="orderDel(item.ORDERSUMMARY_ID)" class="del">删除</text>
 						<text @click="toPay(item)">待付款</text>
 					</view>
 				</view>
@@ -240,6 +241,7 @@
 		alipay,
 		wxpay,
 		shopBygoodList,
+		orderDelete,
 		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
@@ -262,6 +264,26 @@
 			this.getOrderList(1)
 		},
 		methods: {
+			orderDel(ORDERSUMMARY_ID) {
+				const that = this;
+				orderDelete({ORDERSUMMARY_ID}).then(res => {
+					if(res.result == 'success') {
+						uni.showToast({
+							title:'删除成功',
+							icon: 'none'
+						})
+						setTimeout(() => {
+							that.changeTitle(0)
+						}, 1000)
+					} else {
+						uni.showToast({
+							title:'删除失败',
+							icon: 'none'
+						})
+					}
+					
+				})
+			},
 			// 去店铺
 			toShop(shopId) {
 				uni.navigateTo({
@@ -284,27 +306,7 @@
 				uni.navigateTo({
 					url: '../settlement/settlement?page=myOrder'
 				})
-				return false;
 				
-				
-				// let {
-				// 	BALANCE
-				// } = uni.getStorageSync('userInfo');
-				// const _this = this;
-				// this.orderId = item.ORDERSUMMARY_ID
-
-				// uni.showActionSheet({
-				// 	itemList: [`余额支付 (${BALANCE})`, '微信支付', '支付宝支付', '银行卡支付支付'],
-				// 	success(res) {
-				// 		if (res.tapIndex === 3) {
-				// 			return uni.showToast({
-				// 				title: '暂不支持银行卡支付',
-				// 				icon: 'none'
-				// 			})
-				// 		}
-				// 		_this.pay(res.tapIndex, item.ACTUALPAY, item.ORDERSUMMARY_ID)
-				// 	},
-				// });
 			},
 
 			pay(index, ACTUALPAY, ORDERSUMMARY_ID) {
@@ -741,11 +743,11 @@
 						justify-content: flex-end;
 
 						text {
-							padding: 8rpx 30rpx;
+							padding: 8rpx 20rpx;
 							border: 1px solid #FF6504;
 							border-radius: 40rpx;
 							color: #FF6504;
-							margin-right: 30rpx;
+							// margin-right: 30rpx;
 						}
 
 						text:last-child {

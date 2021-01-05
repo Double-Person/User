@@ -148,19 +148,19 @@
 		},
 
 		created() {
-			uni.login({
-			  provider: 'weixin',
-			  success: function (loginRes) {
-			    console.log(loginRes);
-			    // 获取用户信息
-			    uni.getUserInfo({
-			      provider: 'weixin',
-			      success: function (infoRes) {
-			        console.log('用户昵称为：' , infoRes.userInfo);
-			      }
-			    });
-			  }
-			});
+			// uni.login({
+			//   provider: 'weixin',
+			//   success: function (loginRes) {
+			//     console.log(loginRes);
+			//     // 获取用户信息
+			//     uni.getUserInfo({
+			//       provider: 'weixin',
+			//       success: function (infoRes) {
+			//         console.log('用户昵称为：' , infoRes.userInfo);
+			//       }
+			//     });
+			//   }
+			// });
 			let that = this;
 			// #ifdef APP-PLUS
 			// plus 获取经纬度
@@ -170,6 +170,7 @@
 				type: 'wgs84',
 				geocode: true, //设置该参数为true可直接获取经纬度及城市信息
 				success: async (res) => {
+					console.log(res)
 					this.longitude = res.longitude
 					this.latitude = res.latitude
 					

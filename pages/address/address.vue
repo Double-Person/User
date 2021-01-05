@@ -12,7 +12,7 @@
 					电&emsp;&emsp;话: <text>{{vendor.CELLPHONE}}</text>
 				</view>
 				<view class="address-content-address">
-					联系地址: <text>{{vendor.CITY+vendor.FULLADD}}</text>
+					联系地址: <text>{{vendor.CITY+vendor.FULLADD + vendor.AREA}}</text>
 				</view>
 
 				<view class="page-section page-section-gap" @tap="gomap">
@@ -58,11 +58,13 @@
 		onLoad(e) {
 			this.vendor = JSON.parse(e.vendor);
 			// locationPoint  locationAddress
-			let locationPoint = uni.getStorageSync('locationPoint');
-			this.latitude = JSON.parse(locationPoint).latitude;
-			this.longitude = JSON.parse(locationPoint).longitude;
-			this.covers[0].latitude = JSON.parse(locationPoint).latitude;
-			this.covers[0].longitude = JSON.parse(locationPoint).longitude;
+			// let locationPoint = uni.getStorageSync('locationPoint');
+			// console.log(locationPoint)
+			let { LONGITUDE, LATITUDE } = this.vendor;
+			this.latitude = LATITUDE;
+			this.longitude = LONGITUDE;
+			this.covers[0].latitude = LATITUDE;
+			this.covers[0].longitude = LONGITUDE;
 
 		},
 		methods: {

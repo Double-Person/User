@@ -506,8 +506,10 @@
 			},
 			// 前往地图
 			goMap() {
+				let { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD } = this.vendor
+				let obj = { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD };
 				uni.navigateTo({
-					url: "../address/address?vendor=" + JSON.stringify(this.vendor)
+					url: "../address/address?vendor=" + JSON.stringify(obj)
 				});
 			},
 			// 改变数量

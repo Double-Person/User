@@ -58,12 +58,12 @@
 			</view>
 			<view class="" v-show="isShowChangeCard" class="change-card-list">
 				<view class="list">
-					<view class="fl-center-between item" @click="changeCardId(bindList.Wx)" v-if="bindList.Wx">
-						<view>微信 {{bindList.Wx}}</view>
+					<view class="fl-center-between item" @click="changeCardId(bindList.Wx, 'wechat')" v-if="bindList.Wx">
+						<view>微信 <text style="margin-left: 30rpx;">{{bindList.Wx}}</text></view>
 						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Wx" />
 					</view>
-					<view class="fl-center-between item" @click="changeCardId(bindList.Ali)" v-if="bindList.Ali">
-						<view>支付宝 {{bindList.Ali}}</view>
+					<view class="fl-center-between item" @click="changeCardId(bindList.Ali, 'ali')" v-if="bindList.Ali">
+						<view>支付宝 <text style="margin-left: 30rpx;">{{bindList.Ali}}</text></view>
 						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Ali" />
 					</view>
 				</view>
@@ -101,6 +101,7 @@
 		},
 		data() {
 			return {
+				type: '',
 				imgBaseUrl: imgBaseUrl,
 				userInfo: {},
 				isShowChangeCard: false,
@@ -116,7 +117,10 @@
 			this.userInfo = uni.getStorageSync('userInfo');
 			this.kbalance = uni.getStorageSync('kbalance');
 			this.bindList = JSON.parse(opt.bindList)
+			
+			// #ifdef APP-PLUS
 			this.getOpenIdByWchat();
+			// #endif
 		},
 		methods: {
 			//  转银行卡账号 和手机号
@@ -129,7 +133,8 @@
 			},
 
 			// 选择提现的卡
-			changeCardId(card) {
+			changeCardId(card, type) {
+				this.type = type;
 				this.cardNum = card
 				this.isShowChangeCard = false
 			},
@@ -173,22 +178,38 @@
 						icon: 'none'
 					})
 				}
+				console.log(this.cardNum)
 				if (!this.cardNum) {
 					return uni.showToast({
 						title: '请选择提现位置',
 						icon: 'none'
 					})
 				}
+				if(!this.openid) {
+					 uni.showToast({
+						title: '请授权登录',
+						icon: 'none'
+					})
+					if(this.type == 'wechat') {
+						this.getOpenIdByWchat()
+					}else if(this.type == 'ali') {
+						
+					}
+					
+					return false
+				}
 				let obj = {
-					userinfo_id, // 参数userinfo_id  用户id
+					id:userinfo_id, // 参数userinfo_id  用户id
 					types: 0, // 0用户、1商家
+					TYPES: 0, // 0用户、1商家
 					money: Number(this.money), // amount  金额  
 					openid: this.openid
 				}
-				console.log(obj)
 				// 微信提现
-				if(this.cardNum) {
+				if(this.type == 'wechat') {
 					this.weChatWithdrawal(obj)
+				}else if(this.type == 'ali') {
+					
 				}
 				
 			},
@@ -198,7 +219,7 @@
 					console.log(res)
 					if (res.msgType == 0) {
 						uni.showToast({
-							title: '提现申请已提交',
+							title: '提现成功',
 							icon: 'none'
 						})
 					} else {
@@ -218,6 +239,7 @@
 			
 			// 获取微信openId
 			getOpenIdByWchat() {
+				const that = this;
 				uni.login({
 					provider: 'weixin',
 					success: function(loginRes) {
@@ -225,7 +247,7 @@
 							provider: 'weixin',
 							success: function(infoRes) {
 								console.log('用户昵称为：', infoRes.userInfo);
-								this.openid = infoRes.userInfo.openId
+								that.openid = infoRes.userInfo.openId
 							}
 						});
 					}
@@ -319,7 +341,7 @@
 
 		.mask {
 			position: absolute;
-			width: 170rpx;
+			width: 200rpx;
 			height: 95rpx;
 			right: 0;
 			background: #fff;

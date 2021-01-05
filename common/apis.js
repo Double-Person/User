@@ -225,6 +225,13 @@ export const offlinetradingServicePay = params => request.post('/api/ordersummar
  */
 export const wxtx = params => request.post('/api/tx/wxtx', params);
 
+// 删除待付款订单
+export const orderDelete = params => request.post('/api/ordersummary/order/delete', params);
+// 线下支付
+export const userlist = params => request.post('/api/merchant/offlinetrading/userlist', params);
+
+
+
 
 
 

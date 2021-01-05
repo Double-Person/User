@@ -95,6 +95,12 @@ export default {
 					text: '我的订单'
 				},
 				{
+					id: '08',
+					icon: 'icon-weibiaoti--',
+					color: '#da6d7a',
+					text: '线下支付'
+				},
+				{
 					id: '02',
 					icon: 'icon-pingjia-tianchong',
 					color: '#367feb',
@@ -195,6 +201,12 @@ export default {
 		},
 	
 		goPage(index) {
+			console.log(index)
+			if (index == 8) {
+				uni.navigateTo({
+					url: '../offlineEarnings/offlineEarnings'
+				});
+			}
 			if (index == 1) {
 				uni.navigateTo({
 					url: '../myOrder/myOrder'

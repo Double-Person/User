@@ -95,7 +95,7 @@
 		<view class="payMask" :class="payMaskHide?'payMaskHide':''">
 			<view class="payMask-content">
 				<view class="title">
-					<text class="iconfont icon-zuojiantou" @tap="payMaskHide=true; payMode = 0"></text>请选择支付方式
+					<text class="iconfont icon-zuojiantou" @tap="payMaskHide=true; payMode = 0; payPwdMaskHide = true; val = '';"></text>请选择支付方式
 				</view>
 
 				<view class="item" @tap="pay(item.id)" v-for="item in payMaskInfo" :key='item.id'>
@@ -332,6 +332,7 @@
 						icon: 'none'
 					})
 				}
+				this.val = '';
 			
 				/* * 
 				 * MONEY   总价
@@ -531,7 +532,7 @@
 									icon: 'none'
 								})
 								uni.navigateTo({
-									url: '../index/index'
+									url: '../offlineEarnings/offlineEarnings'
 								});
 							}, 2000);
 						}
@@ -553,7 +554,6 @@
 				let arr = value.split("");
 				this.codeIndex = arr.length + 1;
 				this.codeArr = arr;
-				console.log(this.val);
 				if (this.val.length === 6) {
 					uni.showLoading({
 						title: "支付中...",

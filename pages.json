@@ -189,6 +189,11 @@
 		{
 			"path":"pages/payment/Payment",
 			"style" : {}
+		},
+		{
+			"path":"pages/offlineEarnings/offlineEarnings",
+			"style" : {}
+			
 		}
     ],
     "globalStyle": {
