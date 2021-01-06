@@ -448,7 +448,7 @@
 						});
 						setTimeout(() => {
 							uni.navigateTo({
-								url: "../index/index"
+								url: "../payComplete/payComplete"
 							});
 						}, 2000);
 						console.log("success:" + JSON.stringify(res));
@@ -482,7 +482,7 @@
 						});
 						setTimeout(() => {
 							uni.navigateTo({
-								url: "../index/index"
+								url: "../payComplete/payComplete"
 							});
 						}, 2000);
 					},
@@ -532,7 +532,7 @@
 									icon: 'none'
 								})
 								uni.navigateTo({
-									url: '../offlineEarnings/offlineEarnings'
+									url: '../payComplete/payComplete'
 								});
 							}, 2000);
 						}
