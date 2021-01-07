@@ -387,7 +387,6 @@
 					TYPES: this.payMode,
 					tradePass: this.val
 				}).then(res => {
-					console.log(res)
 					uni.hideLoading()
 					
 					if(this.payMode == 1) {
@@ -410,13 +409,21 @@
 						}, 1000)
 						
 					}else {
-						uni.showToast({
-							title: '支付成功',
-							icon: 'none'
-						})
+						let order = res.returnMsg;
+						this.paySuccess(order);
+						
 					}
 				})
 
+			},
+			// 支付成功
+			paySuccess(order) {
+				order.total = this.ActualPayment;
+				setTimeout(() => {
+					uni.redirectTo({
+						url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+					});
+				}, 500);
 			},
 			// 支付
 			pay(index) {
@@ -435,6 +442,7 @@
 			},
 			// 微信支付
 			weChatPay(orderInfo) {
+				const self = this;
 				uni.requestPayment({
 					provider: "wxpay",
 					orderInfo: orderInfo,
@@ -446,10 +454,10 @@
 							duration: 2000,
 							mask: true
 						});
+						
 						setTimeout(() => {
-							uni.navigateTo({
-								url: "../payComplete/payComplete"
-							});
+							let order = res.returnMsg;
+							self.paySuccess(order);
 						}, 2000);
 						console.log("success:" + JSON.stringify(res));
 					},
@@ -468,6 +476,7 @@
 			},
 			// 支付宝支付
 			aliPayFn(orderInfo) {
+				const self = this;
 				uni.requestPayment({
 					provider: "alipay",
 					orderInfo: orderInfo,
@@ -481,9 +490,8 @@
 							mask: true
 						});
 						setTimeout(() => {
-							uni.navigateTo({
-								url: "../payComplete/payComplete"
-							});
+							let order = res.returnMsg;
+							self.paySuccess(order);
 						}, 2000);
 					},
 					fail: err => {
@@ -507,7 +515,7 @@
 					orderSummaryId: this.orderID,
 					tradePass
 				}).then(res => {
-					console.log(res)
+					console.log('-----', res)
 					uni.hideLoading();
 					this.tradePass = '';
 					if (res.returnMsg) {

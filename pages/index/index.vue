@@ -117,6 +117,7 @@
 					2df5711d4e2fd9ecd1622b5a53fc6b1d
 					
 				*/
+			   passCity: '',
 			   imgBaseUrl: imgBaseUrl,
 			   cityShow: '',
 				key: 'f0d8604522a34fea7af419d353f98e8f',
@@ -206,10 +207,11 @@
 						},
 						success: (data) => {
 							getApp().globalData.city = [];
-							this.newCity = data.data.regeocode.addressComponent.city + data.data.regeocode.addressComponent.district;
-							this.cityShow = data.data.regeocode.addressComponent.district;
-							getApp().globalData.city.push(data.data.regeocode.addressComponent.city, data.data.regeocode.addressComponent
-								.district);
+							let {city, district} = data.data.regeocode.addressComponent;
+							this.newCity = city + district;
+							this.cityShow = district;
+							this.passCity = city;
+							getApp().globalData.city.push(city, district);
 						},
 						fail(err) {
 							uni.showToast({
@@ -394,9 +396,10 @@
 
 			// 前往本地优惠
 			goLocalPre() {
+	
 				uni.navigateTo({
 					url: '../localPreferences/localPreferences?longitude=' + this.longitude + '&latitude=' + this.latitude +
-						'&area=' + this.area
+						'&area=' + this.area + '&city=' + this.passCity
 				});
 			},
 			// banner跳转

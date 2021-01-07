@@ -1,10 +1,10 @@
 // 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js'
-export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-// export const baseUrl = 'http://192.168.0.107:8081'
-export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-// export const imgBaseUrl = 'http://192.168.0.107:8081/'
+// export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
+export const baseUrl = 'http://192.168.0.111:8081'
+// export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
+export const imgBaseUrl = 'http://192.168.0.111:8081/'
 
 
 
@@ -234,6 +234,12 @@ export const userlist = params => request.post('/api/merchant/offlinetrading/use
 
 
 
+// * CITY  市
+// * AREA  区
+export const area = params => request.post('/api/ordersummary/activity/area', params);
+
+// ACTIVITY_ID  
+export const findById = params => request.post('/api/ordersummary/activity/findById', params);
 
 
 

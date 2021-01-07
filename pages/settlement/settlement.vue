@@ -492,21 +492,19 @@ export default {
 			this.val = '';
 		},
 		// 支付
-		pay(index) {
-					
+		pay(index) {		
+			const self = this;
 			this.payMode = index;
+			
 			// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
-	
 			let obj = {
 				payAmount: this.payAmount,  // '216.0',//
 				orderSummaryId: this.orderID // 'D1601279104958'//
 			};
 	
-		
 			// 微信支付
 			if (this.payMode === 1) {
 				wxpay(obj).then(res => {
-					console.log()
 					uni.requestPayment({
 						provider: 'wxpay',
 						orderInfo: res.returnMsg, 
@@ -518,11 +516,11 @@ export default {
 								mask: true
 							});
 							setTimeout(() => {
-								uni.navigateTo({
-									url: '../index/index'
-								});
+								let order = res.returnMsg;
+								self.paySuccess(order)
 							}, 2000);
-							console.log('success:' + JSON.stringify(res));
+							
+							
 						},
 						
 						fail :(err) =>{
@@ -556,9 +554,9 @@ export default {
 								mask: true
 							});
 							setTimeout(() => {
-								uni.navigateTo({
-									url: '../index/index'
-								});
+								
+								let order = res.returnMsg;
+								self.paySuccess(order)
 							}, 2000);
 						},
 						fail: err => {
@@ -591,8 +589,7 @@ export default {
 			// 显示密码输入
 			// this.payPwdMaskHide = false
 		},
-		payByBalance() {
-			
+		payByBalance() {	
 			// if(this.tradePass == '') {
 			// 	return uni.showToast({ title: '请输入交易密码', icon: 'none' })
 			// }
@@ -602,7 +599,6 @@ export default {
 			if(this.tradePass == '') {
 				return uni.showToast({ title: '请输入支付密码', icon: 'none' })
 			}
-			
 			
 			this.inputPwd = false;
 			shopBygoodList({ orderSummaryId: this.orderID, tradePass: this.tradePass }).then(res => {
@@ -626,11 +622,10 @@ export default {
 							icon: 'none'
 						})	
 						this.inputPwd = true
-						setTimeout(() => {
-							uni.navigateTo({
-								url: '../index/index'
-							});
-						}, 2000);
+
+						let order = res.returnMsg;
+						this.paySuccess(order)
+						
 					}
 				}else{
 					uni.showToast({
@@ -639,6 +634,15 @@ export default {
 				}
 				
 			})
+		},
+		// 支付成功
+		paySuccess(order) {
+			order.total = this.total;
+			setTimeout(() => {
+				uni.redirectTo({
+					url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+				});
+			}, 100);
 		},
 		// 返回支付选择
 		backPay() {
@@ -727,14 +731,6 @@ export default {
 		// 获取星币
 		_personal(USERINFO_ID) {
 			personal({ USERINFO_ID }).then(res => {
-				// if (parseInt(res.returnMsg.userInfo.STARCOINS) >= this.total) {
-				// 	if (this.total <= 1) {
-				// 	} else {
-				// 		this.XBMoneyValid = Math.ceil(this.total - 1);
-				// 	}
-				// } else {
-				// 	this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
-				// }
 				// 星币可全部抵扣
 				if(res.returnMsg.userInfo.STARCOINS < this.submitTotal) {
 					this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;

@@ -1,15 +1,16 @@
 <template>
 	<view class="local-preferences-detail">
-		<view class="warp" v-if="hotInfo.activity">
-			<image class="bg-img" :src="hotInfo.activity.PICTURE ? (imgBaseUrl + hotInfo.activity.PICTURE) : '/static/images/youhui.png'" mode=""></image>
+		<view class="warp">
+			<image class="bg-img" :src="hotInfo.PICTURE ? (imgBaseUrl + hotInfo.PICTURE) : '/static/images/youhui.png'" mode=""></image>
 		</view>
 		
-		<view class="info"  v-if="hotInfo.activity">
-			{{ hotInfo.activity.DESCRIBE }}
-			
-			<view class="phone" @click="callPhone(hotInfo.shopphone)">
+		<view class="info">
+			<!-- {{ hotInfo.DESCRIBE }} -->
+			<view class="" v-html="hotInfo.DESCRIBE"></view>
+			<!-- {{  }} -->
+			<view class="phone" @click="callPhone(hotInfo.TYPES)">
 				<image src="/static/images/phone.png"></image>
-				<view class="">{{ hotInfo.shopphone }}</view>
+				<view class="">{{ hotInfo.TYPES }}</view>
 			</view>
 		</view>
 
@@ -18,9 +19,10 @@
 			<view class="localPreferences-content-hot-title">
 				<text class="iconfont icon-dian"></text>热门推荐
 			</view>
-			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail(item.goodsId)">
+	
+			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail(item.GOODS_ID)">
 				<view class="left">
-					<image :src="item.IMG" mode=""></image>
+					<image :src="imgBaseUrl + item.IMG" mode=""></image>
 				</view>
 				<view class="right">
 					<view class="right-title">
@@ -36,11 +38,11 @@
 					<view class="right-score">
 						<!-- 不可点击状态 -->
 						<uni-rate disabled="true" :value="item.MONTHLY_SALES" active-color="#FF5D06" size="18"></uni-rate>
-						<text>{{item.SCORE}}分</text>
+						<text>{{item.SCORE || 0}}分</text>
 					</view>
 					<!-- 时间 -->
-					<view class="right-date" v-if="hotInfo.activity">
-						{{hotInfo.activity.STARTTIME}}
+					<view class="right-date">
+						{{hotInfo.CREATETIME}}
 					</view>
 				</view>
 			</view>
@@ -57,6 +59,7 @@
 		getBanner,
 		getPush,
 		shopActivityGoods,
+		findById,
 		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
@@ -72,10 +75,18 @@
 
 		onLoad(options) {
 			console.log(options)
-			let shopId = options.shopId ;//|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId
-			shopActivityGoods({shop_id: shopId}).then( res => {
-				this.hotInfo = res.returnMsg				
-				this.hotInfo.glist = res.returnMsg.glist.slice(0, 5)
+			let shopId = options.shopId ;//|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId  
+			let ACTIVITY_ID = options.ACTIVITY_ID ;// ACTIVITY_ID
+			console.log('***' ,ACTIVITY_ID)
+			findById({ACTIVITY_ID}).then( res => {
+				console.log(res)
+				this.hotInfo = res.returnMsg.data;
+				let {GOODS1, GOODS2,GOODS3 ,GOODS4,GOODS5} = this.hotInfo;
+				let glist = [ GOODS1, GOODS2,GOODS3 ,GOODS4,GOODS5 ];
+				glist = glist.filter(ele => ele);
+							
+				this.hotInfo.glist = glist;
+				console.log(this.hotInfo)
 			} )
 
 		},
@@ -125,6 +136,7 @@
 			margin: 0 auto;
 			padding: 20rpx;
 			font-size: 30rpx;
+			overflow-x: auto;
 			.phone{
 				background: rgb(250, 214, 154);
 				display: flex;

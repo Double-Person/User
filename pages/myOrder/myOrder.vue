@@ -74,9 +74,10 @@
 						</view>
 					</view>
 					<view class="item-btn">
-						<text v-if="item.take_status == 'N'" @click="goOrderDetail(item.ORDERSUMMARY_ID)">申请退款</text>
-						<text v-if="item.take_status == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)">确认收货</text>
-						<text v-if="item.take_status != 'N'" @click="evaluation(item.ORDERSUMMARY_ID)">立即评价</text>
+						 <!-- n 待收货 k 代发货 y 也完成 -->
+						<text v-if="item.take_status != 'Y'" @click="goOrderDetail(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">申请退款</text>
+						<text v-if="item.take_status == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">确认收货</text>
+						<text v-if="item.take_status == 'Y'" @click="evaluation(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">立即评价</text>
 						<text v-if="item.address!='线下支付'" @click="again(item.shopId)">再来一单</text>
 					</view>
 				</view>
@@ -246,6 +247,7 @@
 	} from "@/common/apis.js";
 	export default {
 		data() {
+			// n 待收货 k 代发货 y 也完成
 			return {
 				imgBaseUrl: imgBaseUrl,
 				active: 1,

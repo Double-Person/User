@@ -7,28 +7,29 @@
 			<view class="payComplete-title">支付成功</view>
 		</view>
 		<view class="order-info">
-			<view class="money">￥ 88.56</view>
-			<view class="info-list">
+			<view class="money">￥ {{info.total || 0}}</view>
+
+			<view class="info-list" v-if="info.SHOP_NAME">
 				<text>商家名称</text>
-				<text>火锅底</text>
+				<text>{{ info.SHOP_NAME }}</text>
 			</view>
 			<view class="info-list">
 				<text>订单编号</text>
-				<text>1564641541541</text>
+				<text>{{ info.ORDERNO || info.NUMBER }}</text>
 			</view>
 			<view class="info-list">
 				<text>下单时间</text>
-				<text>2021年1月6日14:36:00</text>
+				<text>{{ info.TIME }}</text>
 			</view>
 			<view class="info-list">
 				<text>付款方式</text>
-				<text>卫星</text>
+				<text>{{ payType(info.TYPES) }}</text>
 			</view>
 		</view>
-	
-		<view class="btn" @click="toOrder">查看订单</view>
+
+		<view class="btn" @click="toOrder(info.ORDERNO)">查看订单</view>
 		<view class="btn" @click="toIndex">返回首页</view>
-	
+
 	</view>
 </template>
 
@@ -38,22 +39,34 @@
 	export default {
 		data() {
 			return {
-
+				info: {}
 			}
 		},
 		components: {
 			commonHeader
 		},
+		onLoad(opt) {
+			this.info = JSON.parse(opt.orderInfo || '')
+		},
 		methods: {
-			toIndex(){
+			toIndex() {
 				uni.navigateTo({
 					url: '../index/index'
 				})
 			},
-			toOrder(){
-				uni.navigateTo({
-					url: '../offlineEarnings/offlineEarnings'
-				})
+			toOrder(ORDERNO) {
+				if (ORDERNO) {
+					uni.redirectTo({
+						url: '../myOrder/myOrder'
+					})
+				} else { // NUMBER 扫码 
+					uni.redirectTo({
+						url: '../offlineEarnings/offlineEarnings'
+					})
+				}
+			},
+			payType(type) {
+				return (type == 0 && '余额支付' || type == 1 && '微信支付' || type == 2 && '支付宝支付' || type == 3 && '银行卡支付')
 			}
 		}
 	}
@@ -62,6 +75,7 @@
 <style lang="scss" scoped>
 	$bgc: #f8f6f9;
 	$minColor: #ff7114;
+
 	.warp {
 		background: $bgc;
 		height: 100vh;
@@ -102,26 +116,29 @@
 			text-align: center;
 			border-bottom: dashed 4rpx $bgc;
 			padding-bottom: 30rpx;
-			 position: relative;
-			 &::before, &::after{
-				 position: absolute;
-				 content: '';
-				 width: 30rpx;
-				 height: 30rpx;
-				 background: $bgc;			 		
-				 border-radius: 50%;
-			 }
+			position: relative;
 
-			&::before {	
+			&::before,
+			&::after {
+				position: absolute;
+				content: '';
+				width: 30rpx;
+				height: 30rpx;
+				background: $bgc;
+				border-radius: 50%;
+			}
+
+			&::before {
 				bottom: -15rpx;
 				left: -30rpx;
 			}
+
 			position: relative;
-			
+
 			&::after {
 				bottom: -15rpx;
 				right: -30rpx;
-				
+
 			}
 		}
 
@@ -133,11 +150,11 @@
 		}
 
 		.info-list:nth-child(2) {
-			padding-top: 30rpx;			
+			padding-top: 30rpx;
 		}
 	}
 
-	.btn{
+	.btn {
 		background: $minColor;
 		width: 80%;
 		height: 45rpx;
@@ -146,8 +163,6 @@
 		margin: 40rpx auto;
 		padding: 20rpx 0;
 		border-radius: 50rpx;
-		
-	}
-	
 
+	}
 </style>

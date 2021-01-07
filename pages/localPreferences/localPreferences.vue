@@ -13,29 +13,29 @@
 				<view class="localPreferences-content-hot-title">
 					<text class="iconfont icon-dian"></text>热门推荐
 				</view>
-				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.shopId)">
+				<view class="localPreferences-content-hot-item" v-for="item in hotLIst" :key="item.id" @click="handelShop(item.SHOP_ID, item.ACTIVITY_ID)">
 					<view class="left">
-						<image :src="imgBaseUrl + item.faceicon" mode=""></image>
+						<image :src="imgBaseUrl + item.FACEICON" mode=""></image>
 					</view>
 					<view class="right">
 						<view class="right-title">
-							<text>{{item.name}}</text>
+							<text>{{item.NAME}}</text>
 							<view>
 								<text class="iconfont icon-youjiantou"></text>
 							</view>
 						</view>
 						<view class="right-text">
-							{{item.details}}
+							{{item.MEANS}}
 						</view>
 						<!-- 评分 -->
 						<view class="right-score">
 							<!-- 不可点击状态 -->
-							<uni-rate disabled="true" :value="item.score" active-color="#FF5D06" size="18"></uni-rate>
-							<text>{{item.score}}分</text>
+							<uni-rate disabled="true" :value="item.SCORE" active-color="#FF5D06" size="18"></uni-rate>
+							<text>{{item.SCORE}}分</text>
 						</view>
 						<!-- 时间 -->
 						<view class="right-date">
-							{{item.createtime}}
+							{{item.STARTTIME}}
 						</view>
 					</view>
 				</view>
@@ -58,6 +58,7 @@
 		pushShop,
 		getBanner,
 		getPush,
+		area,
 		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
@@ -86,38 +87,47 @@
 			tabbar,
 			uniRate
 		},
-	
+
 		onLoad(e) {
 			var obj = {
 				longitude: e.longitude,
 				latitude: e.latitude,
-				AREA: e.area,
-				kilometers: '300',
+				CITY: e.city,
+				AREA: e.area, // '金牛区', //
 				NAME: '' // 不填就是综合
 			}
 			this.onloadObj = obj
-			this.getCalPreferences()
-			this.getBannerList();
+			// this.getCalPreferences()
+			this.getBannerList(obj);
+			this.getArea(obj)
 			
+
 		},
 		methods: {
-			handelShop(shopId) { // shopId	  9e98a5b1afb64ac6a00fc805c678e1e3
-				uni.navigateTo({
-					url: 'localPreferencesDetail?shopId=' + shopId
+			// 本地优惠
+			getArea(obj) {
+				area(obj).then(res => {
+					this.hotLIst = res.returnMsg.data
 				})
-			
+			},
+			handelShop(shopId, ACTIVITY_ID) { // shopId	  9e98a5b1afb64ac6a00fc805c678e1e3  SHOP_ID, item.ACTIVITY_ID
+			console.log(ACTIVITY_ID)
+				uni.navigateTo({
+					url: 'localPreferencesDetail?shopId=' + shopId + '&ACTIVITY_ID=' + ACTIVITY_ID
+				})
+
 			},
 			// 本地优惠
-			getCalPreferences() {
-				getPush(this.onloadObj).then(res => {
-					this.hotLIst = res.returnMsg.shop
-				})
-			},
+			// getCalPreferences() {
+			// 	getPush(this.onloadObj).then(res => {
+			// 		this.hotLIst = res.returnMsg.shop
+			// 	})
+			// },
 			// 获取banner
-			getBannerList() {
+			getBannerList(obj) {
 				var data = {
-					area: uni.getStorageSync('locationArea'),
-					category: '本地优惠'
+					...obj,
+					 CATEGORY: 1
 				}
 				getBanner(data).then(res => {
 					this.bannerList = res.returnMsg.banner.map(item => {
@@ -128,6 +138,7 @@
 							path: item.URL
 						}
 					})
+				
 				})
 			},
 		}
