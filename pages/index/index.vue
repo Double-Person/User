@@ -334,6 +334,7 @@
 			},
 			// h5 定位
 			getPointByH5() {
+				let that = this;
 				uni.getLocation({
 					// type: 'wgs84',
 					type: 'gcj02',
