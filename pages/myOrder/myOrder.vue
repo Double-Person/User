@@ -49,7 +49,7 @@
 					</view>
 
 
-
+<!-- PAYTYPEY  支付方式  PAYTYPE  收入支出类型 0收入 1支出   -->
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
 					</view>
@@ -137,10 +137,10 @@
 							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
-					<view class="item-btn" style="display: flex;justify-content: space-between;align-items: center;">
+					<view class="item-btn" style="display: flex;justify-content: flex-end;align-items: center;">
 
-						<view style="font-size: 24rpx;">下单时间：{{item.CREATETIME }}</view>
-						<text @click="orderDel(item.ORDERSUMMARY_ID)" class="del">删除</text>
+						<view style="font-size: 24rpx;"></view>
+						<text style="margin-right: 30rpx;" @click="orderDel(item.ORDERSUMMARY_ID)" class="del">删除</text>
 						<text @click="toPay(item)">待付款</text>
 					</view>
 				</view>

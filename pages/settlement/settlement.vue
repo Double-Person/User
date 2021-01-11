@@ -325,7 +325,6 @@ export default {
 					});
 				}else if(e.page == 'shopPage'){ //  从商店直接购买
 					var arr = JSON.parse(e.item);
-					console.log('===', arr);
 					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
 					arr.map(item => {
@@ -467,7 +466,6 @@ export default {
 			let arr = value.split('');
 			this.codeIndex = arr.length + 1;
 			this.codeArr = arr;
-			// console.log(this.val);
 			if (this.val == 888888) {
 				// uni.showLoading({
 				//     title: '支付中...',
@@ -493,7 +491,7 @@ export default {
 		},
 		// 支付
 		pay(index) {		
-			const self = this;
+			
 			this.payMode = index;
 			
 			// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
@@ -504,72 +502,12 @@ export default {
 	
 			// 微信支付
 			if (this.payMode === 1) {
-				wxpay(obj).then(res => {
-					uni.requestPayment({
-						provider: 'wxpay',
-						orderInfo: res.returnMsg, 
-						success :( res) =>{  
-							this.payMaskHide = true; // 隐藏当前支付方式选择
-							uni.showToast({
-								title: '支付成功!',
-								duration: 2000,
-								mask: true
-							});
-							setTimeout(() => {
-								let order = res.returnMsg;
-								self.paySuccess(order)
-							}, 2000);
-							
-							
-						},
-						
-						fail :(err) =>{
-							uni.showToast({
-								title: '支付失败!',
-								icon: 'none',
-								duration: 2000,
-								mask: true
-							});
-							console.log('fail:' + JSON.stringify(err));
-						}
-					});
-				});
+				this.weChatPayment(obj)
 			}
 			
 			// 支付宝支付
 			if (this.payMode === 2) {
-				alipay(obj).then(res1 => {
-					console.log('支付宝订单信息', JSON.stringify(res1.returnMsg));
-					uni.requestPayment({
-						provider: 'alipay',
-						orderInfo: res1.returnMsg,
-						// orderInfo: mockOrderInfo.returnMsg,
-						success: res => {
-							console.log('success支付宝:' + JSON.stringify(res));
-							// 隐藏当前支付方式选择
-							this.payMaskHide = true;
-							uni.showToast({
-								title: '支付成功!',
-								duration: 2000,
-								mask: true
-							});
-							setTimeout(() => {
-								
-								let order = res.returnMsg;
-								self.paySuccess(order)
-							}, 2000);
-						},
-						fail: err => {
-							uni.showToast({
-								title: '支付失败!',
-								icon: 'none',
-								duration: 2000,
-								mask: true
-							});
-							console.log('fail支付宝:' + JSON.stringify(err));
-						},
-					});
-				});
+				this.aliPayment(obj)
 			}
 			
 			// 餘額支付
@@ -602,7 +540,6 @@ export default {
 			
 			this.inputPwd = false;
 			shopBygoodList({ orderSummaryId: this.orderID, tradePass: this.tradePass }).then(res => {
-				console.log(res)
 				this.tradePass = '';
 				if(res.returnMsg) {
 					if(res.returnMsg.status == '01') {
@@ -635,9 +572,71 @@ export default {
 				
 			})
 		},
+		
+		weChatPayment(obj) {
+			let _self = this;
+			wxpay(obj).then(res => {
+				uni.requestPayment({
+					provider: 'wxpay',
+					orderInfo: res.returnMsg.wx, 
+					success :( ord) =>{  
+						this.payMaskHide = true; // 隐藏当前支付方式选择
+						uni.showToast({
+							title: '支付成功!',
+							duration: 2000,
+							mask: true
+						});
+						setTimeout(() => {
+							let order = res.returnMsg;
+							_self.paySuccess(order)
+						}, 1000);	
+					},
+					
+					fail :(err) =>{
+						uni.showToast({
+							title: '支付失败!',
+							icon: 'none'
+						});
+						
+					}
+				});
+			});
+		},
+		aliPayment(obj) {
+			let _self = this;
+			alipay(obj).then(res1 => {
+			
+				uni.requestPayment({
+					provider: 'alipay',
+					orderInfo: res1.returnMsg.zfb,
+					// orderInfo: mockOrderInfo.returnMsg,
+					success: res => {
+						// 隐藏当前支付方式选择
+						this.payMaskHide = true;
+						uni.showToast({
+							title: '支付成功!',
+							duration: 2000,
+							mask: true
+						});
+						setTimeout(() => {				
+							let order = res1.returnMsg;
+							_self.paySuccess(order)
+						}, 1000);
+					},
+					fail: err => {
+						uni.showToast({
+							title: '支付失败!',
+							icon: 'none',
+						});
+					},
+				});
+			});
+		},
 		// 支付成功
 		paySuccess(order) {
 			order.total = this.total;
+			delete order.zfb;
+			delete order.wx;
 			setTimeout(() => {
 				uni.redirectTo({
 					url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
