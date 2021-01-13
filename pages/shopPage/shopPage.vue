@@ -1,5 +1,6 @@
 <template>
 	<view class="shopPage">
+		
 		<view class="shopPage-Top" :style="{'background':'url('+imgBaseUrl + vendor.BGIMG+')'}">
 			<view class="shopPage-Top-header">
 				<view class="left">
@@ -19,6 +20,7 @@
 			</view>
 		</view>
 		<!-- 标题 -->
+		
 		<view class="shopPage-shopTitle">
 			<view class="shopPage-shopTitle-top">
 				<view class="img">

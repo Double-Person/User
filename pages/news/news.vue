@@ -8,40 +8,51 @@
 		</view>
 		<!-- 平台公告 -->
 		<view class="news-gonggao new-common" :class="active?'':'hide'">
-			<view class="news-gonggao-msg" v-for="item in guanggaoData" :key="item.MESSAGE_ID" @tap="goNotice(item.MESSAGE_ID)">
+			<view class="news-gonggao-msg" v-for="item in guanggaoData" :key="item.MESSAGE_ID" @tap="goNotice(item.MESSAGE_ID, item.USERMESSAGE_ID)">
 				<view class="news-gonggao-msg-left">
 					<view class="logo">
 						<text class="iconfont icon-yinlianglabashengyin"></text>
-					</view>
-					<view class="text">
-						<text>{{item.TITLE}}</text>
-						<!-- <view>{{item.COUNTENT }}</view> -->
-						<view  class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
-							{{showMsg(item.COUNTENT)}}
-						</view>
-					</view>
+					</view>	
 				</view>
 				<view class="news-gonggao-msg-right">
-					<text>{{item.PUBLISHTIME}}</text>
-					<view v-if="item.STATE == 0">1</view>
+					<view class="fl-between-center">
+						<text>{{item.TITLE}}</text>
+						<text>{{item.PUBLISHTIME}}</text>
+					</view>
+					<view class="fl-between-center">
+						<text  class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
+							{{showMsg(item.COUNTENT)}}
+						</text>
+						<text class="num-ball" v-if="item.TYPES == 0">1</text>
+					</view>
+					
+				
+					
+					
 				</view>
 			</view>
 		</view>
 		<!-- 客服通知 -->
 		<view class="news-tongzhi new-common" :class="active?'hide':''">
-			<view class="news-gonggao-msg" v-for="item in kefuData" :key="item.id" @tap="goNotice(item.MESSAGE_ID)">
+			<view class="news-gonggao-msg" v-for="item in kefuData" :key="item.id" @tap="goNotice(item.MESSAGE_ID, item.USERMESSAGE_ID)">
 				<view class="news-gonggao-msg-left">
 					<view class="logo">
 						<text class="iconfont icon-kefu"></text>
 					</view>
-					<view class="text">
-						<text>{{item.TITLE}}</text>
-						<view class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">{{showMsg(item.COUNTENT)}}</view>
-					</view>
+					
 				</view>
 				<view class="news-gonggao-msg-right">
-					<text>{{item.PUBLISHTIME}}</text>
-					<view v-if="item.STATE == 0">1</view>
+					<view class="fl-between-center">
+						<text>{{item.TITLE}}</text>
+						<text>{{item.PUBLISHTIME}}</text>
+					</view>
+					<view class="fl-between-center">
+						<text  class="content" :style="{color: item.COUNTENT.includes('img') ? 'red' : ''}">
+							{{showMsg(item.COUNTENT)}}
+						</text>
+						<text class="num-ball" v-if="item.TYPES == 0">1</text>
+					</view>
+		
 				</view>
 			</view>
 		</view>
@@ -86,10 +97,11 @@
 				const {
 					returnMsg
 				} = await getMessage({
-					RECIPIENT: uni.getStorageSync('USERINFO_ID'),
+					USERINFO_ID: uni.getStorageSync('USERINFO_ID'),
 					MESSAGETYPE: this.active ? 1 : 2
 				})
 				this[this.active ? 'guanggaoData' : 'kefuData'] = returnMsg
+				this.kefuData = []; // 暂时不要客服通知数据
 			},
 			getVal(e) {
 				console.log(e)
@@ -103,9 +115,9 @@
 				}
 			},
 			// 查看公告详情
-			goNotice(id) {
+			goNotice(id, USERMESSAGE_ID) {
 				uni.navigateTo({
-					url: '../notice/notice?id=' + id
+					url: '../notice/notice?id=' + id + '&USERMESSAGE_ID=' + USERMESSAGE_ID
 				})
 			},
 		}
@@ -113,6 +125,12 @@
 </script>
 
 <style lang="less" scoped>
+	.fl-between-center{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
 	.content{
 		width: 380rpx;
 		overflow: hidden;
@@ -175,11 +193,12 @@
 			.news-gonggao-msg {
 				display: flex;
 				justify-content: space-between;
+				align-items: center;
 				padding: 30rpx 30rpx 30rpx 0;
 				border-bottom: 1px solid #ccc;
 
 				.news-gonggao-msg-left {
-					display: flex;
+					flex: 1;
 
 					.logo {
 						width: 90rpx;
@@ -196,33 +215,12 @@
 						}
 					}
 
-					.text {
-						margin-left: 30rpx;
-
-						text {
-							font-size: 30rpx;
-							font-weight: 550;
-							color: #9F3F01;
-						}
-
-						view {
-							color: #999;
-							font-size: 28rpx;
-							margin-top: 10rpx;
-						}
-					}
 				}
 
 				.news-gonggao-msg-right {
 					margin-top: -20rpx;
-
-					text {
-						color: #999;
-						font-size: 28rpx;
-						display: inline-block;
-					}
-
-					view {
+					flex: 5;
+					.num-ball {
 						width: 45rpx;
 						height: 45rpx;
 						background: #FF4B00;
@@ -234,6 +232,31 @@
 						margin-left: 30rpx;
 						margin-top: 20rpx;
 					}
+					
+					
+					// .text {
+					// 	margin-left: 30rpx;
+					
+					// 	text {
+					// 		font-size: 30rpx;
+					// 		font-weight: 550;
+					// 		color: #9F3F01;
+					// 	}
+					
+					// 	view {
+					// 		color: #999;
+					// 		font-size: 28rpx;
+					// 		margin-top: 10rpx;
+					// 	}
+					// }
+
+					text {
+						color: #999;
+						font-size: 28rpx;
+						display: inline-block;
+					}
+
+					
 
 				}
 			}

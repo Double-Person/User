@@ -7,17 +7,13 @@
 		<view class="notice-content">
 			
 			<view class="text">
-				<view class="">
+				<view class="notice-title">
 					{{info.TITLE}}
 				</view>
-				<view class="text-item" v-html="info.COUNTENT">
-					
-				</view>
-				
+				<view class="text-item" v-html="info.COUNTENT"></view>	
 			</view>
 		</view>
 		<!-- 内容结束 -->
-		
 		<!-- tabbar -->
 		<tabbar></tabbar>
 	</view>
@@ -28,7 +24,7 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-	import { getMessageDetail } from '@/common/apis.js'
+	import { getMessageDetail, getMessageActive } from '@/common/apis.js'
 	export default {
 		data() {
 			return {
@@ -40,14 +36,18 @@
 			tabbar
 		},
 		onLoad(option) {
-			let {id} = option
+			let {id, USERMESSAGE_ID} = option
 			this.getMessageInfo(id)
+			this.readMsg(USERMESSAGE_ID)
 		},
 		methods : {
 			getMessageInfo(id) {
 				getMessageDetail({MESSAGE_ID:id}).then(res=> {
 					this.info = res.returnMsg
 				})
+			},
+			readMsg(USERMESSAGE_ID) {
+				getMessageActive({USERMESSAGE_ID})
 			}
 		}
 	}
@@ -79,6 +79,12 @@
 			}
 			.text{
 				margin-top: 30rpx;
+				.notice-title{
+					text-align: center;
+					font-size: 36rpx;
+					font-weight: bold;
+					margin-bottom: 50rpx;
+				}
 				.text-item{
 					line-height: 1.5em;
 				}
