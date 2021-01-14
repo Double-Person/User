@@ -172,6 +172,7 @@
                 //    item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
                 // })
                 this.gradeList = res.returnMsg.list
+				this.gradeList.length && this.gradeList.sort((a, b) => a.level - b.level)
             })
         }
 	}

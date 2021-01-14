@@ -1,7 +1,7 @@
 <template>
 	<view class="mybalance">
 		<!-- hader -->
-		<commonHeader headerTitl="线下收益"></commonHeader>
+		<commonHeader headerTitl="线下账单"></commonHeader>
 		<view class="mybalance-date">
 			<!-- 日期选择 -->
 			<view class="uni-list">

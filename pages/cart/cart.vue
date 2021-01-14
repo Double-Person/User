@@ -5,10 +5,13 @@
 		<!-- 购物内容 -->
 		<view class="cart-content" v-if="cartList.length>0">
 			<view class="cart-content-item" v-for="(item,index) in cartList" :key="index">
+				<view class="mask" v-if="showMask" @click="maskClick(item, index)"></view>
 				<!-- 标题 -->
 				<view class="cart-content-item-title">
 					<label class="radio">
-						<radio value="" :checked="item.checked" @tap="changeQuan(item,index)" />
+						
+						<!-- :checked="" -->
+						<radio value="" :checked="item.checked"  @click="changeQuan(item,index)" />
 						<image :src="imgBaseUrl + item.shopImg " mode=""></image>
 						<text>{{item.shopName}}</text>
 					</label>
@@ -47,7 +50,7 @@
 		<!-- 底部结算 -->
 		<view class="cart-footer">
 			<label class="radio">
-				<radio value="" :checked="allChecked" @tap="changeAllChecked" /><text>全选</text>
+				<!-- <radio value="" :checked="allChecked" @tap="changeAllChecked" /><text>全选</text> -->
 			</label>
 			<view class="right">
 				<view class="price">
@@ -73,6 +76,7 @@
 		name: 'ShopCart',
 		data() {
 			return {
+				showMask: false,
 				imgBaseUrl: imgBaseUrl,
 				headerTitl: "购物车",
 				cartList: [],
@@ -88,9 +92,10 @@
 			tabbar
 		},
 		mounted() {
-			// this.loopState();
+		
 			this.goodCarts()
 		},
+	
 		methods: {
 			goodCarts() {
 				uni.getStorage({
@@ -100,37 +105,69 @@
 							userId: res.data
 						}).then(res => {
 							if (res.returnMsg.status == '00') {
-								// res.returnMsg.carts.map(item => {
-								// 	item.num = item.num
-								// 	item.price = item.price
-								// 	item.checked = false
-								// })
 								this.cartList = res.returnMsg.carts
+								this.cartList.forEach(ele => ele.checked = false);
+								console.log(this.cartList)
 							}
 						}).catch()
 					}
 				})
 			},
-			// 循环遍历选中状态
-			loopState() {
-				var state = this.cartList.every(item => {
-					return item.checked
-				})
-				if (state) {
-					this.allChecked = true;
-				} else {
-					this.allChecked = false;
+			maskClick(shop, index) {
+				let checks = this.cartList.some(ele => ele.checked);
+				
+				let {shopId} = shop;
+				let checkShop = this.cartList.filter(ele => ele.checked); 
+				let checkShopId = checkShop.length && checkShop[0].shopId;  // 选中的店铺
+				console.log(checks)
+				this.showMask = false;
+				if(!checks) {
+					this.showMask = false;
 				}
+				if(checkShopId == shopId) {
+					this.changeQuan(shop, index);
+					return false;
+				}
+				
+				uni.showToast({
+					title: '每次只能购买同一个商家的商品',
+					icon: 'none'
+				})
 			},
 			// 单个商品全选按钮
 			changeQuan(shop, index) {
-				shop.checked = !shop.checked
-				if (shop.checked == true) {
-					shop.goodsList.forEach((item) => {
+				this.showMask = true;
+				let checks = this.cartList.some(ele => ele.checked);
+				
+				let {shopId} = shop;
+				let checkShop = this.cartList.filter(ele => ele.checked); 
+				let checkShopId = checkShop.length && checkShop[0].shopId;  // 选中的店铺
+				
+				
+				if(shopId !=checkShopId && checkShopId) {
+					
+					if(checks) {
+						this.showMask = true;
+						this.cartList[index].checked = false
+						console.log(this.cartList)
+						this.$forceUpdate()
+						return false;
+					
+					}
+					this.showMask = false;
+					
+					
+				}
+				console.log('=======')
+				
+				// shop.checked = !shop.checked
+				this.cartList[index].checked = !this.cartList[index].checked 
+				if (this.cartList[index].checked == true) {
+					this.cartList[index].goodsList.forEach((item) => {
 						item.checked = true;
 					})
 				} else {
-					shop.goodsList.forEach((item) => {
+					this.cartList[index].goodsList.forEach((item) => {
 						item.checked = false;
 					})
 				}
@@ -138,6 +175,7 @@
 			},
 			// // 改变单选状态
 			changeRadio(goods, i) {
+				
 				this.goodsindex = i
 				goods.checked = !goods.checked;
 				let index = this.cartList[i].goodsList.findIndex(item => {
@@ -246,6 +284,19 @@
 </script>
 
 <style lang="less" scoped>
+	.mask{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background: rgba(0,0,0,0.3);
+		z-index: 2;
+		
+	}
+	.cart-content-item{
+		position: relative;
+	}
 	.cart {
 		color: #333;
 		min-height: 100%;

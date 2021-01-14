@@ -130,9 +130,9 @@
 									<text>{{item1.price}}</text>
 								</view>
 								<view class="item-right-num">
-									<text class="iconfont icon-jian1" v-if="item1.num > 1" @tap="changeNum(item1.goodsId, -1,item.title)"></text>
+									<text class="iconfont icon-jian1" v-if="item1.num > 1" @tap="changeNum(item1.goodsId, -1,item1.title)"></text>
 									{{item1.num}}
-									<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId, 1,item.title)"></text>
+									<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId, 1,item1.title)"></text>
 								</view>
 							</view>
 						</view>
@@ -570,7 +570,7 @@
 
 					uni.navigateTo({
 						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
-							'&page=shopPage'
+							'&page=shopPage'+ '&phone=' + this.vendor.PHONE
 					})
 					// uni.navigateTo({
 					// 	url: "../settlement/settlement?item=" +
@@ -791,14 +791,25 @@
 			},
 			// 计算数量
 			goodNum() {
-				var num = 0;
-				// 筛选已选
-				this.mainArray.map((item, index) => {
-					item.list.map((item1, index1) => {
-						num += item1.num;
-					});
-				});
-				return num;
+				// var num = 0;
+				// // 筛选已选
+				// this.mainArray.map((item, index) => {
+				// 	item.list.map((item1, index1) => {
+				// 		num += item1.num;
+				// 	});
+				// });
+				// return num;
+				var all = 0;
+				let list = this.selectArr.map(item => item.list);
+				let arr = [].concat(...list);
+				let obj = {};
+				arr = arr.reduce((item, next) => {
+					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
+					return item;
+				}, []).forEach(item => {
+					all += item.num * 1;
+				})
+				return all
 			}
 		}
 	};

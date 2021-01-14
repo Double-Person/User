@@ -21,7 +21,7 @@
 		</view>
 
 		<!-- 广告 @click="goPreferencesPage" -->
-		<view  class="index-poster">
+		<view class="index-poster">
 			<specialBanner :banner-list="bannerList" :swiper-config="swiperConfig"></specialBanner>
 			<!-- <image src="../../static/images/banner.png" mode=""></image> -->
 		</view>
@@ -53,7 +53,8 @@
 					<view>{{item.CITY + item.AREA}} 距离{{ item.distance }}米</view>
 				</view>
 				<view class="index-content-product">
-					<view class="index-content-product-msg" v-for="(item1, index1) in item.GoodsImg" :key="index1" @tap="goShopPage(item1.GOODS_ID,1)">
+					<view class="index-content-product-msg" v-for="(item1, index1) in item.GoodsImg" 
+					:key="index1" @tap="goShopPage(item1.GOODS_ID,1)" v-if="item1.PUSHHP == 1">
 						<image :src="imgBaseUrl + item1.img" mode=""></image>
 						<text>{{ item1.name }}</text>
 						<view class="msg">
@@ -117,9 +118,9 @@
 					2df5711d4e2fd9ecd1622b5a53fc6b1d
 					
 				*/
-			   passCity: '',
-			   imgBaseUrl: imgBaseUrl,
-			   cityShow: '',
+				passCity: '',
+				imgBaseUrl: imgBaseUrl,
+				cityShow: '',
 				key: 'f0d8604522a34fea7af419d353f98e8f',
 				stroingCity: true,
 				title: '',
@@ -149,23 +150,10 @@
 		},
 
 		created() {
-			// uni.login({
-			//   provider: 'weixin',
-			//   success: function (loginRes) {
-			//     console.log(loginRes);
-			//     // 获取用户信息
-			//     uni.getUserInfo({
-			//       provider: 'weixin',
-			//       success: function (infoRes) {
-			//         console.log('用户昵称为：' , infoRes.userInfo);
-			//       }
-			//     });
-			//   }
-			// });
+
 			let that = this;
 			// #ifdef APP-PLUS
 			// plus 获取经纬度
-
 
 			uni.getLocation({
 				type: 'wgs84',
@@ -174,7 +162,8 @@
 					console.log(res)
 					this.longitude = res.longitude
 					this.latitude = res.latitude
-					
+
+
 					var points = new plus.maps.Point(res.longitude, res.latitude);
 
 					plus.maps.Map.reverseGeocode(
@@ -187,11 +176,10 @@
 							let addressList = address.match(reg).toString().split(",");
 							uni.setStorageSync('addressList', addressList)
 							// addressList[0] +
-							this.newCity =  addressList[1] + addressList[2]
+							this.newCity = addressList[1] + addressList[2]
 						},
 						function(e) {}
 					);
-
 
 
 
@@ -207,26 +195,33 @@
 						},
 						success: (data) => {
 							getApp().globalData.city = [];
-							let {city, district} = data.data.regeocode.addressComponent;
+							let {
+								city,
+								district
+							} = data.data.regeocode.addressComponent;
 							this.newCity = city + district;
 							this.cityShow = district;
 							this.passCity = city;
 							getApp().globalData.city.push(city, district);
 						},
 						fail(err) {
-							uni.showToast({
-								title: "定位失败！手动选择",
-								icon: 'none'
-							})
+							uni.showToast({ title: "定位失败！手动选择", icon: 'none' })
 						}
 					})
 
 				},
-				
+				fail() {
+					uni.showModal({
+						title: '提示',
+						content: '请打开手机定位权限',
+						showCancel: false,
+
+					});
+				}
 			});
 
 			// #endif
-			this.getPoint()
+			// this.getPoint()
 			// 定位 
 			// #ifdef MP-WEIXIN
 			this.getPointByWeChat();
@@ -241,11 +236,11 @@
 
 			// 获取分类
 			// getItem().then(res => {
-				// this.itemList = res.returnMsg && res.returnMsg.varList;
+			// this.itemList = res.returnMsg && res.returnMsg.varList;
 			// });
 			this._homePage()
 			this.$forceUpdate()
-			
+
 			// #ifdef H5
 			this.getBannerList()
 			// #endif
@@ -280,8 +275,8 @@
 							district
 						} = data.data.regeocode.addressComponent
 						// province +
-						this.newCity =  city + district
-						this.getBannerList(city , district)
+						this.newCity = city + district
+						this.getBannerList(city, district)
 						this.getPositonData(this.latitude, this.longitude, this.area)
 					},
 					fail: err => {
@@ -296,10 +291,8 @@
 				uni.getLocation({
 					type: 'wgs84',
 					success: (res) => {
-
 						this.longitude = res.longitude
 						this.latitude = res.latitude
-
 						uni.setStorageSync('locationPoint', JSON.stringify(res));
 						// this.conversionPoint(res)
 
@@ -397,7 +390,7 @@
 
 			// 前往本地优惠
 			goLocalPre() {
-	
+
 				uni.navigateTo({
 					url: '../localPreferences/localPreferences?longitude=' + this.longitude + '&latitude=' + this.latitude +
 						'&area=' + this.area + '&city=' + this.passCity
@@ -470,14 +463,17 @@
 						getApp().globalData.longitude = arr[0];
 						getApp().globalData.latitude = arr[1];
 
-						
+
 						this.longitude = arr[0];
 						this.latitude = arr[1];
-						let { city, district } = res.data.geocodes[0]
+						let {
+							city,
+							district
+						} = res.data.geocodes[0]
 						this.area = district
 						this.getPositonData(this.longitude, this.latitude, this.area);
-						
-						
+
+
 						this.getBannerList(city, district)
 						this.getPositonData(this.longitude, this.latitude, this.area)
 					}
@@ -489,7 +485,7 @@
 				this.getPositonData(this.longitude, this.latitude, this.area, CATEGORY_ID);
 			},
 			// 获取banner
-			getBannerList(CITY='成都市', AREA='金牛区') {
+			getBannerList(CITY = '成都市', AREA = '金牛区') {
 				var data = {
 					CITY,
 					AREA, //this.area,
@@ -507,7 +503,7 @@
 							path: item.URL
 						}
 					})
-					
+
 					console.log('轮播', this.bannerList.length, this.bannerList)
 
 				}).catch(err => console.log(err))
@@ -532,11 +528,19 @@
 				// #ifdef APP-PLUS
 				uni.scanCode({
 					scanType: ['qrCode'],
-					success: ({ result }) => {
-						let {shopId, money} = JSON.parse(result);
-						getShopPay({ SHOP_ID: shopId, money}).then(res => {
+					success: ({
+						result
+					}) => {
+						let {
+							shopId,
+							money
+						} = JSON.parse(result);
+						getShopPay({
+							SHOP_ID: shopId,
+							money
+						}).then(res => {
 							console.log(res)
-							
+
 							if (res.returnMsg.status != '00') {
 								return uni.showToast({
 									title: '条码错误!',
@@ -544,7 +548,7 @@
 									duration: 2000,
 									mask: true
 								});
-							} 
+							}
 							uni.navigateTo({
 								// url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId+ '&money=' + money
 								url: `../scanPay/scanPay?shopName=${res.returnMsg.shop.SHOP_NAME}&shopId=${shopId}&money=${money}`

@@ -22,14 +22,11 @@
 								{{shopItem.PHONE}}
 							</view>
 						</view>
+						<view v-if="item.address!='线下支付'" @click="again(item.shopId)" class="anotherList">再来一单</view>
 						<view class="item-content">
-							<view 
-									v-for="(good,indez) in shopItem.goodes" 
-									:key="indez" 
-									@click="toShop(good.SHOP_ID)"
-									style="width:100%; display: flex;justify-content: space-between; margin-bottom: 15rpx;">
+							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%; display: flex;justify-content: space-between; margin-bottom: 15rpx;">
 								<view class="left">
-									<image :src="imgBaseUrl + good.IMG" mode=""></image>
+									<image :src="imgBaseUrl + good.IMG" mode=""  @click.stop="toShop(good.SHOP_ID)"></image>
 									<view>
 										<text class="left-title">
 											商品名称：{{good.GOODSNAME}}
@@ -38,6 +35,7 @@
 										<view class="left-price">
 											单价：￥{{good.PRICE}}
 										</view>
+										<view v-if="item.take_status == 'Y'" @click="evaluation(item.ORDERSUMMARY_ID, good.GOODS_ID)" class="evaluation">立即评价</view>
 									</view>
 								</view>
 								<view class="right">
@@ -49,11 +47,11 @@
 					</view>
 
 
-<!-- PAYTYPEY  支付方式  PAYTYPE  收入支出类型 0收入 1支出   -->
+					<!-- PAYTYPEY  支付方式  PAYTYPE  收入支出类型 0收入 1支出   -->
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
 					</view>
-					
+
 					<view class="item-pay">
 						下单时间：{{ item.CREATETIME }}
 					</view>
@@ -63,8 +61,8 @@
 					<view class="item-pay border-bottom">
 						收获地址：{{ item.ADDRESS }}
 					</view>
-					
-					
+
+
 					<view class="item-total" style="align-items: center;">
 
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
@@ -74,11 +72,11 @@
 						</view>
 					</view>
 					<view class="item-btn">
-						 <!-- n 待收货 k 代发货 y 也完成 -->
+						<!-- n 待收货 k 代发货 y 也完成 -->
 						<text v-if="item.take_status != 'Y'" @click="goOrderDetail(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">申请退款</text>
 						<text v-if="item.take_status == 'N'" @click="subOrder(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">确认收货</text>
-						<text v-if="item.take_status == 'Y'" @click="evaluation(item.ORDERSUMMARY_ID)" style="margin-right: 15rpx;">立即评价</text>
-						<text v-if="item.address!='线下支付'" @click="again(item.shopId)">再来一单</text>
+						
+						
 					</view>
 				</view>
 			</view>
@@ -96,11 +94,8 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" 
-							:key="indez" 
-							@click="toShop(good.SHOP_ID)"
-							style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
-								<view class="left" >
+							<view v-for="(good,indez) in shopItem.goodes" :key="indez" @click="toShop(good.SHOP_ID)" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 30rpx;">
+								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
 										<text class="left-title">
@@ -159,16 +154,14 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" 
-							:key="indez" @click="toShop(good.SHOP_ID)"
-							 style="width:100%;display: flex;justify-content: space-between;">
+							<view v-for="(good,indez) in shopItem.goodes" :key="indez" @click="toShop(good.SHOP_ID)" style="width:100%;display: flex;justify-content: space-between;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
 										<text class="left-title">
 											商品名称：{{good.GOODSNAME}}
 										</text>
-				
+
 										<view class="left-price">
 											单价：￥{{good.PRICE}}
 										</view>
@@ -179,11 +172,11 @@
 								</view>
 							</view>
 						</view>
-				
+
 					</view>
-				
-				
-				
+
+
+
 					<view class="item-pay">
 						付款方式：<text>{{item.PAYTYPEY==0&&'微信'||item.PAYTYPEY==1&&'支付宝'||item.PAYTYPEY==3&&'银行卡'||item.PAYTYPEY==2&&'余额支付'}}</text>
 					</view>
@@ -196,10 +189,10 @@
 					<view class="item-pay border-bottom">
 						收获地址：{{ item.ADDRESS }}
 					</view>
-					
-					
+
+
 					<view class="item-total" style="align-items: center;">
-				
+
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
 						<view style="font-size: 28rpx;">
 							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
@@ -266,12 +259,19 @@
 			this.getOrderList(1)
 		},
 		methods: {
+			evaluation(orderId, GOODS_ID) { // ORDERSUMMARY_ID  ORDERSUMMARY_ID
+				uni.navigateTo({
+					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order' + '&goodsId=' + GOODS_ID 
+				})
+			},
 			orderDel(ORDERSUMMARY_ID) {
 				const that = this;
-				orderDelete({ORDERSUMMARY_ID}).then(res => {
-					if(res.result == 'success') {
+				orderDelete({
+					ORDERSUMMARY_ID
+				}).then(res => {
+					if (res.result == 'success') {
 						uni.showToast({
-							title:'删除成功',
+							title: '删除成功',
 							icon: 'none'
 						})
 						setTimeout(() => {
@@ -279,43 +279,43 @@
 						}, 1000)
 					} else {
 						uni.showToast({
-							title:'删除失败',
+							title: '删除失败',
 							icon: 'none'
 						})
 					}
-					
+
 				})
 			},
 			// 去店铺
 			toShop(shopId) {
 				uni.navigateTo({
-					url:'../shopPage/shopPage?shopId=' + shopId
+					url: '../shopPage/shopPage?shopId=' + shopId
 				})
 			},
 			// 去支付
 			toPay(item) {
-				
+
 				console.log(item)
 				let goodsInfo = item.shop.map(ele => ele.goodes);
 				console.log(goodsInfo)
 				item.goodsInfo = [...goodsInfo]
-				
-				
-				
-				
+
+
+
+
 				uni.setStorageSync('myOrderPayment', JSON.stringify(item));
 				// page == 'myOrder'
 				uni.navigateTo({
 					url: '../settlement/settlement?page=myOrder'
 				})
-				
+
 			},
 
 			pay(index, ACTUALPAY, ORDERSUMMARY_ID) {
 				// 0 余额支付   1 微信支付   2 支付宝支付    3 银行卡支付	
 				let obj = {
-					payAmount: ACTUALPAY, 
-					orderSummaryId: ORDERSUMMARY_ID 
+					payAmount: ACTUALPAY,
+					orderSummaryId: ORDERSUMMARY_ID
 				};
 				// 微信支付
 				if (index === 1) {
@@ -398,10 +398,18 @@
 
 			payByBalance() {
 				let isEnough = ['0.00', '0', '0.0'].includes(BALANCE);
-				let { BALANCE } = uni.getStorageSync('userInfo');
-				if (isEnough) return uni.showToast({ title: '余额不足', icon: 'none' })
+				let {
+					BALANCE
+				} = uni.getStorageSync('userInfo');
+				if (isEnough) return uni.showToast({
+					title: '余额不足',
+					icon: 'none'
+				})
 
-				if (this.tradePass == '') return uni.showToast({ title: '请输入支付密码', icon: 'none' })
+				if (this.tradePass == '') return uni.showToast({
+					title: '请输入支付密码',
+					icon: 'none'
+				})
 
 				this.inputPwd = false;
 				shopBygoodList({
@@ -443,11 +451,7 @@
 				})
 			},
 
-			evaluation(orderId) { // ORDERSUMMARY_ID
-				uni.navigateTo({
-					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order'
-				})
-			},
+			
 			changeTitle(index) {
 				this.active = index;
 				this.getOrderList(index)
@@ -523,15 +527,27 @@
 					ORDERSUMMARY_ID: item.ORDERSUMMARY_ID
 				}).then(res => {
 					if (res.returnMsg.status == '00') {
-						uni.showToast({ title: '取消退款成功', icon: "none" })
+						uni.showToast({
+							title: '取消退款成功',
+							icon: "none"
+						})
 						this.active = 2
 						this.getOrderList(2)
 					} else if (res.returnMsg.status == '01') {
-						uni.showToast({ title: '订单号不存在', icon: "none" })
-					}else if (res.returnMsg.status == '02') {
-						uni.showToast({ title: '取消退款失败', icon: "none" })
-					}else{
-						uni.showToast({ title: '取消退款失败', icon: "none" })
+						uni.showToast({
+							title: '订单号不存在',
+							icon: "none"
+						})
+					} else if (res.returnMsg.status == '02') {
+						uni.showToast({
+							title: '取消退款失败',
+							icon: "none"
+						})
+					} else {
+						uni.showToast({
+							title: '取消退款失败',
+							icon: "none"
+						})
 					}
 
 				})
@@ -542,9 +558,25 @@
 </script>
 
 <style lang="less">
-	.border-bottom{
+	.anotherList, .evaluation{
+		padding: 8rpx 20rpx;
+		border: 1px solid #FF6504;
+		border-radius: 40rpx;
+		color: #FF6504;
+		margin-top: 30rpx;
+		display: inline-block;
+		font-size: 28rpx;
+	}
+	.evaluation{
+		padding: 4rpx 15rpx ;
+	}
+	
+	
+	
+	.border-bottom {
 		border-bottom: 1px solid #e0e0e0;
 	}
+
 	.input-pwd {
 		position: fixed;
 		z-index: 999;
@@ -579,7 +611,8 @@
 	}
 
 	.myOrder-content-uncomplete,
-	.myOrder-content-complete, .myOrder-content-refund {
+	.myOrder-content-complete,
+	.myOrder-content-refund {
 		.item-content {
 			display: block !important;
 			padding: 15px 0 0 0 !important;
@@ -720,7 +753,7 @@
 					.item-pay {
 						font-size: 28rpx;
 					}
-					
+
 
 					.item-total {
 						display: flex;

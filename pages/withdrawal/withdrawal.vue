@@ -35,7 +35,7 @@
 
 			<view class="fl-center-between withdrawal-amount">
 				<text class="symbol">¥</text>
-				<input type="text" class="input" v-model.number="money" placeholder="输入提现金额" />
+				<input type="number" class="input" v-model.number="money" placeholder="输入提现金额" />
 				<text class="all" @click="balanceAll()">全部</text>
 			</view>
 
@@ -46,8 +46,7 @@
 					</view>
 					<view class="info-text">
 
-						<text>{{ cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝' || cardNum == '' && '请选择' }} {{ cardNum }}</text>
-						<!-- 招商银行（8707） -->
+						<text>{{ cardNum == '' && '请选择' || '请选择' || cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝'  }}</text>
 						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
 				</view>
@@ -110,7 +109,7 @@
 				money: null,
 				cardNum: '', // 卡号
 				kbalance: 0, // uni.setStorageSync('kbalance')
-				openid: 'ofTYkxBM2Jh0KluonnXzNpLLxYuA'
+				openid: ''//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
 			};
 		},
 		onLoad(opt) {
@@ -178,7 +177,7 @@
 						icon: 'none'
 					})
 				}
-				console.log(this.cardNum)
+			
 				if (!this.cardNum) {
 					return uni.showToast({
 						title: '请选择提现位置',

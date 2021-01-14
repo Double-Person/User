@@ -63,10 +63,10 @@
 						<text>否</text>
 					</label>
 				</view>
-				<view class="phone">
+				<!-- <view class="phone">
 					联系商家:
 					<text>{{phone}}</text>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<!-- 底部 -->
@@ -307,6 +307,8 @@ export default {
 		tabbar
 	},
 	onLoad(e) {
+		console.log(e)
+		this.phone = e.phone
 			// this.Allprice=e.allTotal		
 		this.shopId = e.shopId;
 		this.getAddressInfo(e.page);
@@ -721,7 +723,7 @@ export default {
 					item.title = '通用抵扣券' + item.MONEY + '元';
 				});
 				
-				this.phone = res.returnMsg.phone
+				
 				this.redpackgeList = res.returnMsg.userCoupons;
 				this.redpackgeList.forEach(item => item.useCard = false)
 				this.redpackgeList.length ? (this.yhqTetx = '选择优惠劵') : (this.yhqTetx = '暂无优惠券')				

@@ -87,6 +87,7 @@
 				}
 				.text-item{
 					line-height: 1.5em;
+					overflow-x: hidden;
 				}
 			}
 		}

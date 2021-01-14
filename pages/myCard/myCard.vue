@@ -40,21 +40,7 @@
 					</view>
 				</view>
 				<!-- 招商银行卡 -->
-				<view class="myCard-content-item" v-if="false">
-					<view class="left">
-						<text class="iconfont icon-bangdingshezhiyinxingqiabangding" style="color: #FF9707;"></text>
-						<view class="text">
-							<text>招商银行卡</text>
-							<view>
-								<!-- 哈哈哈哈哈 -->
-							</view>
-						</view>
-					</view>
-					<view class="right" @tap="goBindBankCard">
-
-						{{info.Card &&info.Card.length ? '已绑定' : '去绑定'}}
-					</view>
-				</view>
+				
 			</view>
 
 
@@ -63,7 +49,7 @@
 				红包/抵用券
 			</view>
 
-			<view class="redpackge-item" v-for="item in redpackgeList" :key="item.COUPONS_ID">
+			<view class="redpackge-item" v-for="item in redpackgeList" :key="item.USERCOUPONS_ID">
 				<view class="left">
 					<view class="left-quan">
 						<view class="price">
@@ -101,14 +87,12 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	import {
 		myCard,
-		shopBank
+		personal
 	} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
-				info: {
-
-				},
+				info: {},
 				redpackgeList: [],
 				cardStata: false,
 				wxName: '',
@@ -142,23 +126,43 @@
 
 						this.redpackgeList = res.returnMsg.userCoupons;
 					})
-					shopBank({shop_id: res.data}).then(res => {
-						this.info = res.returnMsg
-					})
+					
 				}
 			})
 		},
 		methods: {
 			// 检查绑定
 			 checkBind() {
+				 let that = this;
+				 // this.userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
+				 // let {DESC1, DESC2} = this.userInfo1.userInfo
+				 // this.bindList.Ali = DESC1
+				 // this.bindList.Wx = DESC2
+				 
 				uni.getStorage({
 					key: 'USERINFO_ID',
 					success: (res) => {
-						shopBank({
-							shop_id: res.data
-						}).then(result => {
-							this.info = result.returnMsg
+						uni.showLoading({
+							title:'加载中',
+							mask: true
 						})
+									
+						personal({ USERINFO_ID: res.data }).then(res => {
+							if (res.msgType == 0) {
+								let userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
+								let {DESC1, DESC2} = userInfo1.userInfo
+								console.log(DESC1, DESC2)
+								that.info.Ali = DESC1
+								that.info.Wx = DESC2
+								console.log(that.info)
+								that.$forceUpdate()
+							} else {
+								uni.showToast({
+									title: '网络出小差了！',
+									icon: 'none'
+								});
+							}
+						}).finally(() => uni.hideLoading())
 					},
 					
 				});
@@ -166,7 +170,7 @@
 			},
 			// 前往绑定支付宝
 			goBindAlipay() {
-				if (!this.AlipayName) {
+				if (!this.info.Ali) {
 					uni.navigateTo({
 						url: "../bindAlipay/bindAlipay"
 					})
@@ -179,16 +183,16 @@
 			},
 			// 前往绑定微信
 			goBindWeixin() {
-				if (!this.wxName) {
+				if (!this.info.Wx) {
 					uni.navigateTo({
 						url: "../bindWeixin/bindWeixin"
 					})
 				} else {
-					uni.showToast({
-						title: "暂未开通该功能!",
-						duration: 2000,
-						mask: true
-					})
+					// uni.showToast({
+					// 	title: "暂未开通该功能!",
+					// 	duration: 2000,
+					// 	mask: true
+					// })
 				}
 			},
 			// 前往绑定银行卡

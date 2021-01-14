@@ -51,7 +51,7 @@
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
 				<view class="item-img" :class="imgHide?'imgHide':''">
-					<image :src="imgUrl" mode=""></image>
+					<image :src="imgBaseUrl + imgUrl" mode=""></image>
 				</view>
 			</view>
 			<view class="item" @tap="fan">
@@ -63,7 +63,7 @@
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
 				<view class="item-img" :class="imgHide1?'imgHide':''">
-					<image :src="imgUrl1" mode=""></image>
+					<image :src="imgBaseUrl + imgUrl1" mode=""></image>
 				</view>
 			</view>
 		</view>
@@ -81,7 +81,7 @@
 					<text>注：请上传jpg/png格式图片</text>
 				</view>
 				<view class="item-img" :class="imgHide2?'imgHide':''">
-					<image :src="imgUrl2" mode=""></image>
+					<image :src="imgBaseUrl + imgUrl2" mode=""></image>
 				</view>
 			</view>
 		</view>
@@ -106,7 +106,8 @@
 	// 引入请求接口
 	import {
 		shopAuth,
-		baseUrl
+		baseUrl,
+		imgBaseUrl
 	} from '@/common/apis.js';
 	import {
 		pathToBase64,
@@ -115,6 +116,7 @@
 	export default {
 		data() {
 			return {
+				imgBaseUrl: imgBaseUrl,
 				addressObj: {},
 				username: '',
 				phone: '',
