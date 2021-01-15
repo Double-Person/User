@@ -5,13 +5,15 @@
 		<!-- 购物内容 -->
 		<view class="cart-content" v-if="cartList.length>0">
 			<view class="cart-content-item" v-for="(item,index) in cartList" :key="index">
-				<view class="mask" v-if="showMask" @click="maskClick(item, index)"></view>
 				<!-- 标题 -->
 				<view class="cart-content-item-title">
 					<label class="radio">
 						
 						<!-- :checked="" -->
-						<radio value="" :checked="item.checked"  @click="changeQuan(item,index)" />
+						<!-- <radio value="" :checked="item.checked"  @click="changeQuan(item,index)" /> -->
+						<view class="" @click="changeQuan(item,index)" >
+							<image class="card-check" :src="item.checked ? '/static/images/cardCheck.png' : '/static/images/cardNotCheck.png'" mode=""></image>
+						</view>
 						<image :src="imgBaseUrl + item.shopImg " mode=""></image>
 						<text>{{item.shopName}}</text>
 					</label>
@@ -19,7 +21,10 @@
 				<!-- 内容 -->
 				<view class="cart-content-item-content" v-for="(goods, $goods) in item.goodsList" :key="$goods">
 					<label class="radio">
-						<radio value="" :checked="goods.checked" @tap="changeRadio(goods,index)" />
+						<!-- <radio value="" :checked="goods.checked" @tap="changeRadio(goods,index)" /> -->
+						<view class="" @tap="changeRadio(item, index, goods,index)" >
+							<image class="card-check" :src="goods.checked ? '/static/images/cardCheck.png' : '/static/images/cardNotCheck.png'" mode=""></image>
+						</view>
 						<image :src="imgBaseUrl + goods.SHOP_IMG" mode="" @tap="goShopDetails(goods)"></image>
 						<view class="text" @tap="goShopDetails(goods)">
 							<text class="title">{{goods.GOODS_NAME}}</text>
@@ -76,7 +81,7 @@
 		name: 'ShopCart',
 		data() {
 			return {
-				showMask: false,
+				toastTitle: '每次只能购买同一商家的商品',
 				imgBaseUrl: imgBaseUrl,
 				headerTitl: "购物车",
 				cartList: [],
@@ -106,78 +111,71 @@
 						}).then(res => {
 							if (res.returnMsg.status == '00') {
 								this.cartList = res.returnMsg.carts
-								this.cartList.forEach(ele => ele.checked = false);
-								console.log(this.cartList)
+								this.cartList.forEach(ele => {
+									ele.checked = false
+									ele.childCheck = false // 判断当前商家下面是否有选中的商品
+								});
 							}
 						}).catch()
 					}
 				})
 			},
-			maskClick(shop, index) {
-				let checks = this.cartList.some(ele => ele.checked);
-				
-				let {shopId} = shop;
-				let checkShop = this.cartList.filter(ele => ele.checked); 
-				let checkShopId = checkShop.length && checkShop[0].shopId;  // 选中的店铺
-				console.log(checks)
-				this.showMask = false;
-				if(!checks) {
-					this.showMask = false;
-				}
-				if(checkShopId == shopId) {
-					this.changeQuan(shop, index);
-					return false;
-				}
-				
-				uni.showToast({
-					title: '每次只能购买同一个商家的商品',
-					icon: 'none'
-				})
-			},
+			
 			// 单个商品全选按钮
 			changeQuan(shop, index) {
-				this.showMask = true;
 				let checks = this.cartList.some(ele => ele.checked);
-				
 				let {shopId} = shop;
 				let checkShop = this.cartList.filter(ele => ele.checked); 
 				let checkShopId = checkShop.length && checkShop[0].shopId;  // 选中的店铺
 				
-				
+				// 当前点击的店铺是否已经被勾选
 				if(shopId !=checkShopId && checkShopId) {
-					
 					if(checks) {
-						this.showMask = true;
-						this.cartList[index].checked = false
-						console.log(this.cartList)
-						this.$forceUpdate()
-						return false;
-					
-					}
-					this.showMask = false;
-					
-					
+						this.cartList[index].checked = false;
+						return uni.showToast({ title: this.toastTitle, icon: 'none' })
+					}		
 				}
-				console.log('=======')
+				let childCheck = this.cartList.some(ele => ele.childCheck);
+				let arr = this.cartList.filter(ele => ele.childCheck);
+				if(arr.length) {
+					let childCheckShopId = arr[0].shopId
+					// 其他店铺下方是否有被勾选的商品
+					if(childCheckShopId && childCheckShopId != shopId ) {
+						return uni.showToast({ title: this.toastTitle, icon: 'none' })
+					}
+				}
+				
 				
 				// shop.checked = !shop.checked
 				this.cartList[index].checked = !this.cartList[index].checked 
 				if (this.cartList[index].checked == true) {
-					this.cartList[index].goodsList.forEach((item) => {
-						item.checked = true;
-					})
+					this.cartList[index].goodsList.forEach((item) => item.checked = true)
 				} else {
-					this.cartList[index].goodsList.forEach((item) => {
-						item.checked = false;
-					})
+					this.cartList[index].goodsList.forEach((item) => item.checked = false)
 				}
 
 			},
 			// // 改变单选状态
-			changeRadio(goods, i) {
+			changeRadio(shop, shopIndex, goods, i) {
+				let chechIndex = this.cartList.findIndex(ele => ele.checked);
+				// 判断除当前店铺下有其他商品是否有被选中
+				if(chechIndex != -1 && chechIndex != shopIndex) {
+					return uni.showToast({ title: this.toastTitle, icon: 'none' })
+				}
+				let shopchildCheck = this.cartList.filter(ele => ele.childCheck); 
+				if(shopchildCheck.length) {
+					let [{ shopId }] = shopchildCheck;
+					if(shopId != shop.shopId) {
+						return uni.showToast({ title: this.toastTitle, icon: 'none' })
+					}
+				}
 				
 				this.goodsindex = i
 				goods.checked = !goods.checked;
+				let someCheck = shop.goodsList.some(ele => ele.checked)
+				
+				this.cartList[shopIndex].childCheck = someCheck;
+				
 				let index = this.cartList[i].goodsList.findIndex(item => {
 					return item.checked == false;
 				});
@@ -284,15 +282,9 @@
 </script>
 
 <style lang="less" scoped>
-	.mask{
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		background: rgba(0,0,0,0.3);
-		z-index: 2;
-		
+	.card-check{
+		width: 40rpx !important;
+		height: 40rpx !important;
 	}
 	.cart-content-item{
 		position: relative;

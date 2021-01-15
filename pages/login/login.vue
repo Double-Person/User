@@ -47,6 +47,17 @@
 		<view class="otherLogin">
 			快捷登录方式 <text class="iconfont icon-weixin" @tap="weixinLogin"></text>
 		</view>
+
+		<view class="mask-bind" v-if="isShowMask">
+			<view class="bind-phone">
+				<view class="form">
+					<text>手机号码：</text> <input type="number" v-model="PHONE" :maxlength="11" />
+				</view>
+				<view class="btn-bind-wx" @click="bindPhone">
+					绑定手机
+				</view>
+			</view>
+		</view>
 		<!-- #endif -->
 	</view>
 </template>
@@ -55,24 +66,26 @@
 	// 引入api接口
 	import {
 		login,
-		wxLogin
+		wxLogin,
+		wxTel
 	} from "@/common/apis.js";
 
 	export default {
 		data() {
 			return {
-
+				openIdBind: '',
+				isShowMask: false,
+				PHONE: '',
 				codeText: "获取验证码",
 				btnState: true,
-				phone: "18398207590", // 13258188656
-				pwd: "123456", /// 123456
+				phone: "", // 13258188656 18398207590
+				pwd: "", /// 123456
 				phoneState: false,
 				pwdState: false,
 				rememberPwdHide: true,
 				saveObj: '',
 			}
 		},
-
 
 		mounted() {
 
@@ -189,7 +202,6 @@
 					that.saveObj.openId = getApp().globalData.openid ? getApp().globalData.openid : '';
 					that.saveObj.nickName = getApp().globalData.nickName ? getApp().globalData.nickName : '';
 				} catch (err) {
-					console.log(err)
 				}
 
 
@@ -201,7 +213,10 @@
 				// 登录请求
 				login(that.saveObj).then(res => {
 
-					uni.showToast({ title: res.errMsg, icon: 'none' })
+					uni.showToast({
+						title: res.errMsg,
+						icon: 'none'
+					})
 
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局
@@ -321,9 +336,26 @@
 					}
 				})
 			},
+			bindPhone() {
+				if(this.PHONE.length !== 11) {
+					return uni.showToast({
+						title: '请输入正确的手机号',
+						icon: 'none'
+					})
+				}
+				wxTel({ PHONE: this.PHONE, WX:this.openIdBind }).then(res=> {
+					if(res.msgType == 0){
+						this.PHONE = '';
+						uni.reLaunch({
+							url: '../index/index'
+						})
+					}
+				})
+			},
 			// 微信登录
 			// #ifdef APP-PLUS
 			weixinLogin() {
+				const that = this;
 				uni.getProvider({
 					service: 'oauth',
 					success: function(res) {
@@ -337,11 +369,18 @@
 
 								getApp().globalData.openid = loginRes.authResult.openid;
 								uni.hideLoading()
+								that.openIdBind = loginRes.authResult.openid;
+								
+								uni.showLoading({
+									title: '登录中...',
+									mask: true
+								})
 								wxLogin({
 									"openId": loginRes.authResult.openid,
 									"code": '',
 									"accessToken": loginRes.authResult.access_token
 								}).then(res => {
+									
 									getApp().globalData.nickName = res.returnMsg.nickName;
 									if (res.returnMsg.status == '00') {
 										uni.setStorage({
@@ -352,18 +391,23 @@
 										uni.reLaunch({
 											url: '../index/index'
 										})
-									} else if (res.returnMsg.status == '01') {
+									} else if (res.returnMsg.status == '02') {
 										// 否则跳转注册
 										uni.navigateTo({
 											url: '../register/register'
 										})
+									} else if (res.returnMsg.status == '01') {
+										that.isShowMask = true
 									}
+
+
+
 								}).catch(err => {
 									uni.showToast({
 										title: '登录失败！',
 										icon: 'none'
 									})
-								})
+								}).finally( () => uni.hideLoading())
 							},
 							fail: (err) => {
 								uni.showToast({
@@ -381,6 +425,53 @@
 
 	}
 </script>
+
+<style lang="less" scoped>
+	.mask-bind {
+		position: fixed;
+		z-index: 10;
+		width: 100%;
+		top: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.3);
+	}
+
+	.bind-phone {
+		margin: 400rpx auto;
+		width: 80%;
+		background: #fff;
+		border: 2rpx #eee solid;
+		border-radius: 10rpx;
+		padding: 80rpx 10rpx;
+
+		.form {
+			display: flex;
+			margin-bottom: 50rpx;
+
+			text {
+				font-size: 36rpx;
+				font-weight: 400;
+				color: #333333;
+			}
+
+			input {
+				border-left: 2rpx solid #999;
+				padding-left: 30rpx;
+			}
+		}
+
+		.btn-bind-wx {
+			width: 100%;
+			height: 88rpx;
+			line-height: 88rpx;
+			font-size: 40rpx;
+			text-align: center;
+			background: linear-gradient(243deg, #FF9960 0%, #FF5A2C 100%);
+			border-radius: 8rpx;
+			color: #fff;
+		}
+	}
+</style>
 
 <style lang="less">
 	.login {

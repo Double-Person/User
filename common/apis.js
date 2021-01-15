@@ -1,10 +1,10 @@
 // 引入封装的request   用户端
 // import request from './request.js';
-import request from './ajax.js'
-export const baseUrl = 'https://yflh.hkzhtech.com/qufl'
-// export const baseUrl = 'http://192.168.0.111:8081'
-export const imgBaseUrl = 'https://yflh.hkzhtech.com/qufl/'
-// export const imgBaseUrl = 'http://192.168.0.111:8081/'
+import request from './ajax.js';
+const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
+// const COMMON_URL = 'http://192.168.0.111:8081';
+export const baseUrl = COMMON_URL;
+export const imgBaseUrl = COMMON_URL + '/'
 
 
 
@@ -15,6 +15,10 @@ export const autograph = params => request.post('/api/ordersummary/official/sign
 export const login = data => request.post('/api/ordersummary/login/account', data);
 // 3.微信登陆    完成
 export const wxLogin = params => request.post('/api/ordersummary/wx/login', params);
+
+
+//  绑定手机
+export const wxTel = data => request.post('/api/ordersummary/wx/tel', data);
 // 4.手机验证码发送    完成
 export const sendCode = params => request.post('/api/ordersummary/mobile', params);
 // 5.支付宝支付  
@@ -179,14 +183,6 @@ export const shopBygoodList = params => request.get('/api/ordersummary/balance/p
 export const deletecarts = params => request.post('/api/ordersummary/me/deletecarts', params)
 
 
-
-
-       
-
-
-
-
-
 // 提现接口     
 export const withdrawal = params => request.get('/api/merchant/withdrawal', {
 	params
@@ -224,6 +220,15 @@ export const offlinetradingServicePay = params => request.post('/api/ordersummar
  * money 金额  types  0用户、1商家   id 用户或商家的id   openid  
  */
 export const wxtx = params => request.post('/api/tx/wxtx', params);
+
+/** 支付宝提现
+ * money 提现金额
+* types 提现类型 0用户、1商家
+* id  用户或商家的id 
+* zfb 
+* name 名字
+ */
+export const alitx = params => request.post('/api/tx/ali/pay', params);
 
 // 删除待付款订单
 export const orderDelete = params => request.post('/api/ordersummary/order/delete', params);

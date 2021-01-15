@@ -173,11 +173,12 @@
                 var obj = {
                     "USERINFO_ID": this.USERINFO_ID,
                     "GOODS_ID": this.goodsId,
-                    "ORDERSUMMARY_ID": this.ORDERSUMMARY_ID,
+                    "EVALUEATE_ID": this.ORDERSUMMARY_ID,
                     "SCORE": this.active,
                     "CONTENT": this.content,
-                    "img": this.imgUrl
+                    "IMGS": this.imgUrl
                 }
+				uni.showLoading({ title: '加载中', mask: true })
                 addEvaluate(obj).then(res => {
                     if(res.returnMsg.status == '00'){
                         uni.showToast({
@@ -205,7 +206,7 @@
                             mask:true
                         })
                     }
-                })
+                }).finally(() => uni.hideLoading())
             }
 		},
 		

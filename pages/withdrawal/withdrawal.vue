@@ -46,7 +46,7 @@
 					</view>
 					<view class="info-text">
 
-						<text>{{ cardNum == '' && '请选择' || '请选择' || cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝'  }}</text>
+						<text>{{ cardNum == '' && '请选择' || cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝'  }}</text>
 						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
 				</view>
@@ -91,6 +91,7 @@
 		withdrawal,
 		personal,
 		wxtx,
+		alitx,
 		backCardInfo,
 		imgBaseUrl
 	} from "@/common/apis.js";
@@ -185,17 +186,16 @@
 					})
 				}
 				if(!this.openid) {
-					 uni.showToast({
-						title: '请授权登录',
-						icon: 'none'
-					})
+					 
 					if(this.type == 'wechat') {
+						uni.showToast({
+							title: '请授权登录',
+							icon: 'none'
+						})
 						this.getOpenIdByWchat()
-					}else if(this.type == 'ali') {
-						
+						return false
 					}
 					
-					return false
 				}
 				let obj = {
 					id:userinfo_id, // 参数userinfo_id  用户id
@@ -208,13 +208,38 @@
 				if(this.type == 'wechat') {
 					this.weChatWithdrawal(obj)
 				}else if(this.type == 'ali') {
-					
+					this.aliWithdrawal(obj)
 				}
 				
 			},
 			// 微信提现
 			weChatWithdrawal(obj) {
 				wxtx(obj).then(res => {
+					console.log(res)
+					if (res.msgType == 0) {
+						uni.showToast({
+							title: '提现成功',
+							icon: 'none'
+						})
+					} else {
+						uni.showToast({
+							title: res.errMsg,
+							icon: 'none'
+						})
+					}
+				
+					setTimeout(() => {
+						uni.navigateTo({
+							url: '/pages/personal/personal'
+						})
+					}, 1000)
+				})
+			},
+			// 支付宝提现
+			aliWithdrawal(obj) {
+				obj.openid = '';
+				obj.zfb = this.cardNum;
+				alitx(obj).then(res => {
 					console.log(res)
 					if (res.msgType == 0) {
 						uni.showToast({

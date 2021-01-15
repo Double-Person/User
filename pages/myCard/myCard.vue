@@ -15,7 +15,7 @@
 						<view class="text">
 							<text>微信</text>
 							<view>
-								<!-- {{info.Wx}} -->
+								{{info.Wx}}
 							</view>
 						</view>
 					</view>
@@ -30,13 +30,13 @@
 						<view class="text">
 							<text>支付宝</text>
 							<view>
-								<!-- {{info.Ali}} -->
+								{{info.Ali}}
 							</view>
 						</view>
 					</view>
 					<view class="right" @tap="goBindAlipay">
 
-						{{info &&info.Ali? '重新绑定' : '去绑定'}}
+						{{info && info.Ali? '重新绑定' : '去绑定'}}
 					</view>
 				</view>
 				<!-- 招商银行卡 -->
@@ -170,44 +170,17 @@
 			},
 			// 前往绑定支付宝
 			goBindAlipay() {
-				if (!this.info.Ali) {
-					uni.navigateTo({
-						url: "../bindAlipay/bindAlipay"
-					})
-				} else {
-					uni.navigateTo({
-						url: "../cash/cash"
-					})
-				}
-
+				uni.navigateTo({
+					url: "../bindAlipay/bindAlipay"
+				})
 			},
 			// 前往绑定微信
 			goBindWeixin() {
-				if (!this.info.Wx) {
-					uni.navigateTo({
-						url: "../bindWeixin/bindWeixin"
-					})
-				} else {
-					// uni.showToast({
-					// 	title: "暂未开通该功能!",
-					// 	duration: 2000,
-					// 	mask: true
-					// })
-				}
+				uni.navigateTo({
+					url: "../bindWeixin/bindWeixin"
+				})
 			},
-			// 前往绑定银行卡
-			goBindBankCard() {
-				let info = this.info && this.info.Card || ''
-				if(info) {
-					uni.navigateTo({
-						url:"../bindBankCard/bindBankCard?info=" + JSON.stringify(info)
-					})
-				}else{
-					uni.navigateTo({
-						url:"../bindBankCard/bindBankCard"
-					})
-				}
-			},
+			
 			// 前往首页
 			ljsy() {
 				uni.navigateTo({

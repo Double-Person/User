@@ -15,13 +15,13 @@
             </view>
             <view class="bindWeixin-content-item">
                 <text>手机号</text>
-                <input type="text" value="" @input="getphone" maxlength="11" placeholder-style="color:#999;fontSize:28rpx;" v-model="phone"
+                <input type="number" value="" @input="getphone" maxlength="11" placeholder-style="color:#999;fontSize:28rpx;" v-model="phone"
                     placeholder="请输入手机号" />
             </view>
             <view class="bindWeixin-content-item">
                 <text>验证码</text>
                 <view>
-                    <input type="text" value="" v-model="code" placeholder-style="color:#999;fontSize:28rpx;"
+                    <input type="number" value="" v-model="code" placeholder-style="color:#999;fontSize:28rpx;"
                         placeholder="请填写验证码" />
                     <button class="testCode" :class="selectCode?'selectCode':''" :disabled="disabled" @tap="getCode">{{codeText}}</button>
                 </view>
@@ -76,7 +76,7 @@
                 var obj = {
                     "USERINFO_ID": this.USERINFO_ID,
                     "name": this.username,
-                    "wxAccount": this.wx,
+                    "aliAccount": this.wx,
                     "mobile": this.phone,
                     "code": this.code
                 }
@@ -122,7 +122,7 @@
                         })
                     }else if(res.returnMsg.status == '05'){
                         uni.showToast({
-                            title: "请实名认证!",
+                            title: "与实名认证中的姓名不一致!",
                             duration: 2000,
                             icon:'none',
                             mask:true

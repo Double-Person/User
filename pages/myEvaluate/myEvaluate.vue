@@ -4,23 +4,29 @@
 		<commonHeader headerTitl="我的评价" xingHide=true lingHide=true fenxiangHide=true></commonHeader>
 		<!-- 内容开始 -->
 		<view class="myEvaluate-content" v-if="myEvaluateList.length>0">
-			<view class="myEvaluate-content-item" v-for="item in myEvaluateList" :key="item.id">
+			<view class="myEvaluate-content-item" v-for="item in myEvaluateList" :key="item.EVALUATE_ID">
 				<view class="title">
-					{{item.shopName}}
+					{{item.SHOP_NAME}}
 				</view>
 				<view class="content">
 					<view class="content-left">
-						<image :src="imgBaseUrl + item.goodsImg" mode=""></image>
+						<image :src="imgBaseUrl + item.GOODS_IMG" mode=""></image>
 					</view>
 					<view class="content-right">
-						<text>下单时间：{{item.createTime}}</text>
+						<text>下单时间：{{item.SHOPTIME}}</text>
 						<view>
-							{{item.content?item.content:"暂无评价!"}}
+							{{item.DETAILS?item.DETAILS:"暂无评价!"}}
 						</view>
 					</view>
 				</view>
+				<view class="comments-warp">
+					用户评论：{{ item.CONTENT }}
+				</view>
+				<view class="comments-warp" v-if="item.HF">
+					商家回复：{{ item.HF[0].REPLY }}
+				</view>
 				<view class="btn">
-					<text v-if="item.evaluateId" @tap="deleteEvaluate(item.evaluateId)">删除</text>
+					<text v-if="item.EVALUATE_ID" @tap="deleteEvaluate(item.EVALUATE_ID)">删除</text>
 					<text @tap="goEvaluate(item)">评价</text>
 				</view>
 			</view>
@@ -50,8 +56,8 @@
 		},
 		methods:{
 			// 删除
-			deleteEvaluate(id){
-                var obj = { EVALUATE_ID: id }
+			deleteEvaluate(EVALUATE_ID){
+                var obj = { EVALUATE_ID }
                 delEvaluate(obj).then(res =>  {
                     if (res.returnMsg.status == '00'){
                         uni.showToast({
@@ -61,7 +67,7 @@
                         })
                         setTimeout(()=>{
                             this.getList()
-                        },2000)
+                        },1000)
                     }else{
                         uni.showToast({
                             title:'删除失败！',
@@ -72,8 +78,9 @@
 			},
 			// 前往评价页
 			goEvaluate(item){
+				console.log(item.EVALUATE_ID)
 				uni.navigateTo({
-					url:"../evaluate/evaluate?ORDERSUMMARY_ID="+item.ORDERSUMMARY_ID+'&goodsId='+item.goodsId
+					url:"../evaluate/evaluate?ORDERSUMMARY_ID="+item.EVALUATE_ID+'&goodsId='+item.GOODS_ID
 				})
 			},
             // 获取评价列表
@@ -100,6 +107,14 @@
 </script>
 
 <style lang="less">
+	.comments-warp{
+
+		background: #F7F7F7;
+		border-radius: 10rpx;
+		padding: 30rpx;
+		margin-bottom: 30rpx;
+
+	}
 	.myEvaluate{
 		min-height: 100%;
 		background: #f6f7f8;
