@@ -214,8 +214,9 @@
 			},
 			// 城市
 			getCity(data) {
-				// this.city = e.detail.value;
-				this.city = data.data.slice(0, 3).join('');
+				let [, city, district] = data.data.slice(0, 3);
+				this.addressObj.city = city;
+				this.addressObj.district = district
 			},
 			// 邮箱
 			getEmail(e) {
@@ -247,15 +248,16 @@
 				}
 				 
 				let res = await shopAuth(obj)
-
+				console.log(res)
 				if(res.msgType == 0) {
+					
 					uni.showToast({
 						title: '申请提交成功',
 						icon: 'none'
 					})
 				}else{
 					uni.showToast({
-						title: res.errMsg,
+						title: res.returnMsg || '提交失败',
 						icon: 'none'
 					})
 				}
@@ -271,7 +273,9 @@
 					},
 					success: (data) => {
 						try{
+							
 							this.addressObj = data.data.regeocode.addressComponent;
+							console.log(this.addressObj)
 							let addStr = data.data.regeocode.formatted_address.split(this.addressObj.district);
 							this.city = addStr[1];
 						}catch(e){
