@@ -7,6 +7,8 @@
 			<text :class="active===1?'active':''" @tap="changeTitle(1)">已付款</text>
 			<text :class="active===0?'active':''" @tap="changeTitle(0)">未付款</text>
 			<text :class="active===2?'active':''" @tap="changeTitle(2)">退款/售后</text>
+			<text :class="active===3?'active':''" @tap="changeTitle(3)">退款成功</text>
+			<text :class="active===4?'active':''" @tap="changeTitle(4)">已完成</text>
 		</view>
 		<view class="myOrder-content">
 			<!-- 已付款 -->
@@ -141,7 +143,7 @@
 				</view>
 			</view>
 			<!-- 退款售后 -->
-			<view class="myOrder-content-refund commonStyle" :class="active===2?'show':''">
+			<view class="myOrder-content-refund commonStyle" :class="active===2 || active===3 || active===4?'show':''">
 				<view class="item" v-for="item in orderList" :key="item.id">
 					<view v-for="(shopItem,indey) in item.shop" :key="indey">
 						<view class="item-title">
@@ -199,7 +201,7 @@
 							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
-					<view class="item-btn">
+					<view class="item-btn" v-if="active===2">
 						<text @click="again(item.SHOP_ID)">进入店铺</text>
 						<text @click="cancelRefund(item)">撤销退款</text>
 					</view>

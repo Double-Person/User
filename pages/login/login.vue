@@ -87,70 +87,53 @@
 			}
 		},
 
-		mounted() {
-
-
-			// uni.clearStorageSync()
-			// 获取本地存储登录信息 
-			uni.getStorage({
-				key: 'name',
-				success: (data) => {
-					let that = this;
-					let {
-						PHONE,
-						PASSWORD,
-						openId = '',
-						nickName = ''
-					} = JSON.parse(data.data);
-					this.phone = PHONE;
-					this.pwd = PASSWORD;
-					this.phoneState = true;
-					this.pwdState = true;
-					this.loginState();
-					login({
-						PHONE,
-						PASSWORD,
-						openId,
-						nickName
-					}).then(res => {
-
-						if (res.returnMsg.status == '00') {
-							uni.showToast({
-								title: '登陆成功',
-								icon: 'none'
-							})
-							uni.redirectTo({
-								url: '/pages/index/index'
-							})
-						} else if (res.returnMsg.status == '01') {
-							uni.showToast({
-								title: '账号不存在!',
-								icon: 'none'
-							})
-						} else if (res.returnMsg.status == '02') {
-							uni.showToast({
-								title: '密码错误!',
-								icon: 'none'
-							})
-						} else if (res.returnMsg.status == '03') {
-							uni.showToast({
-								title: '不合法注册!',
-								icon: 'none'
-							})
-						} else {
-							uni.showToast({
-								title: '系统错误!',
-								icon: 'none'
-							})
-						}
-					}).catch(err => uni.showToast({
-						title: '系统错误!',
-						icon: 'none'
-					}))
+		 mounted() {
+			
+			let saveStata = uni.getStorageSync('saveStata');
+			console.log(saveStata)
+			if(saveStata) {
+				try{
+					console.log('获取本地存储登录信息')
+					uni.getStorage({
+						key: 'name',
+						success: (data) => {
+							let that = this;
+							let {
+								PHONE,
+								PASSWORD,
+								openId = '',
+								nickName = ''
+							} = JSON.parse(data.data);
+							this.phone = PHONE;
+							this.pwd = PASSWORD;
+							this.phoneState = true;
+							this.pwdState = true;
+							this.loginState();
+							that.saveObj = {
+								PHONE,
+								PASSWORD,
+								openId: '',
+								nickName: ''
+							}
+							console.log('获取本地存储登录信息')
+							that.loginSendData()
+							
+						},
+						
+					})
+				}catch(e){
+					//TODO handle the exception
 				}
-			})
+			}
+			
+			
+
+			
+			
 		},
 		methods: {
+			
+			
 			// 获取输入手机号
 			inputPhone(e) {
 				if (e.detail.value.length === 11) {
@@ -231,26 +214,18 @@
 						uni.getStorage({
 							key: 'saveStata',
 							success: (res) => {
-								if (res.data == "true") {
+								if (res.data) {
 									uni.redirectTo({
 										url: '/pages/index/index'
 									})
-
 								} else {
-									// 提示保存密码
-									that.rememberPwdHide = false;
+									that.rememberPwdHide = false; // 提示保存密码
 								}
 							},
 							fail: () => {
-								// 提示保存密码
-								that.rememberPwdHide = false;
+								that.rememberPwdHide = false; // 提示保存密码
 							}
 						})
-						// uni.redirectTo({
-						// 	url: '/pages/index/index'
-						// })
-
-
 					} else if (res.returnMsg.status == '01') {
 						uni.showToast({
 							title: '账号不存在!',
@@ -320,12 +295,12 @@
 			// 取消保存
 			cancelSave() {
 				// 保存状态到本地
-				uni.setStorage({
+				uni.setStorageSync({
 					key: 'saveStata',
 					data: false
 				})
 				// 移出本地数据
-				uni.removeStorage({
+				uni.removeStorageSync({
 					key: 'name',
 					success: () => {
 						this.rememberPwdHide = true;

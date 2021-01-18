@@ -110,7 +110,7 @@
 				money: null,
 				cardNum: '', // 卡号
 				kbalance: 0, // uni.setStorageSync('kbalance')
-				openid: ''//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
+				openid: 'ofTYkxBM2Jh0KluonnXzNpLLxYuA'//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
 			};
 		},
 		onLoad(opt) {
@@ -223,7 +223,7 @@
 						})
 					} else {
 						uni.showToast({
-							title: res.errMsg,
+							title: res.returnMsg || '提现失败' ,
 							icon: 'none'
 						})
 					}
@@ -248,7 +248,7 @@
 						})
 					} else {
 						uni.showToast({
-							title: res.errMsg,
+							title: res.returnMsg || '提现失败' ,
 							icon: 'none'
 						})
 					}

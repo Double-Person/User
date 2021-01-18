@@ -101,7 +101,8 @@
 
 						var obj = {
 							"userinfo_id": res.data,
-							"time": timeStamp?timeStamp:''
+							"time": timeStamp?timeStamp:'',
+							TYPES: 0 // 0 用户 1 商家
 						}
 						withdrawalInfo(obj).then(res => {
 							this.listData = res.returnMsg

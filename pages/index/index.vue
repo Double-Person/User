@@ -49,8 +49,8 @@
 					<view @tap="goShopPage(item.SHOP_ID,0)">进店逛逛</view>
 				</view>
 				<view class="index-content-msg">
-					<text>累计{{ item.PAID_COUNT }}人购买</text>
-					<view>{{item.CITY + item.AREA}} 距离{{ item.distance }}米</view>
+					<text>累计购买 {{ item.PAID_COUNT }} 次</text>
+					<view>{{item.CITY + item.AREA}} 距离{{ (item.distance / 1000).toFixed(2) }}千米</view>
 				</view>
 				<view class="index-content-product">
 					<view class="index-content-product-msg" v-for="(item1, index1) in item.GoodsImg" 
@@ -59,7 +59,7 @@
 						<text>{{ item1.name }}</text>
 						<view class="msg">
 							<text>￥{{ item1.price || 0 }}</text>
-							{{ item1.sales || 0 }}人购买
+							销售量: {{ item1.sales || 0 }}
 						</view>
 					</view>
 				</view>
@@ -101,7 +101,6 @@
 		baseUrl,
 		imgBaseUrl
 	} from '@/common/apis.js';
-
 
 	export default {
 		components: {
@@ -223,14 +222,9 @@
 			// #endif
 			// this.getPoint()
 			// 定位 
-			// #ifdef MP-WEIXIN
-			this.getPointByWeChat();
-			// #endif
+		
 
-			// #ifdef H5
-			this.getPointByH5();
-
-			// #endif
+			
 
 
 
@@ -299,92 +293,7 @@
 					}
 				})
 			},
-			// 获取经纬度 
-			getLocationPlus() {
-
-				this.$refs.index.addEventListener("plusready", () => {
-					plus.geolocation.getCurrentPosition((res) => {
-						map_click(res.coords.longitude, res.coords.latitude);
-					}, e => {
-						alert("获取定位位置信息失败，请打开GPS定位功能！" + e.message);
-					}, {
-						geocode: true
-					});
-				}, false);
-
-				function map_click(lng, lat) {
-					setUserPosition(lng, lat);
-					var map = new BMap.Map('output');
-					var point = new BMap.Point(lng, lat);
-					map.centerAndZoom(point, 12);
-					var geoc = new BMap.Geocoder();
-					geoc.getLocation(point, function(rs) {
-						var addComp = rs.addressComponents;
-						this.newCity(addComp.city);
-						setCityLocation(addComp.city);
-					});
-				}
-			},
-			// h5 定位
-			getPointByH5() {
-				let that = this;
-				uni.getLocation({
-					// type: 'wgs84',
-					type: 'gcj02',
-					geocode: true,
-					altitude: true, // 高精确度
-					success: (res) => {
-						this.latitude = res.latitude;
-						this.longitude = res.longitude;
-						uni.request({
-							url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
-							method: 'GET',
-							data: {
-								key: that.key,
-
-								location: `${res.longitude}, ${res.latitude}`
-							},
-							success: (data) => {
-								this.area = data.data.regeocode.addressComponent.district;
-								let {
-									province,
-									city,
-									district
-								} = data.data.regeocode.addressComponent
-								this.newCity = province + city + district
-								this.getPositonData(this.latitude, this.longitude, this.area)
-							},
-							fail(err) {
-								uni.showToast({
-									title: "定位不成功",
-									icon: 'none'
-								})
-							}
-						})
-					},
-					fail: function(err) {
-						uni.showToast({
-							title: "定位失败！手动选择",
-							icon: 'none'
-						})
-					}
-				})
-			},
-			// 微信小程序定位
-			getPointByWeChat() {
-				amapPlugin.getRegeo({
-					success: (data) => {
-						this.area = data[0].regeocodeData.addressComponent.district
-						this.newCity = data[0].regeocodeData.addressComponent.city + data[0].regeocodeData.addressComponent.district;
-					},
-					fail: (err) => {
-						uni.showToast({
-							title: "定位失败！手动选择",
-							icon: 'none'
-						})
-					}
-				})
-			},
+		
 
 			// 获取轮播
 
@@ -403,26 +312,28 @@
 				});
 			},
 			// 根据定位请求数据
-			getPositonData(longitude, latitude, area, CATEGORY_ID) {
+			getPositonData(LATITUDE, LONGITUDE, AREA, CATEGORY_ID) {
+				console.log('根据定位请求数据', LONGITUDE, LATITUDE, AREA, CATEGORY_ID)
 				uni.showLoading({
 					title: '加载中',
 					mask: true
 				})
+				this.cityShow = AREA;
 				uni.request({
 					url: baseUrl + '/api/ordersummary/push/newvendor',
 					header: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
 					data: {
-						LONGITUDE: longitude,
-						LATITUDE: latitude,
-						// kilometers: '300',
-						AREA: area,
+						LONGITUDE,
+						LATITUDE,
+						AREA,
 						// NAME: this.itemType, // 不填就是综合
 						CATEGORY_ID: CATEGORY_ID || ''
 					},
 					method: 'POST',
 					success: (res) => {
+						console.log('---', res);
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',
@@ -451,6 +362,7 @@
 			// 手动设置城市
 			setCity(data) {
 				this.newCity = data.data.slice(1, 3).join('');
+				
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);
 				// 地址转换为经纬度
@@ -471,18 +383,18 @@
 							district
 						} = res.data.geocodes[0]
 						this.area = district
-						this.getPositonData(this.longitude, this.latitude, this.area);
+						this.getPositonData( this.latitude,this.longitude, this.area);
 
 
 						this.getBannerList(city, district)
-						this.getPositonData(this.longitude, this.latitude, this.area)
+						this.getPositonData(this.latitude,this.longitude,  this.area)
 					}
 				});
 			},
 			// 分类筛选  CATEGORY_ID
 			getItemClick(item, CATEGORY_ID) {
 				this.itemType = item;
-				this.getPositonData(this.longitude, this.latitude, this.area, CATEGORY_ID);
+				this.getPositonData(this.latitude, this.longitude, this.area, CATEGORY_ID);
 			},
 			// 获取banner
 			getBannerList(CITY = '成都市', AREA = '金牛区') {
@@ -504,9 +416,7 @@
 						}
 					})
 
-					console.log('轮播', this.bannerList.length, this.bannerList)
-
-				}).catch(err => console.log(err))
+				}).catch(err => uni.showToast({ title: '系统错误', icon: 'none' }))
 			},
 			// 前往店铺
 			goShopPage(id, e) {

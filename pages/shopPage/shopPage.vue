@@ -1,6 +1,6 @@
 <template>
 	<view class="shopPage">
-		
+
 		<view class="shopPage-Top" :style="{'background':'url('+imgBaseUrl + vendor.BGIMG+')'}">
 			<view class="shopPage-Top-header">
 				<view class="left">
@@ -20,7 +20,7 @@
 			</view>
 		</view>
 		<!-- 标题 -->
-		
+
 		<view class="shopPage-shopTitle">
 			<view class="shopPage-shopTitle-top">
 				<view class="img">
@@ -122,20 +122,20 @@
 				</view>
 				<view class="cartMask-content-item">
 					<!-- <view v-for="(item,index) in addCartShow" :key="index"> -->
-						<view class="item" v-for="(item1,index1) in addCartShow" :key="index1">
-							<view class="item-left">{{item1.shopName}}</view>
-							<view class="item-right">
-								<view class="item-right-price">
-									￥
-									<text>{{item1.price}}</text>
-								</view>
-								<view class="item-right-num">
-									<text class="iconfont icon-jian1" v-if="item1.num > 1" @tap="changeNum(item1.goodsId, -1,item1.title)"></text>
-									{{item1.num}}
-									<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId, 1,item1.title)"></text>
-								</view>
+					<view class="item" v-for="(item1,index1) in addCartShow" :key="index1">
+						<view class="item-left">{{item1.shopName}}</view>
+						<view class="item-right">
+							<view class="item-right-price">
+								￥
+								<text>{{item1.price}}</text>
+							</view>
+							<view class="item-right-num">
+								<text class="iconfont icon-jian1" v-if="item1.num > 1" @tap="changeNum(item1.goodsId, -1,item1.title)"></text>
+								{{item1.num}}
+								<text class="iconfont icon-jia1" @tap="changeNum(item1.goodsId, 1,item1.title)"></text>
 							</view>
 						</view>
+					</view>
 					<!-- </view> -->
 				</view>
 
@@ -508,8 +508,22 @@
 			},
 			// 前往地图
 			goMap() {
-				let { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD } = this.vendor
-				let obj = { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD };
+				let {
+					LONGITUDE,
+					LATITUDE,
+					CELLPHONE,
+					CITY,
+					AREA,
+					FULLADD
+				} = this.vendor
+				let obj = {
+					LONGITUDE,
+					LATITUDE,
+					CELLPHONE,
+					CITY,
+					AREA,
+					FULLADD
+				};
 				uni.navigateTo({
 					url: "../address/address?vendor=" + JSON.stringify(obj)
 				});
@@ -545,46 +559,47 @@
 			// 去结算
 			goSettlement() {
 				var arr = [];
-				if (parseFloat(this.titleAll)) {
-					this.selectArr.map(item => {
-						item.list.map(item1 => {
-							arr.push(item1);
-						});
-					});
-
-					let list = this.selectArr.map(item => item.list);
-
-					let temp = [].concat(...list);
-					temp = temp.filter(item => item.num != 0)
-					temp.forEach((addShopId, index) => {
-						addShopId.SHOP_ID = this.vendor.SHOP_ID
-					})
-
-					let obj = {};
-					let peon = temp.reduce((cur, next) => {
-						obj[next.category] ? "" : obj[next.category] = true && cur.push(next);
-						return cur;
-					}, [])
-					let stringifyArr = JSON.stringify(peon)
-
-
-					uni.navigateTo({
-						url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
-							'&page=shopPage'+ '&phone=' + this.vendor.PHONE
-					})
-					// uni.navigateTo({
-					// 	url: "../settlement/settlement?item=" +
-					// 		encodeURIComponent(JSON.stringify(arr)) +
-					// 		"&shopId=" +
-					// 		this.shopId
-					// });
-				} else {
-					uni.showToast({
+				if (!parseFloat(this.titleAll)) {
+					return uni.showToast({
 						title: "请先选购商品",
 						duration: 2000,
 						icon: "none"
 					});
 				}
+				this.selectArr.map(item => {
+					item.list.map(item1 => {
+						arr.push(item1);
+					});
+				});
+
+				let list = this.selectArr.map(item => item.list);
+
+				let temp = [].concat(...list);
+				temp = temp.filter(item => item.num != 0)
+				temp.forEach((addShopId, index) => {
+					addShopId.SHOP_ID = this.vendor.SHOP_ID
+				})
+
+				let obj = {};
+				let peon = temp.reduce((cur, next) => {
+					obj[next.goodsId] ? "" : obj[next.goodsId] = true && cur.push(next);
+					return cur;
+				}, [])
+				console.log(peon)
+				let stringifyArr = JSON.stringify(peon)
+
+
+				uni.navigateTo({
+					url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
+						'&page=shopPage' + '&phone=' + this.vendor.PHONE
+				})
+				// uni.navigateTo({
+				// 	url: "../settlement/settlement?item=" +
+				// 		encodeURIComponent(JSON.stringify(arr)) +
+				// 		"&shopId=" +
+				// 		this.shopId
+				// });
+
 			},
 			// 清空购物车
 			clearCart() {
@@ -770,7 +785,7 @@
 					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
 					return item;
 				}, []);
-				
+
 				let showList = temp.filter(ele => ele.num)
 				return showList
 

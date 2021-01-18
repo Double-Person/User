@@ -388,6 +388,7 @@
 					tradePass: this.val
 				}).then(res => {
 					uni.hideLoading()
+					console.log('---', res)
 					
 					if(this.payMode == 1) {
 						this.weChatPay(res.returnMsg)
@@ -427,6 +428,7 @@
 			},
 			// 支付
 			pay(index) {
+				console.log(index)
 				this.payMode = index;
 				if (this.payMode === 3) {
 					uni.showToast({
@@ -435,7 +437,14 @@
 						mask: true
 					});
 				}else {
-					this.finallyPay()
+					// 
+					if(this.payMode == 0) {
+						this.payMaskHide = true
+						this.payPwdMaskHide = false
+					}else {
+						this.finallyPay() 
+					}
+					
 				}
 				// 显示密码输入
 				// this.payPwdMaskHide = false
@@ -515,7 +524,6 @@
 					orderSummaryId: this.orderID,
 					tradePass
 				}).then(res => {
-					console.log('-----', res)
 					uni.hideLoading();
 					this.tradePass = '';
 					if (res.returnMsg) {

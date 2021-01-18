@@ -327,6 +327,7 @@ export default {
 					});
 				}else if(e.page == 'shopPage'){ //  从商店直接购买
 					var arr = JSON.parse(e.item);
+					console.log(arr)
 					this.shopNum =  arr.map(ele => Number(ele.num)).reduce((prev, cur)=> prev + cur);
 					this.total =  arr.map(ele => ele.num * ele.price).reduce((prev, cur)=> prev + cur);
 					arr.map(item => {
@@ -338,7 +339,6 @@ export default {
 					this.shopNum = myOrderPayment.number
 					this.total = myOrderPayment.PAYABLE
 					this.GOODS = myOrderPayment.goodsInfo[0]
-			
 				}
 	
 	

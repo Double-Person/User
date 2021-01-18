@@ -1,7 +1,7 @@
 <template>
 	<view class="mybalance">
-		<!-- hader -->
-		<commonHeader :headerTitl="headerTitl" xingHide=true></commonHeader>
+		<!-- hader   我的消费金 -->
+		<commonHeader headerTitl="线上消费金" xingHide=true></commonHeader>
 		<view class="mybalance-date">
 			<!-- 日期选择 -->
 			<view class="uni-list">
@@ -64,7 +64,6 @@
 			})
 			return {
 				imgBaseUrl: imgBaseUrl,
-				headerTitl: "我的消费金",
 				listData: [],
 				// 日期选择
 				date: currentDate,

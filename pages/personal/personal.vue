@@ -552,6 +552,9 @@ export default {
 		.item:not(:last-child) {
 			border-bottom: 1px solid #ccc;
 		}
+		.item:last-child {
+			margin-bottom: 100rpx;
+		}
 	}
 }
 </style>

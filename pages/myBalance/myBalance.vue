@@ -22,9 +22,9 @@
 						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue"></text>
 					</text>
 					<view class="text">
-						<text>{{item.TYPES==1&&'购物'||item.TYPES==2&&'提现'||item.TYPES==3&&'星币兑换'}}</text>
-						<view v-if="item.CHARGE">
-							手续费{{item.CHARGE}}%
+						<text>{{item.TYPES==0&&'购物'||item.TYPES==1&&'提现'||item.TYPES==2&&'星币兑换'||item.TYPES==3&&'系统奖励'}}</text>
+						<view v-if="item.CHARGE !=0">
+							手续费 {{item.CHARGE}}
 						</view>
 						<view>
 							{{item.TRADETIME}}
@@ -32,7 +32,8 @@
 					</view>
 				</view>
 				<view class="right">
-					{{item.TYPES==1&&'-'||item.TYPES==2&&'-'||item.TYPES==3&&'+'}}￥{{item.MONEY}}
+					<!-- {{item.TYPES==1&&'-'||item.TYPES==2&&'-'||item.TYPES==3&&'+'}}￥{{item.MONEY}} -->
+					{{item.TYPES==0?'-':'+'}}￥{{item.MONEY}}
 				</view>
 			</view>
 		</view>

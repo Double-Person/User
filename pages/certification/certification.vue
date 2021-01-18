@@ -91,14 +91,15 @@
 							},
 							success: (uploadFileRes) => {
 								this.imgUrl1 = JSON.parse(uploadFileRes.data).data
-								this.imgHide1 = false 
+								this.imgHide1 = false
 							}
 						});
-						
+
 					}
 				});
 			},
 			fan() {
+				let that = this;
 				uni.chooseImage({
 					count: 1, //默认9
 					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
@@ -113,11 +114,11 @@
 								file: 'test'
 							},
 							success: (uploadFileRes) => {
-								this.imgUrl2 = JSON.parse(uploadFileRes.data).data
-								this.imgHide2 = false 
+								that.imgUrl2 = JSON.parse(uploadFileRes.data).data
+								that.imgHide2 = true
 							}
 						});
-						
+
 					}
 				});
 			},
@@ -185,32 +186,49 @@
 							icon: 'none'
 						});
 					});
+			},
+
+			getUserInfo() {
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
+				// 获取个人资料
+				personal({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(res => {
+					
+					this.userInfo = res.returnMsg.userInfo
+					
+					this.username = res.returnMsg.userInfo.USERNAME ? res.returnMsg.userInfo.USERNAME : '';
+					if (res.returnMsg.userInfo.IDCARDFRONT) {
+						this.imgHide1 = false;
+						this.imgUrl1 = res.returnMsg.userInfo.IDCARDFRONT;
+						console.log(this.imgUrl1)
+					}
+					if (res.returnMsg.userInfo.IDCARDBACK) {
+						this.imgHide2 = false;
+						this.imgUrl2 = res.returnMsg.userInfo.IDCARDBACK;
+					}
+
+					// console.log('****', this.userInfo)
+				}).finally(() => uni.hideLoading())
 			}
+
+
+
 		},
 		mounted() {
 			uni.getStorage({
 				key: 'USERINFO_ID',
-				success: res => (this.USERINFO_ID = res.data)
+				success: res => {
+					console.log(res)
+					this.USERINFO_ID = res.data;
+					this.getUserInfo()
+					// console.log(this.USERINFO_ID)
+				}
 			});
-			uni.showLoading({
-				title: '加载中', 
-				mask:true
-			})
-			// 获取个人资料
-			personal({
-				USERINFO_ID: this.USERINFO_ID
-			}).then(res => {
-				this.userInfo = res.returnMsg.userInfo
-				this.username = res.returnMsg.userInfo.USERNAME ? res.returnMsg.userInfo.USERNAME : '';
-				if (res.returnMsg.userInfo.IDCARDFRONT) {
-					this.imgHide1 = false;
-					this.imgUrl1 = res.returnMsg.userInfo.IDCARDFRONT;
-				}
-				if (res.returnMsg.userInfo.IDCARDBACK) {
-					this.imgHide2 = false;
-					this.imgUrl2 = res.returnMsg.userInfo.IDCARDBACK;
-				}
-			}).finally(() => uni.hideLoading())
+
 		}
 	};
 </script>

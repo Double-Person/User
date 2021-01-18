@@ -41,8 +41,8 @@
 			</view>
 			<view class="oraderDetails-content-total">
 				<view>
-					共计{{countAll}}件商品
-					<text>合计 ￥<text>{{total}}</text></text>
+					共计{{computedLength(goodsList)}}件商品
+					<text>合计 ￥<text>{{computedLTotal(goodsList)}}</text></text>
 				</view>
 			</view>
 			<view class="oraderDetails-content-cause">
@@ -58,7 +58,7 @@
 				付款方式：<text>{{orderData.payType== 0 &&'微信' || orderData.payType==1&&'支付宝' || orderData.payType==3&&'银行卡' || orderData.payType==2&&'余额支付'}}</text>
 			</view>
 			<view class="oraderDetails-content-shop">
-				联系商家：<text>{{orderData.shopPhone}}</text>
+				联系商家：<text @click="callPhone(orderData.shopPhone)">{{orderData.shopPhone}}</text>
 			</view>
 			<view class="oraderDetails-content-btn">
 				<text @click="backPay(orderData.orderSummaryId)">退款</text>
@@ -82,8 +82,7 @@
 				imgBaseUrl: imgBaseUrl,
 				orderData:{},
                 goodsList:[],
-                countAll:'',
-                total:'',
+         
                 cause:''
 			};
 		},
@@ -92,6 +91,27 @@
 			,tabbar
 		},
         methods:{
+			computedLength (list) {
+				if(list.length === 0) {
+					return 0
+				}
+				let sum = list.reduce((pre, nex) => pre.count *1  + nex.count * 1 );
+				return sum
+			},
+			computedLTotal (list) {
+				if(list.length === 0) {
+					return 0
+				}
+				console.log(list)
+				let sum = list.reduce((pre, nex) => pre.count * pre.price  + nex.count * nex.price );
+				return sum
+			},
+			// 拨打电话
+			callPhone(phoneNumber) {
+				uni.makePhoneCall({
+					phoneNumber
+				});
+			},
             // 申请退款
             backPay(orderId){
                 if(!this.cause) {
@@ -137,13 +157,9 @@
         },
         onLoad(e) {
            queryOrder({ORDERSUMMARY_ID:e.orderID}).then(res => {
-               console.log(res)
-               this.orderData = res.returnMsg.order
-               this.goodsList = res.returnMsg.orderGoods
-               res.returnMsg.orderGoods.map(item => {
-                   this.countAll += item.count
-                   this.total += item.count*item.price
-               })
+
+			   this.orderData = res.returnMsg.order
+			   this.goodsList = res.returnMsg.orderGoods
            }) 
         }
 	}
