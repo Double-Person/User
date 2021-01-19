@@ -1,8 +1,8 @@
 // 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js';
-const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
-// const COMMON_URL = 'http://192.168.0.110:8081';
+// const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
+const COMMON_URL = 'http://192.168.0.110:8081';
 export const baseUrl = COMMON_URL;
 export const imgBaseUrl = COMMON_URL + '/'
 
@@ -169,6 +169,10 @@ export const getMessageActive = params => request.post('/api/user/message/readMe
 
 // 60 商家入驻
 export const shopAuth = params => request.post('/api/merchant/shopAuth', params)
+// 分类列表
+export const categoryList = params => request.post('/api/ordersummary/list', params)
+
+
 
 // 获取首页分类（综合商家等）
 export const homePage = () => request.get('/api/ordersummary/homePage')

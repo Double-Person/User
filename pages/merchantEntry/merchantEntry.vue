@@ -11,9 +11,15 @@
 				 placeholder="注册姓名已读取" />
 			</view>
 			<view class="merchantEntry-content-item">
-				<text>手机号码认证注册</text>
-				<input @blur="getPhone" :maxlength="11" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<text>手机号</text>
+				<input @blur="getPhone" :maxlength="11" type="number" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="注册手机号已读取" />
+			</view>
+			
+			<view class="merchantEntry-content-item">
+				<text>店铺名</text>
+				<input  type="text" v-model="SHOP_NAME" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				 placeholder="店铺名" />
 			</view>
 			<view class="merchantEntry-content-item" style="text-align: right;">
 				<text>选择入驻城市/区</text>
@@ -27,7 +33,7 @@
 			
 			<view class="merchantEntry-content-item">
 				<text>详细地址</text>
-				<input @blur="getEmail" type="text" v-model="city"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input type="text" v-model="city"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入详细地址" />
 			</view>
 			
@@ -36,10 +42,21 @@
 				<input @blur="getEmail" type="text"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入负责人邮箱" />
 			</view>
+			
+			<view class="merchantEntry-content-item">
+				<text>商家分类</text>
+				<input @click="checkShopName" disabled type="text" v-model="CATEGORY_NAME"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				 placeholder="选择商家分类" />
+			</view>
+			
 			<view class="merchantEntry-content-item">
 				<text>上传 营业执照身份证照</text>
 			</view>
 		</view>
+		
+		
+		
+		
 		<!-- 身份证 -->
 		<view class="merchantEntry-idCard">
 			<view class="item" @tap="zheng">
@@ -67,6 +84,26 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 上传商家头像 -->
+		<view class="merchantEntry-yengye">
+			<text>上传商家头像</text>
+		</view>
+		<view class="merchantEntry-item">
+			<view class="item" @tap="head">
+				<view class="item-top" :class="imgHide3?'':'imgHide'">
+					<image src="/static/images/yingye.png" mode=""></image>
+					<view>
+						请上传商家头像
+					</view>
+					<text>注：请上传jpg/png格式图片</text>
+				</view>
+				<view class="item-img" :class="imgHide3?'imgHide':''">
+					<image :src="imgBaseUrl + imgUrl3" mode=""></image>
+				</view>
+			</view>
+		</view>
+		
 		<!-- 上传营业执照 -->
 		<view class="merchantEntry-yengye">
 			<text>上传营业执照</text>
@@ -85,6 +122,8 @@
 				</view>
 			</view>
 		</view>
+		
+		
 		<!-- 保存 -->
 		<view class="merchantEntry-saveBtn" @tap="submit">
 			提交审核
@@ -106,6 +145,7 @@
 	// 引入请求接口
 	import {
 		shopAuth,
+		categoryList,
 		baseUrl,
 		imgBaseUrl
 	} from '@/common/apis.js';
@@ -120,14 +160,20 @@
 				addressObj: {},
 				username: '',
 				phone: '',
+				SHOP_NAME: '', // 店铺名
+				FACEICON: '', // 头像
+				CATEGORY_ID: '',//   类型
+				CATEGORY_NAME: '',//   类型
 				email: "",
 				city: "",
 				imgHide: true,
 				imgHide1: true,
 				imgHide2: true,
+				imgHide3: true,
 				imgUrl: '',
 				imgUrl1: '',
 				imgUrl2: '',
+				imgUrl3: '',
 				newCity: '', //当前城市
 				area: '', //当前地区
 				itemType: 1,
@@ -140,8 +186,9 @@
 			commonHeader,
 			tabbar
 		},
-		created() {
+		onLoad() {
 			this.getPoint()
+			this._categoryList()
 		},
 		methods: {
 			// 添加图片
@@ -204,6 +251,49 @@
 					}
 				});
 			},
+			head() {
+				uni.chooseImage({
+					count: 1, //默认9
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['album', 'camera'], //从相册选择
+					success: (res) => {
+						const tempFilePaths = res.tempFilePaths;
+						uni.uploadFile({
+							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
+							filePath: tempFilePaths[0],
+							name: 'file',
+							success: (uploadFileRes) => {
+								this.imgUrl3 = JSON.parse(uploadFileRes.data).data
+								this.imgHide3 = false;
+							}
+						});
+					}
+				});
+			},
+			async checkShopName() {
+				const that = this;
+				let names = await this.categorys.map(ele => ele.NAME);
+				await uni.showActionSheet({
+				    itemList: names,
+				    success: function (res) {
+						let { CATEGORY_ID, NAME } = that.categorys[res.tapIndex];
+				        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
+						that.CATEGORY_ID = CATEGORY_ID;//   类型
+						that.CATEGORY_NAME = NAME//   类型
+				    },
+				    fail: function (res) {
+				        console.log(res.errMsg);
+				    }
+				});
+			},
+			
+			_categoryList() {
+				categoryList().then(res => {
+					console.log(res)
+					this.categorys = res.varList
+				})
+			},
+			
 			// 姓名
 			getUsername(e) {
 				this.username = e.detail.value;
@@ -230,13 +320,24 @@
 				if(!this.email) { return uni.showToast({ title: '请输入负责人邮箱', icon: 'none' }) }
 				if(!this.city) { return uni.showToast({ title: '请输入详细地址', icon: 'none' }) }
 				
+				if(!this.SHOP_NAME) { return uni.showToast({ title: '请输入店铺名', icon: 'none' }) }
+				if(!this.CATEGORY_ID) { return uni.showToast({ title: '请选择分类', icon: 'none' }) }
+				
 				if(!this.imgUrl) { return uni.showToast({ title: '请上传身份证正面', icon: 'none' }) }
 				if(!this.imgUrl1) { return uni.showToast({ title: '请上传身份证反面', icon: 'none' }) }
+				if(!this.imgUrl3) { return uni.showToast({ title: '请上传商家头像', icon: 'none' }) }
 				if(!this.imgUrl2) { return uni.showToast({ title: '请上传营业执照', icon: 'none' }) }
+				
+				
+				// FACEICON: '', // 头像
+				// SHOP_NAME  店铺名
+				// CATEGORY_ID  类型
 				let obj = {
 					name: this.username, // 用户名
 					phone: this.phone, //  手机号
 					eamil: this.eamil,
+					SHOP_NAME: this.SHOP_NAME,  // 店铺名
+					CATEGORY_ID: this.CATEGORY_ID,
 					city: this.addressObj.city || '',
 					area: this.addressObj.district || '',
 					fulladd: this.city,
@@ -244,8 +345,11 @@
 					latitude: this.latitude || 0,
 					idcarddfront: this.imgUrl, // 身份证真反面
 					idcardback: this.imgUrl1, // 身份证真反面
-					certificate: this.imgUrl2 //营业执照
+					certificate: this.imgUrl2 ,//营业执照
+					FACEICON:  this.imgUrl3  // // 头像
 				}
+				console.log(obj);
+				
 				 
 				let res = await shopAuth(obj)
 				console.log(res)
