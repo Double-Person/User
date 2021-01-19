@@ -5,9 +5,6 @@
 		<view class="about-content">
 			<view>
 				<view class="content">
-				<!-- 	<view class="title">
-						{{ info.SYSSET_NAME }}
-					</view> -->
 					<view class="item">
 						<view src="" frameborder="0" v-html="info.SYSSET_VALUE"></view>
 					</view>
@@ -43,7 +40,6 @@
 				const {
 					returnMsg
 				} = await getAboutInfo()
-				// console.log(data)
 				this.info = returnMsg
 			},
 			usage() {

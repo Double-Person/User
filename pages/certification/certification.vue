@@ -5,7 +5,7 @@
 		<view class="certification-content">
 			<view class="certification-content-username">
 				<view class="left">姓名</view>
-				<input type="text" v-model="username" value="" placeholder="请输入真实姓名" placeholder-style="color:#999" />
+				<input type="text" v-model="username" placeholder="请输入真实姓名" placeholder-style="color:#999" />
 			</view>
 			<view class="certification-content-upload">上传身份证照</view>
 		</view>
@@ -78,7 +78,7 @@
 			zheng() {
 				uni.chooseImage({
 					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有  'original', 
 					sourceType: ['album', 'camera'], //从相册选择
 					success: res => {
 						const tempFilePaths = res.tempFilePaths;
@@ -86,9 +86,9 @@
 							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
 							filePath: tempFilePaths[0],
 							name: 'file',
-							formData: {
-								file: 'test'
-							},
+							// formData: {
+							// 	file: 'test'
+							// },
 							success: (uploadFileRes) => {
 								this.imgUrl1 = JSON.parse(uploadFileRes.data).data
 								this.imgHide1 = false
@@ -102,7 +102,7 @@
 				let that = this;
 				uni.chooseImage({
 					count: 1, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sizeType: [ 'compressed'], //可以指定是原图还是压缩图，默认二者都有 'original',
 					sourceType: ['album', 'camera'], //从相册选择
 					success: res => {
 						const tempFilePaths = res.tempFilePaths;
@@ -110,12 +110,12 @@
 							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
 							filePath: tempFilePaths[0],
 							name: 'file',
-							formData: {
-								file: 'test'
-							},
+							// formData: {
+							// 	file: 'test'
+							// },
 							success: (uploadFileRes) => {
 								that.imgUrl2 = JSON.parse(uploadFileRes.data).data
-								that.imgHide2 = true
+								that.imgHide2 = false
 							}
 						});
 
@@ -204,14 +204,12 @@
 					if (res.returnMsg.userInfo.IDCARDFRONT) {
 						this.imgHide1 = false;
 						this.imgUrl1 = res.returnMsg.userInfo.IDCARDFRONT;
-						console.log(this.imgUrl1)
 					}
 					if (res.returnMsg.userInfo.IDCARDBACK) {
 						this.imgHide2 = false;
 						this.imgUrl2 = res.returnMsg.userInfo.IDCARDBACK;
 					}
 
-					// console.log('****', this.userInfo)
 				}).finally(() => uni.hideLoading())
 			}
 
@@ -225,7 +223,6 @@
 					console.log(res)
 					this.USERINFO_ID = res.data;
 					this.getUserInfo()
-					// console.log(this.USERINFO_ID)
 				}
 			});
 

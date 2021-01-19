@@ -84,8 +84,7 @@
                     if (res.returnMsg.status == '00') {
                         uni.showToast({
                             title: "绑定成功!",
-                            duration: 2000,
-                            mask:true
+                            icon: 'none'
                         })
                         setTimeout(() => {
                             uni.navigateTo({
@@ -95,45 +94,18 @@
                     }else if(res.returnMsg.status == '01'){
                         uni.showToast({
                             title: "请输入验证码!",
-                            duration: 2000,
                             icon:'none',
-                            mask:true
                         })
                     }else if(res.returnMsg.status == '02'){
-                        uni.showToast({
-                            title: "验证码错误!",
-                            duration: 2000,
-                            icon:'none',
-                            mask:true
-                        })
+                        uni.showToast({ title: "验证码错误!", icon:'none', })
                     }else if(res.returnMsg.status == '03'){
-                        uni.showToast({
-                            title: "验证码超市!",
-                            duration: 2000,
-                            icon:'none',
-                            mask:true
-                        })
+                        uni.showToast({ title: "验证码超市!", icon:'none', })
                     }else if(res.returnMsg.status == '04'){
-                        uni.showToast({
-                            title: "实名认证未通过或未认证!",
-                            duration: 2000,
-                            icon:'none',
-                            mask:true
-                        })
+                        uni.showToast({ title: "实名认证未通过或未认证!", icon:'none', })
                     }else if(res.returnMsg.status == '05'){
-                        uni.showToast({
-                            title: "与实名认证中的姓名不一致!",
-                            duration: 2000,
-                            icon:'none',
-                            mask:true
-                        })
+                        uni.showToast({ title: "与实名认证中的姓名不一致!", icon:'none', })
                     }else if(res.returnMsg.status == '06'){
-                        uni.showToast({
-                            title: "绑定手机号不一致!",
-                            duration: 2000,
-                            icon:'none',
-                            mask:true
-                        })
+                        uni.showToast({ title: "绑定手机号不一致!", icon:'none', })
                     }
                 })
             },

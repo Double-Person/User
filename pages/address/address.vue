@@ -12,7 +12,7 @@
 					电&emsp;&emsp;话: <text>{{vendor.CELLPHONE}}</text>
 				</view>
 				<view class="address-content-address">
-					联系地址: <text>{{vendor.CITY+vendor.FULLADD + vendor.AREA}}</text>
+					联系地址: <text>{{vendor.CITY + vendor.AREA + vendor.FULLADD}}</text>
 				</view>
 
 				<view class="page-section page-section-gap" @tap="gomap">

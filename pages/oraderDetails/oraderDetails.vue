@@ -92,18 +92,25 @@
 		},
         methods:{
 			computedLength (list) {
+				
 				if(list.length === 0) {
 					return 0
 				}
-				let sum = list.reduce((pre, nex) => pre.count *1  + nex.count * 1 );
+				let sum = 0;
+				for (let item of list) {
+					sum += item.count*1
+				}
+			
 				return sum
 			},
 			computedLTotal (list) {
 				if(list.length === 0) {
 					return 0
 				}
-				console.log(list)
-				let sum = list.reduce((pre, nex) => pre.count * pre.price  + nex.count * nex.price );
+				let sum = 0;
+				for (let item of list) {
+					sum += item.count* item.price
+				}
 				return sum
 			},
 			// 拨打电话

@@ -23,15 +23,7 @@
 					<text class="time">关注时间：{{ item.creates }}</text>
 				</view>
 				
-				<!-- <view class="content">
-					<view class="content-left">
-						<image :src="item.shopImg" mode=""></image>
-					</view>
-					<view class="content-right">
-						<text>下单时间：{{item.createTime}}</text>
-						<text>总价：￥{{item.actualPay}}</text>
-					</view>
-				</view> -->
+			
 				<view class="btn">
 					<!-- <text @tap="cancel(item.collectionsId)">取消收藏</text> -->
 					<!-- <text>再来一单</text> -->

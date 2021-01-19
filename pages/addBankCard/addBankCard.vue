@@ -9,11 +9,11 @@
 		<view class="addBankCard-content">
 			<view class="item">
 				<text>姓名</text>
-				<input @blur="getName" type="text" value="" placeholder="请添加卡号姓名" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"/>
+				<input @blur="getName" type="text" value="" placeholder="请添加卡号姓名" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;" />
 			</view>
 			<view class="item">
 				<text>卡号</text>
-				<input @blur="getCard" maxlength="19" type="text" value="" placeholder="请添加银行卡号" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"/>
+				<input @blur="getCard" maxlength="19" type="text" value="" placeholder="请添加银行卡号" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;" />
 			</view>
 		</view>
 		<view class="submit-btn" @tap="addCard">
@@ -23,84 +23,83 @@
 </template>
 
 <script>
-	import {addShopBank} from '@/common/apis.js'
-	import commonHeader from"@/components/common-header/common-header";
+	import {
+		addShopBank
+	} from '@/common/apis.js'
+	import commonHeader from "@/components/common-header/common-header";
 	export default {
 		data() {
 			return {
-				username:'',
-				card:'',
-				usernameState:false,
-				cardState:false
+				username: '',
+				card: '',
+				usernameState: false,
+				cardState: false
 			};
 		},
-		components:{
+		components: {
 			commonHeader
 		},
-		methods:{
+		methods: {
 			// 获取姓名
-			getName(e){
+			getName(e) {
 				var nameReg = /^[\u4E00-\u9FA5]{2,4}$/;
-				if(nameReg.test(e.detail.value)){
+				if (nameReg.test(e.detail.value)) {
 					this.username = e.detail.value;
 					this.usernameState = true;
-				}else if(!e.detail.value.length) {
+				} else if (!e.detail.value.length) {
 					this.usernameState = false;
 					return false;
-				}else{
+				} else {
 					this.usernameState = false;
 					uni.showToast({
-						title:"请输入正确姓名",
-						icon:'none'
+						title: "请输入正确姓名",
+						icon: 'none'
 					})
 				}
 			},
 			// 获取卡号
-			getCard(e){
-				 var regExp = /^([1-9]{1})(\d{15}|\d{18})$/;
-				 // var arr = regExp.test(e.detail.value);
-				 if(regExp.test(e.detail.value)){
-					 this.cardState = true;
-					 this.card = e.detail.value;
-				 }else if(!e.detail.value.length){
-					 this.cardState = false;
-					 return false
-				 } else{
+			getCard(e) {
+				var regExp = /^([1-9]{1})(\d{15}|\d{18})$/;
+				// var arr = regExp.test(e.detail.value);
+				if (regExp.test(e.detail.value)) {
+					this.cardState = true;
+					this.card = e.detail.value;
+				} else if (!e.detail.value.length) {
+					this.cardState = false;
+					return false
+				} else {
 					this.cardState = false;
 					uni.showToast({
-						title:"请核对卡号",
-						icon:'none'
+						title: "请核对卡号",
+						icon: 'none'
 					})
-				 }
+				}
 			},
 			// 添加银行卡
-			addCard(){
-				if(this.cardState&&this.usernameState){
-					console.log(this.username,this.card)  // 
+			addCard() {
+				if (this.cardState && this.usernameState) {
+					console.log(this.username, this.card) // 
 					uni.getStorage({
-					    key: 'USERINFO_ID',
-					    success:  (res)=> {
-					     // 绑定银行啊卡   foreign_id 商户id   cardno 银行卡 
-							addShopBank({cardno: this.card, foreign_id: res.data, name: this.username}).then(res => {
+						key: 'USERINFO_ID',
+						success: (res) => {
+							// 绑定银行啊卡   foreign_id 商户id   cardno 银行卡 
+							addShopBank({
+								cardno: this.card,
+								foreign_id: res.data,
+								name: this.username
+							}).then(res => {
 								console.log(res)
 							})
-					    }
+						}
 					});
-				 
-					
+
+
 					return false;
+
+				} else {
 					uni.showToast({
-						title:'添加成功'
-					})
-					
-					getApp().globalData.cardStata = true;
-					uni.navigateTo({
-						url:'../myCard/myCard'
-					})
-				}else{
-					uni.showToast({
-						title:'请先输入正确信息',
-						icon:'none'
+						title: '请先输入正确信息',
+						icon: 'none'
 					})
 				}
 			}
@@ -109,7 +108,7 @@
 </script>
 
 <style lang="less" scoped>
-	.addBankCard{
+	.addBankCard {
 		background: #f7f7f7;
 		padding-top: 120rpx;
 		/* #ifdef APP-PLUS */
@@ -120,32 +119,37 @@
 		/* #endif */
 		height: 100%;
 		color: #333;
-		.addTips{
+
+		.addTips {
 			font-size: 40rpx;
 			font-weight: bold;
 			padding-left: 30rpx;
 		}
-		.addBankCard-content{
+
+		.addBankCard-content {
 			padding-left: 30rpx;
 			background: #fff;
 			margin-top: 30rpx;
-			.item{
+
+			.item {
 				height: 90rpx;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				font-size: 30rpx;
 				border-bottom: 1px solid #e0e0e0;
-				input{
+
+				input {
 					width: 400rpx;
 					margin-right: 30rpx;
 					text-align: right;
 				}
 			}
 		}
-		.submit-btn{
+
+		.submit-btn {
 			width: 95%;
-			background:linear-gradient(243deg,rgba(255,153,96,1) 0%,rgba(255,90,44,1) 100%);
+			background: linear-gradient(243deg, rgba(255, 153, 96, 1) 0%, rgba(255, 90, 44, 1) 100%);
 			height: 88rpx;
 			border-radius: 10rpx;
 			color: #fff;

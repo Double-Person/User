@@ -39,10 +39,7 @@
 						{{info && info.Ali? '重新绑定' : '去绑定'}}
 					</view>
 				</view>
-				<!-- 招商银行卡 -->
-				
 			</view>
-
 
 			<!-- 红包 -->
 			<view class="redpackge">
@@ -134,11 +131,7 @@
 			// 检查绑定
 			 checkBind() {
 				 let that = this;
-				 // this.userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
-				 // let {DESC1, DESC2} = this.userInfo1.userInfo
-				 // this.bindList.Ali = DESC1
-				 // this.bindList.Wx = DESC2
-				 
+				
 				uni.getStorage({
 					key: 'USERINFO_ID',
 					success: (res) => {
@@ -151,10 +144,8 @@
 							if (res.msgType == 0) {
 								let userInfo1 = JSON.parse(JSON.stringify(res.returnMsg));
 								let {DESC1, DESC2} = userInfo1.userInfo
-								console.log(DESC1, DESC2)
 								that.info.Ali = DESC1
 								that.info.Wx = DESC2
-								console.log(that.info)
 								that.$forceUpdate()
 							} else {
 								uni.showToast({

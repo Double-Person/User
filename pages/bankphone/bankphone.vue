@@ -8,11 +8,11 @@
 		<view class="login-content">
 			<view class="login-content-item">
 				<text>+86</text>
-				<input type="text" :value="phone" @input="inputPhone" :maxlength="11" placeholder="请输入手机号" placeholder-style="color:#999" />
+				<input type="number" :value="phone" @input="inputPhone" :maxlength="11" placeholder="请输入手机号" placeholder-style="color:#999" />
 			</view>
 			<view class="login-content-item">
 				<text>验证码</text>
-				<input type="text" :value="testCode" maxlength="6" placeholder="请输入验证码" placeholder-style="color:#999" @blur="inputTestCode"/>
+				<input type="number" :value="testCode" maxlength="6" placeholder="请输入验证码" placeholder-style="color:#999" @blur="inputTestCode"/>
 				<button class="testCode" :class="selectCode?'selectCode':''" :disabled="disabled" @tap="getCode">{{codeText}}</button>
 			</view>
 			<view class="login-content-item password">

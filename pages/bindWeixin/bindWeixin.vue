@@ -14,13 +14,13 @@
 			</view>
 			<view class="bindWeixin-content-item">
 				<text>手机号</text>
-				<input type="text" value="" @input="getphone" maxlength="11" placeholder-style="color:#999;fontSize:28rpx;" v-model="phone"
+				<input type="number" @input="getphone" maxlength="11" placeholder-style="color:#999;fontSize:28rpx;" v-model="phone"
 				 placeholder="请输入手机号" />
 			</view>
 			<view class="bindWeixin-content-item">
 				<text>验证码</text>
 				<view>
-					<input type="text" value="" v-model="code" placeholder-style="color:#999;fontSize:28rpx;" placeholder="请填写验证码" />
+					<input type="number" v-model="code" placeholder-style="color:#999;fontSize:28rpx;" placeholder="请填写验证码" />
 					<button class="testCode" :class="selectCode?'selectCode':''" :disabled="disabled" @tap="getCode">{{codeText}}</button>
 				</view>
 			</view>

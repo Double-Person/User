@@ -69,7 +69,7 @@
 
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
 						<view style="font-size: 28rpx;">
-							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text>
 							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
@@ -130,7 +130,7 @@
 
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
 						<view style="font-size: 28rpx;">
-							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text>
 							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>
@@ -197,7 +197,7 @@
 
 						<view style="font-size: 24rpx;">订单编号：{{item.ORDERNO}}</view>
 						<view style="font-size: 28rpx;">
-							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text> 商品
+							共计 <text style="color: red;margin-left: 0;"> {{item.number}} </text>
 							<text>合计 ￥<text>{{item.PAYABLE}}</text></text>
 						</view>
 					</view>

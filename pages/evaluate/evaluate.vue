@@ -54,10 +54,7 @@
                     <view class="right-img" :class="imgHide?'imgHide':''">
                         <image :src="imgBaseUrl + imgUrl" mode=""></image>
                     </view>
-    <!-- 				<view class="item">
-                        <text class="iconfont icon-bofang"></text>
-                        <view>上传图片</view>
-                    </view> -->
+
                 </view>
 			</view>
 		</view>

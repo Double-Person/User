@@ -110,13 +110,7 @@
 		},
 		data() {
 			return {
-				/*
-					f0d8604522a34fea7af419d353f98e8f  真机调试能定位
-					318dfe4e09e51453d11d2c31cde26534  申请的
-					6a827b40e5822fcbde20f50916a59522
-					2df5711d4e2fd9ecd1622b5a53fc6b1d
-					
-				*/
+				
 				passCity: '',
 				imgBaseUrl: imgBaseUrl,
 				cityShow: '',
@@ -221,17 +215,7 @@
 
 			// #endif
 			// this.getPoint()
-			// 定位 
-		
-
-			
-
-
-
-			// 获取分类
-			// getItem().then(res => {
-			// this.itemList = res.returnMsg && res.returnMsg.varList;
-			// });
+	
 			this._homePage()
 			this.$forceUpdate()
 
@@ -288,8 +272,6 @@
 						this.longitude = res.longitude
 						this.latitude = res.latitude
 						uni.setStorageSync('locationPoint', JSON.stringify(res));
-						// this.conversionPoint(res)
-
 					}
 				})
 			},

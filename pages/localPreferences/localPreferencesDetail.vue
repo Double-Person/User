@@ -3,7 +3,7 @@
 		<view class="warp">
 			<image class="bg-img" :src="hotInfo.PICTURE ? (imgBaseUrl + hotInfo.PICTURE) : '/static/images/youhui.png'" mode=""></image>
 		</view>
-		
+
 		<view class="info">
 			<!-- {{ hotInfo.DESCRIBE }} -->
 			<view class="" v-html="hotInfo.DESCRIBE"></view>
@@ -19,7 +19,7 @@
 			<view class="localPreferences-content-hot-title">
 				<text class="iconfont icon-dian"></text>热门推荐
 			</view>
-	
+
 			<view class="localPreferences-content-hot-item" v-for="item in hotInfo.glist" :key="item.id" @click="toDetail(item.GOODS_ID)">
 				<view class="left">
 					<image :src="imgBaseUrl + item.IMG" mode=""></image>
@@ -74,31 +74,34 @@
 		},
 
 		onLoad(options) {
-			console.log(options)
-			let shopId = options.shopId ;//|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId  
-			let ACTIVITY_ID = options.ACTIVITY_ID ;// ACTIVITY_ID
-			console.log('***' ,ACTIVITY_ID)
-			findById({ACTIVITY_ID}).then( res => {
-				console.log(res)
+			let shopId = options.shopId; //|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId  
+			let ACTIVITY_ID = options.ACTIVITY_ID; // ACTIVITY_ID
+			findById({
+				ACTIVITY_ID
+			}).then(res => {
 				this.hotInfo = res.returnMsg.data;
-				let {GOODS1, GOODS2,GOODS3 ,GOODS4,GOODS5} = this.hotInfo;
-				let glist = [ GOODS1, GOODS2,GOODS3 ,GOODS4,GOODS5 ];
+				let {
+					GOODS1,
+					GOODS2,
+					GOODS3,
+					GOODS4,
+					GOODS5
+				} = this.hotInfo;
+				let glist = [GOODS1, GOODS2, GOODS3, GOODS4, GOODS5];
 				glist = glist.filter(ele => ele);
-							
 				this.hotInfo.glist = glist;
-				console.log(this.hotInfo)
-			} )
+			})
 
 		},
 		methods: {
-		
+
 			toDetail(goodsId) { // goodsId 
 				uni.navigateTo({
 					url: '../goodsDetails/goodsDetails?shopId=' + goodsId
 				})
 			},
 			// 拨打电话
-			callPhone(phone){
+			callPhone(phone) {
 				uni.makePhoneCall({
 					phoneNumber: phone //仅为示例
 				});
@@ -111,7 +114,7 @@
 	.local-preferences-detail {
 		height: 100vh;
 		width: 100%;
-		
+
 
 		.warp {
 			// position: fixed;
@@ -121,14 +124,15 @@
 			// right: 0;
 			// bottom: 0;
 			margin-bottom: 40rpx;
-			.bg-img{
+
+			.bg-img {
 				width: 100%;
 				object-fit: cover;
 				// height: 300rpx;
 			}
 		}
-	
-		.info{
+
+		.info {
 			// height: 300rpx;
 			background: rgb(245, 166, 35);
 			width: 90%;
@@ -137,18 +141,21 @@
 			padding: 20rpx;
 			font-size: 30rpx;
 			overflow-x: auto;
-			.phone{
+
+			.phone {
 				background: rgb(250, 214, 154);
 				display: flex;
 				align-items: center;
 				padding: 15rpx 0 15rpx 30rpx;
 				border-radius: 60rpx;
 				margin: 30rpx auto;
-				image{
+
+				image {
 					width: 45rpx;
 					height: 45rpx;
 				}
-				view{
+
+				view {
 					margin-left: 30rpx;
 					color: rgb(205, 145, 81);
 				}

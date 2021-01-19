@@ -106,7 +106,8 @@
 			// 更换手机号
 			submit(){
                 uni.showLoading({
-                    title: '加载中...'
+                    title: '加载中...',
+					mask: true
                 });
 				var obj={
 					code:this.code,
