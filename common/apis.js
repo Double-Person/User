@@ -1,8 +1,8 @@
 // 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js';
-// const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
-const COMMON_URL = 'http://192.168.0.110:8081';
+const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
+// const COMMON_URL = 'http://192.168.0.110:8081';
 export const baseUrl = COMMON_URL;
 export const imgBaseUrl = COMMON_URL + '/'
 

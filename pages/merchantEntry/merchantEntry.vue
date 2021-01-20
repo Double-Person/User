@@ -7,12 +7,12 @@
 		<view class="merchantEntry-content">
 			<view class="merchantEntry-content-item">
 				<text>姓名</text>
-				<input @blur="getUsername" type="text" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input v-model="username" type="text" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="注册姓名已读取" />
 			</view>
 			<view class="merchantEntry-content-item">
 				<text>手机号</text>
-				<input @blur="getPhone" :maxlength="11" type="number" value="" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input v-model="phone" :maxlength="11" type="number" placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="注册手机号已读取" />
 			</view>
 			
@@ -39,7 +39,7 @@
 			
 			<view class="merchantEntry-content-item">
 				<text>负责人邮箱</text>
-				<input @blur="getEmail" type="text"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
+				<input v-model="email" type="text"  placeholder-style="color:#999;fontSize:28rpx;textAlign:right;"
 				 placeholder="填写入负责人邮箱" />
 			</view>
 			
@@ -289,29 +289,19 @@
 			
 			_categoryList() {
 				categoryList().then(res => {
-					console.log(res)
 					this.categorys = res.varList
 				})
 			},
 			
-			// 姓名
-			getUsername(e) {
-				this.username = e.detail.value;
-			},
-			// 电话
-			getPhone(e) {
-				this.phone = e.detail.value;
-			},
+			
 			// 城市
 			getCity(data) {
 				let [, city, district] = data.data.slice(0, 3);
 				this.addressObj.city = city;
-				this.addressObj.district = district
+				this.addressObj.district = district;
 			},
 			// 邮箱
-			getEmail(e) {
-				this.email = e.detail.value;
-			},
+			
 			// 提交
 			async submit() {
 				if(!this.username) { return uni.showToast({ title: '请输入用户名', icon: 'none' }) }
@@ -335,7 +325,8 @@
 				let obj = {
 					name: this.username, // 用户名
 					phone: this.phone, //  手机号
-					eamil: this.eamil,
+					eamil: this.email,
+					EAMIL: this.email,
 					SHOP_NAME: this.SHOP_NAME,  // 店铺名
 					CATEGORY_ID: this.CATEGORY_ID,
 					city: this.addressObj.city || '',
@@ -348,7 +339,7 @@
 					certificate: this.imgUrl2 ,//营业执照
 					FACEICON:  this.imgUrl3  // // 头像
 				}
-				console.log(obj);
+				
 				
 				 
 				let res = await shopAuth(obj)
