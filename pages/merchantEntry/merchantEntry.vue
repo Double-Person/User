@@ -277,13 +277,9 @@
 				    itemList: names,
 				    success: function (res) {
 						let { CATEGORY_ID, NAME } = that.categorys[res.tapIndex];
-				        console.log('选中了第' + (res.tapIndex + 1) + '个按钮');
 						that.CATEGORY_ID = CATEGORY_ID;//   类型
 						that.CATEGORY_NAME = NAME//   类型
 				    },
-				    fail: function (res) {
-				        console.log(res.errMsg);
-				    }
 				});
 			},
 			
@@ -343,7 +339,6 @@
 				
 				 
 				let res = await shopAuth(obj)
-				console.log(res)
 				if(res.msgType == 0) {
 					
 					uni.showToast({

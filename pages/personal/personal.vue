@@ -188,16 +188,18 @@ export default {
 	methods: {
 		goMycard() {
 			console.log(this.bindList) // Ali  Wx
-			// if(Object.keys(this.bindList).length > 0) {
-			if(this.bindList.Ali || this.bindList.Wx  ) {
-				uni.navigateTo({
-					url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
-				})
-			}else{
-				uni.navigateTo({
-					url: "../myCard/myCard"
-				})
-			}
+			uni.navigateTo({
+				url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
+			})
+			// if(this.bindList.Ali || this.bindList.Wx  ) {
+			// 	uni.navigateTo({
+			// 		url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
+			// 	})
+			// }else{
+			// 	uni.navigateTo({
+			// 		url: "../myCard/myCard"
+			// 	})
+			// }
 		},
 	
 		goPage(index) {

@@ -167,6 +167,7 @@
 										<view class="left-price">
 											单价：￥{{good.PRICE}}
 										</view>
+										<view v-if="item.take_status == 'Y'" @click="evaluation(item.ORDERSUMMARY_ID, good.GOODS_ID)" class="evaluation">立即评价</view>
 									</view>
 								</view>
 								<view class="right">
@@ -725,7 +726,7 @@
 
 							>view {
 								.left-title {
-									font-size: 32rpx;
+									font-size: 28rpx;
 								}
 
 								view {

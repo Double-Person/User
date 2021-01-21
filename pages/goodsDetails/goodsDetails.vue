@@ -7,7 +7,7 @@
 
 				<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
 					<swiper-item v-for="item in Detail.image" :key='item.GOODSIMGS_ID'>
-						<image :src="imgBaseUrl + item.IMG" mode=""></image>
+						<image :src="imgBaseUrl + item.IMG" mode="" @click="previewImage(Detail.image)"></image>
 					</swiper-item>
 
 				</swiper>
@@ -94,8 +94,12 @@
 			})
 
 		},
-		mounted() {
-
+		methods: {
+			previewImage(imgs) {
+				console.log(imgs)
+				let urls = imgs.map(ele => (this.imgBaseUrl + ele.IMG))
+				uni.previewImage({ urls });
+			}
 		}
 	}
 </script>
@@ -118,15 +122,17 @@
 			.goodsDetails-content-background {
 				height: 390rpx;
 				width: 100%;
-				.swiper{
+
+				.swiper {
 					height: 100%;
+
 					image {
 						width: 100%;
 						height: 100%;
 					}
 				}
 
-				
+
 			}
 
 			.goodsDetails-content-title {
@@ -222,7 +228,7 @@
 						.text {
 							font-size: 30rpx;
 							letter-spacing: 5rpx;
-							word-break:break-all;
+							word-break: break-all;
 						}
 					}
 				}

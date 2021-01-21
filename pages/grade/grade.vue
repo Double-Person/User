@@ -49,13 +49,12 @@
 			tabbar
 		},
         mounted() {
-            level().then(res=>{
-                res.returnMsg.list.map(item => {
-                   item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
-                })
-                this.gradeList = res.returnMsg.list
+			const USERINFO_ID = uni.getStorageSync('USERINFO_ID')
+			level({ USERINFO_ID }).then(res => {
+				this.gradeList = res.returnMsg.list
 				this.gradeList.length && this.gradeList.sort((a, b) => a.level - b.level)
-            })
+			})
+
         }
 	}
 </script>
@@ -89,6 +88,7 @@
 		}
 		.grade-item{
 			padding:0 30rpx;
+			margin-bottom: 200rpx;
 			background: #fff;
 			.item{
 				display: flex;

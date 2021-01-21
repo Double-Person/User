@@ -93,7 +93,6 @@
 			console.log(saveStata)
 			if(saveStata) {
 				try{
-					console.log('获取本地存储登录信息')
 					uni.getStorage({
 						key: 'name',
 						success: (data) => {
@@ -131,9 +130,7 @@
 			
 			
 		},
-		methods: {
-			
-			
+		methods: {		
 			// 获取输入手机号
 			inputPhone(e) {
 				if (e.detail.value.length === 11) {
@@ -267,15 +264,15 @@
 				})
 			},
 			// 保存密码
-			savePwd() {
+			async savePwd() {
 				this.rememberPwdHide = true;
 				// 保存状态到本地
-				uni.setStorage({
+				await uni.setStorage({
 					key: 'saveStata',
 					data: true
 				})
 				// 账号密码保存
-				uni.setStorage({
+				await uni.setStorage({
 					key: 'name',
 					data: JSON.stringify(this.saveObj),
 					success() {
@@ -293,14 +290,14 @@
 				})
 			},
 			// 取消保存
-			cancelSave() {
+			async cancelSave() {
 				// 保存状态到本地
-				uni.setStorageSync({
+				await uni.setStorageSync({
 					key: 'saveStata',
 					data: false
 				})
 				// 移出本地数据
-				uni.removeStorageSync({
+				await uni.removeStorageSync({
 					key: 'name',
 					success: () => {
 						this.rememberPwdHide = true;

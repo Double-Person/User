@@ -16,7 +16,8 @@
 				</view>
 
 				<view class="page-section page-section-gap" @tap="gomap">
-					<map style="width: 100%; height: 410rpx;" :latitude="latitude" :longitude="longitude" :markers="covers">
+					<!-- 30.710764, 104.030396 -->
+					<map style="width: 630rpx; height: 410rpx;" :latitude="latitude" :longitude="longitude" :markers="covers">
 					</map>
 				</view>
 
@@ -57,10 +58,9 @@
 		},
 		onLoad(e) {
 			this.vendor = JSON.parse(e.vendor);
-			// locationPoint  locationAddress
-			// let locationPoint = uni.getStorageSync('locationPoint');
-			// console.log(locationPoint)
+			// console.log(locationPoint)   104.030396,30.710764
 			let { LONGITUDE, LATITUDE } = this.vendor;
+			console.log(LATITUDE, LONGITUDE)
 			this.latitude = LATITUDE;
 			this.longitude = LONGITUDE;
 			this.covers[0].latitude = LATITUDE;

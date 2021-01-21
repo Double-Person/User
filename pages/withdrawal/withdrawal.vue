@@ -46,7 +46,7 @@
 					</view>
 					<view class="info-text">
 
-						<text>{{ cardNum == '' && '请选择' || cardNum == bindList.Wx && '微信' || cardNum == bindList.Ali && '支付宝'  }}</text>
+						<text>{{ cardNum == '' && '请选择' || cardNum == bindList.Ali && '支付宝' || cardNum == 'wx' && '微信' }}</text>
 						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
 				</view>
@@ -57,11 +57,11 @@
 			</view>
 			<view class="" v-show="isShowChangeCard" class="change-card-list">
 				<view class="list">
-					<view class="fl-center-between item" @click="changeCardId(bindList.Wx, 'wechat')" v-if="bindList.Wx">
+					<view class="fl-center-between item" @click="changeCardId('wx', 'wechat')">
 						<view>微信 <text style="margin-left: 30rpx;">{{bindList.Wx}}</text></view>
-						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Wx" />
+						<icon type="success_no_circle" size="20" v-if="cardNum == 'wx'" />
 					</view>
-					<view class="fl-center-between item" @click="changeCardId(bindList.Ali, 'ali')" v-if="bindList.Ali">
+					<view class="fl-center-between item" @click="changeCardId(bindList.Ali, 'ali')"  v-if="bindList.Ali && bindList.Ali!= 'null'">
 						<view>支付宝 <text style="margin-left: 30rpx;">{{bindList.Ali}}</text></view>
 						<icon type="success_no_circle" size="20" v-if="cardNum == bindList.Ali" />
 					</view>
@@ -110,7 +110,7 @@
 				money: null,
 				cardNum: '', // 卡号
 				kbalance: 0, // uni.setStorageSync('kbalance')
-				openid: 'ofTYkxBM2Jh0KluonnXzNpLLxYuA'//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
+				openid: ''//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
 			};
 		},
 		onLoad(opt) {
@@ -119,7 +119,7 @@
 			this.bindList = JSON.parse(opt.bindList)
 			
 			// #ifdef APP-PLUS
-			this.getOpenIdByWchat();
+			// this.getOpenIdByWchat();
 			// #endif
 		},
 		methods: {
