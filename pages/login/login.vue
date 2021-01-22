@@ -13,7 +13,7 @@
 			</view>
 			<view class="login-content-item password">
 				<text>密码</text>
-				<input type="password" :value="pwd" @input="inputPwd" maxlength="6" placeholder="请输入6位数密码" placeholder-style="color:#999" />
+				<input type="password" :value="pwd" @input="inputPwd" placeholder="请输入密码" placeholder-style="color:#999" />
 			</view>
 			<view class="tips">
 				<text @tap="forgetPwd">忘记密码</text>
@@ -88,15 +88,13 @@
 		},
 
 		 mounted() {
-			
+			let that = this;
 			let saveStata = uni.getStorageSync('saveStata');
-			console.log(saveStata)
 			if(saveStata) {
 				try{
 					uni.getStorage({
 						key: 'name',
 						success: (data) => {
-							let that = this;
 							let {
 								PHONE,
 								PASSWORD,
@@ -114,7 +112,6 @@
 								openId: '',
 								nickName: ''
 							}
-							console.log('获取本地存储登录信息')
 							that.loginSendData()
 							
 						},
@@ -144,7 +141,7 @@
 			},
 			// 获取登录密码
 			inputPwd(e) {
-				if (e.detail.value.length === 6) {
+				if (e.detail.value.length) {
 					this.pwdState = true;
 					this.pwd = e.detail.value;
 					this.loginState()
@@ -157,9 +154,8 @@
 			// 判断登录按钮状态
 			loginState() {
 				// if (this.phoneState && this.pwdState) {
-				if (this.pwd.length === 6 && this.phone.length === 11) {
+				if (this.pwd.length > 0 && this.phone.length === 11) {
 					this.btnState = false;
-
 					this.$forceUpdate()
 				} else {
 					this.btnState = true;

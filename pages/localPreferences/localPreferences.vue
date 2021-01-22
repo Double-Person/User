@@ -133,6 +133,7 @@
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
 							picture: item.IMG,
+							types: item.TYPES,
 							title: '',
 							description: '',
 							path: item.URL

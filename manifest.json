@@ -108,7 +108,8 @@
                 },
                 "speech" : {
                     "ifly" : {}
-                }
+                },
+                "push" : {}
             },
             "icons" : {
                 "android" : {

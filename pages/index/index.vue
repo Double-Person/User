@@ -101,6 +101,7 @@
 		baseUrl,
 		imgBaseUrl
 	} from '@/common/apis.js';
+	import {INDEX_KEY, CONVERSION_KEY} from "@/common/commonConfig.js"
 
 	export default {
 		components: {
@@ -114,7 +115,8 @@
 				passCity: '',
 				imgBaseUrl: imgBaseUrl,
 				cityShow: '',
-				key: 'f0d8604522a34fea7af419d353f98e8f',
+				key: INDEX_KEY, // 'f0d8604522a34fea7af419d353f98e8f',
+				CONVERSION_KEY: CONVERSION_KEY,
 				stroingCity: true,
 				title: '',
 				newCity: '', //当前城市
@@ -152,11 +154,8 @@
 				type: 'wgs84',
 				geocode: true, //设置该参数为true可直接获取经纬度及城市信息
 				success: async (res) => {
-					console.log(res)
 					this.longitude = res.longitude
 					this.latitude = res.latitude
-
-
 					var points = new plus.maps.Point(res.longitude, res.latitude);
 
 					plus.maps.Map.reverseGeocode(
@@ -295,7 +294,6 @@
 			},
 			// 根据定位请求数据
 			getPositonData(LATITUDE, LONGITUDE, AREA, CATEGORY_ID) {
-				console.log('根据定位请求数据', LONGITUDE, LATITUDE, AREA, CATEGORY_ID)
 				uni.showLoading({
 					title: '加载中',
 					mask: true
@@ -315,7 +313,6 @@
 					},
 					method: 'POST',
 					success: (res) => {
-						console.log('---', res);
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',
@@ -348,10 +345,10 @@
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);
 				// 地址转换为经纬度
+				// 
 				uni.request({
 					method: 'GET',
-					url: 'http://restapi.amap.com/v3/geocode/geo?key=60ca6302ddbfc1545c05fed7e8fff834&s=rsv3&city=35&address=' +
-						this.newCity,
+					url: `http://restapi.amap.com/v3/geocode/geo?key=${this.CONVERSION_KEY}&s=rsv3&city=35&address=${this.newCity}`,
 					success: res => {
 						var arr = res.data.geocodes[0].location.split(',');
 						getApp().globalData.longitude = arr[0];

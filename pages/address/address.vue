@@ -34,6 +34,7 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
+	import { KEY } from '@/common/commonConfig.js'
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	export default {
@@ -57,22 +58,40 @@
 			tabbar
 		},
 		onLoad(e) {
-			this.vendor = JSON.parse(e.vendor);
-			// console.log(locationPoint)   104.030396,30.710764
-			let { LONGITUDE, LATITUDE } = this.vendor;
-			console.log(LATITUDE, LONGITUDE)
-			this.latitude = LATITUDE;
-			this.longitude = LONGITUDE;
-			this.covers[0].latitude = LATITUDE;
-			this.covers[0].longitude = LONGITUDE;
-
+			this.vendor = JSON.parse(e.vendor);		
+			this.getPoint()
 		},
 		methods: {
+			getPoint() {
+				let { CITY, AREA, FULLADD } = this.vendor;
+				const address= CITY + AREA + FULLADD;
+				const that = this;
+				uni.request({
+					url: `http://restapi.amap.com/v3/geocode/geo?key=${KEY}&s=rsv3&city=35&address=${address}`,
+					success({ statusCode, data:{ geocodes }} ) {
+						if(statusCode == 200 && geocodes.length > 0) {
+							let [{location}] = geocodes;
+							let [LONGITUDE, LATITUDE] = location.split(',')
+							that.setData({ LATITUDE, LONGITUDE })
+						}
+					},
+					fail(err) {
+						let { LONGITUDE, LATITUDE } = that.vendor;
+						that.setData({ LATITUDE, LONGITUDE })
+					}
+				})
+			},
+			setData({ LATITUDE, LONGITUDE }) {
+				this.latitude =  LATITUDE;
+				this.longitude = LONGITUDE;
+				this.covers[0].latitude =  LATITUDE;
+				this.covers[0].longitude = LONGITUDE;
+			},
 			// 前往地图
 			gomap() {
 				uni.openLocation({
 					latitude: JSON.parse(this.latitude),
-					longitude: JSON.parse(this.longitude),
+					longitude: JSON.parse(this.longitude)
 				});
 			}
 		}

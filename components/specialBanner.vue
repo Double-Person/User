@@ -88,9 +88,9 @@
 			},
 			animationfinish(e) {
 				this.isDescAnimating = false
-			}, 
+			},
 			getBannerDetail(item) {
-				if (item.types == 0) { // 外部
+				if (item.types == 0 ) { // 外部
 					plus.runtime.openURL(item.path);
 				}
 				if (item.types == 1) { // 商家 
