@@ -156,7 +156,8 @@
 							</view>
 						</view>
 						<view class="item-content">
-							<view v-for="(good,indez) in shopItem.goodes" :key="indez" @click="toShop(good.SHOP_ID)" style="width:100%;display: flex;justify-content: space-between;">
+							<view v-for="(good,indez) in shopItem.goodes" 
+							:key="indez" @click="toShop(good.SHOP_ID)" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 15rpx;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode=""></image>
 									<view>
