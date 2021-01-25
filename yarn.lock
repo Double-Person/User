@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@dcloudio/types@^2.0.16":
+  version "2.0.22"
+  resolved "https://registry.npm.taobao.org/@dcloudio/types/download/@dcloudio/types-2.0.22.tgz#b2be8d512628f36d20297fe8702ef66189276859"
+  integrity sha1-sr6NUSYo820gKX/ocC72YYknaFk=
+
 image-tools@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/image-tools/-/image-tools-1.2.1.tgz#e0986f85aa44f1029f9d84e1ca51199341289d43"
@@ -11,6 +16,13 @@ jweixin-module@^1.6.0:
   version "1.6.0"
   resolved "https://registry.npm.taobao.org/jweixin-module/download/jweixin-module-1.6.0.tgz#4a7ea614083e3c9c3f49e2fdc2bb882cfa58dfcd"
   integrity sha1-Sn6mFAg+PJw/SeL9wruILPpY380=
+
+luch-request@^3.0.4:
+  version "3.0.5"
+  resolved "https://registry.npm.taobao.org/luch-request/download/luch-request-3.0.5.tgz#13f25661166b3ce7c861f1a11d3fc6990bc85b28"
+  integrity sha1-E/JWYRZrPOfIYfGhHT/GmQvIWyg=
+  dependencies:
+    "@dcloudio/types" "^2.0.16"
 
 uni-request@^1.0.2:
   version "1.0.2"

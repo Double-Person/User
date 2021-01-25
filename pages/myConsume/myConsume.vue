@@ -21,7 +21,7 @@
 					<text class="left">
 						<image :src="imgBaseUrl + item.faceicon" mode="" v-if="item.faceicon.length> 10"></image>
 						<text class="iconfont icon-shouzhimingxicaifuhongbaoyue" v-else></text>
-						
+
 					</text>
 					<view class="right">
 						<view class="top">
@@ -55,7 +55,8 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 
 	import {
-		myConsume, imgBaseUrl
+		myConsume,
+		imgBaseUrl
 	} from '@/common/apis.js';
 	export default {
 		data() {
@@ -104,17 +105,19 @@
 
 						var obj = {
 							"USERINFO_ID": res.data,
-							"CREATETIME": timeStamp?timeStamp:''
+							"CREATETIME": timeStamp ? timeStamp : ''
 						}
 						// obj 传参过去不得行
+						uni.showLoading({
+							title: '加载中',
+							mask: true
+						})
 						myConsume(obj).then(res => {
 							this.listData = res.returnMsg.varList
-						}).catch(err => {
-							uni.showToast({
-								title: '请求失败！',
-								icon: 'none'
-							})
-						})
+						}).catch(err => uni.showToast({
+							title: '请求失败！',
+							icon: 'none'
+						})).finally(() => uni.hideLoading())
 					}
 				})
 			}
@@ -197,6 +200,7 @@
 						justify-content: center;
 						align-items: center;
 						margin-right: 20rpx;
+
 						image {
 							width: 45rpx;
 							height: 45rpx;
@@ -205,6 +209,7 @@
 							border: none;
 							display: inline-block;
 						}
+
 						text {
 							font-size: 40rpx;
 							color: #FF5A32;

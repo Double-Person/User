@@ -165,11 +165,11 @@
 			},
 			xbExchange() {
 				if (this.value === '') {
-					uni.showToast({
+					return uni.showToast({
 						title: '请输入兑换数量!',
 						icon: 'none'
 					})
-					return false
+					
 				}
 				uni.showLoading({
 					title: '兑换中...',
@@ -181,7 +181,6 @@
 					"USERINFO_ID": this.USERINFO_ID
 				}
 				starcoinslog(obj).then(res => {
-					console.log(res)
 					if (res.returnMsg.status == '00') {
 						setTimeout(() => {
 							uni.hideLoading()
@@ -206,27 +205,32 @@
 				}).catch(() => uni.hideLoading())
 			}
 		},
-		mounted() {
-			uni.getStorage({
+		async mounted() {
+			await uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
+			await uni.getStorage({
 				key: 'USERINFO_ID',
+				fail() {
+					uni.showToast({ title: '系统错误', icon: 'none' })
+				},
 				success: res => this.USERINFO_ID = res.data
 			})
 			// 获取星币
-			personal({
+			await personal({
 				USERINFO_ID: this.USERINFO_ID
 			}).then(res => {
 				this.newNum = res.returnMsg.STARCOINS
-			})
+			}).catch(() => uni.showToast({ title: '系统错误', icon: 'none' }))
 			// 获取用户等级规则
-			level({
+			await level({
 				USERINFO_ID: this.USERINFO_ID
 			}).then(res => {
-				// res.returnMsg.list.map(item => {
-				//    item.charge = (parseInt(item.charge)/1000*100).toFixed(0)
-				// })
 				this.gradeList = res.returnMsg.list
 				this.gradeList.length && this.gradeList.sort((a, b) => a.level - b.level)
-			})
+			}).catch(() => uni.showToast({ title: '系统错误', icon: 'none' }))
+			await uni.hideLoading()
 		}
 	}
 </script>

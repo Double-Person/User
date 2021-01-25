@@ -26,8 +26,8 @@
 						<text>
 						{{item.TYPES == 'STRATEGIC_EXCHANGE' && '星币兑换'||item.TYPES == 'PAY_PAID' && '购物' || item.TYPES == 'STRATEGIC_DIVIDEND' && '分利' || item.TYPES == 'STRATEGIC_AFFIRM' && '星币退款'}}
 						</text>
-						<view v-if="item.poundage">
-							手续费{{item.poundage}}
+						<view v-if="item.CHARGE">
+							手续费{{item.CHARGE}}
 						</view>
 						<view>
 							{{item.TRADETIME}}

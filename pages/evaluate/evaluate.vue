@@ -39,11 +39,8 @@
 			</view>
 			<!-- 评价文字 -->
 			<view class="evaluate-content-text">
-				<textarea value="" @input="changeInput" v-model="content" placeholder-style="fontSize:24rpx" placeholder="质量如何，服务是否周到，交通是否便利？（写够15字，才是好同志~）" />
-				<view :class="tipsHide?'tipsHide':''">
-					加油，还差{{inputNum}}个字即可发布！
+				<textarea v-model="content" placeholder-style="fontSize:24rpx" placeholder="质量如何，服务是否周到，交通是否便利？（写够15字，才是好同志~）" />
 				</view>
-			</view>
 			<!-- 上传照片 -->
 			<view class="evaluate-content-phone">
 				<view @tap="addImg">
@@ -81,13 +78,13 @@
 				imgBaseUrl: imgBaseUrl,
 				active:0,
 				inputNum:15,
-				tipsHide:false,
-                ORDERSUMMARY_ID:'',
-                goodsId:'',
-                USERINFO_ID:'',
-                content:'',
-                imgHide: true, // 隐藏/显示图片
-                imgUrl: '', // 图片地址
+
+				ORDERSUMMARY_ID:'',
+				goodsId:'',
+				USERINFO_ID:'',
+				content:'',
+				imgHide: true, // 隐藏/显示图片
+				imgUrl: '', // 图片地址
 				fromPath:''
 			};
 		},
@@ -112,15 +109,7 @@
 			selectActive(index){
 				this.active = index;
 			},
-			// 文字输入监听
-			changeInput(e){
-				this.inputNum = 15-e.detail.value.length;
-				if(this.inputNum<=0){
-					this.tipsHide = true;
-				}else{
-					this.tipsHide = false;
-				}
-			},
+	
 			// 添加图片
 			addImg(){
 				uni.chooseImage({
@@ -128,12 +117,7 @@
 				    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
 				    sourceType: ['album','camera'], //从相册选择
 				    success: (res)=> {
-                        // pathToBase64(res.tempFilePaths[0])
-                        //   .then(base64 => {
-                        //     this.imgUrl = base64
-                        //     this.imgHide = false
-                        //   })
-         
+                               
 						const tempFilePaths = res.tempFilePaths;
 						uni.uploadFile({
 							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
@@ -151,60 +135,52 @@
 				});
 			},
             // 发表评论
-            submit(){
+      submit(){
 				let that = this;
-                if(this.active<0 || this.content == ''){
-                    uni.showToast({
-                        title:'请完善信息!',
-                        icon:'none'
-                    })
-                    return false
-                }
-                if(this.content.length<15){
-                    uni.showToast({
-                        title:'评价内容不能小于15字!',
-                        icon:'none'
-                    })
-                    return false
-                }
-                var obj = {
-                    "USERINFO_ID": this.USERINFO_ID,
-                    "GOODS_ID": this.goodsId,
-                    "EVALUEATE_ID": this.ORDERSUMMARY_ID,
-                    "SCORE": this.active,
-                    "CONTENT": this.content,
-                    "IMGS": this.imgUrl
-                }
-				uni.showLoading({ title: '加载中', mask: true })
-                addEvaluate(obj).then(res => {
-                    if(res.returnMsg.status == '00'){
-                        uni.showToast({
-                            title:"评价成功!",
-                            duration:2000,
-                            mask:true
-                        })
-                        setTimeout(()=>{
-							if(that.fromPath == 'order') {
-								uni.navigateTo({
-									url: '../myOrder/myOrder'
-								})
-							}else{
-								uni.navigateTo({
-								    url:"../myEvaluate/myEvaluate"
-								})
-							}
-                            
-                        },2000)
-                    }else{
-                        uni.showToast({
-                            title:"您已评价此订单!",
-                            duration:2000,
-                            icon:"none",
-                            mask:true
-                        })
-                    }
-                }).finally(() => uni.hideLoading())
-            }
+				if(this.active<0 || this.content.trim() == ''){
+					 return uni.showToast({
+								title:'请完善信息!',
+								icon:'none'
+					 })
+				}
+            
+				var obj = {
+						"USERINFO_ID": this.USERINFO_ID,
+						"GOODS_ID": this.goodsId,
+						"EVALUEATE_ID": this.ORDERSUMMARY_ID,
+						"SCORE": this.active,
+						"CONTENT": this.content,
+						"IMGS": this.imgUrl
+				}
+				uni.showLoading({ title: '加载中', mask: true });
+				addEvaluate(obj).then(res => {
+						if(res.returnMsg.status == '00'){
+							uni.showToast({
+									title:"评价成功!",
+									duration:2000,
+									mask:true
+							})
+						setTimeout(()=>{
+						if(that.fromPath == 'order') {
+							uni.navigateTo({
+								url: '../myOrder/myOrder'
+							})
+						}else{
+							uni.navigateTo({
+									url:"../myEvaluate/myEvaluate"
+							})
+						}                    
+          },2000)
+					}else{
+							uni.showToast({
+									title:"您已评价此订单!",
+									duration:2000,
+									icon:"none",
+									mask:true
+							})
+					}
+				}).finally(() => uni.hideLoading())
+      }
 		},
 		
 	}
@@ -265,9 +241,7 @@
 					right: 30rpx;
 					bottom: 20rpx;
 				}
-				.tipsHide{
-					display: none;
-				}
+			
 			}
 			.evaluate-content-phone{
 				height: 283rpx;
