@@ -253,6 +253,11 @@ export const area = params => request.post('/api/ordersummary/activity/area', pa
 export const findById = params => request.post('/api/ordersummary/activity/findById', params);
 
 
+export const evaluateSelect = params => request.post('/api/ordersummary/evaluate/select', params);
+
+
+
+
 
 
 // export const upload = (data) => {

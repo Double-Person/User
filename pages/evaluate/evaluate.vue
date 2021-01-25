@@ -70,14 +70,15 @@
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
-    import {addEvaluate, baseUrl, imgBaseUrl} from "@/common/apis.js"
-    import { pathToBase64, base64ToPath } from 'image-tools'
+    import {addEvaluate, baseUrl, imgBaseUrl} from "@/common/apis.js";
+    import { pathToBase64, base64ToPath } from 'image-tools';
 	export default {
 		data() {
 			return {
 				imgBaseUrl: imgBaseUrl,
 				active:0,
 				inputNum:15,
+				EVALUEATE_ID: '',
 
 				ORDERSUMMARY_ID:'',
 				goodsId:'',
@@ -98,6 +99,7 @@
 				this.fromPath = e.from
 			}
 			this.goodsId = e.goodsId
+			this.EVALUEATE_ID = e.EVALUATE_ID || '';
 			uni.getStorage({
 				key:"USERINFO_ID",
 				success:(res)=>{
@@ -113,11 +115,10 @@
 			// 添加图片
 			addImg(){
 				uni.chooseImage({
-				    count: 1, //默认9
-				    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
-				    sourceType: ['album','camera'], //从相册选择
-				    success: (res)=> {
-                               
+					count: 1, //默认9
+					sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: ['album','camera'], //从相册选择
+					success: (res)=> {
 						const tempFilePaths = res.tempFilePaths;
 						uni.uploadFile({
 							url: baseUrl + '/uploadFile/file', //仅为示例，非真实的接口地址
@@ -131,11 +132,12 @@
 								this.imgHide = false 
 							}
 						});
-				    }
-				});
+					}
+				})
+				
 			},
-            // 发表评论
-      submit(){
+	 // 发表评论
+			submit(){
 				let that = this;
 				if(this.active<0 || this.content.trim() == ''){
 					 return uni.showToast({
@@ -143,45 +145,46 @@
 								icon:'none'
 					 })
 				}
-            
+		   
 				var obj = {
-						"USERINFO_ID": this.USERINFO_ID,
-						"GOODS_ID": this.goodsId,
-						"EVALUEATE_ID": this.ORDERSUMMARY_ID,
-						"SCORE": this.active,
-						"CONTENT": this.content,
-						"IMGS": this.imgUrl
+					"USERINFO_ID": this.USERINFO_ID,
+					"GOODS_ID": this.goodsId,
+					"EVALUEATE_ID": this.EVALUEATE_ID || this.ORDERSUMMARY_ID,
+					"SCORE": this.active,
+					"CONTENT": this.content,
+					"IMGS": this.imgUrl
 				}
 				uni.showLoading({ title: '加载中', mask: true });
 				addEvaluate(obj).then(res => {
-						if(res.returnMsg.status == '00'){
-							uni.showToast({
-									title:"评价成功!",
-									duration:2000,
-									mask:true
-							})
+					if(res.returnMsg.status == '00'){
+						uni.showToast({
+								title:"评价成功!",
+								duration:2000,
+								mask:true
+						})
 						setTimeout(()=>{
-						if(that.fromPath == 'order') {
-							uni.navigateTo({
-								url: '../myOrder/myOrder'
-							})
-						}else{
-							uni.navigateTo({
-									url:"../myEvaluate/myEvaluate"
-							})
-						}                    
-          },2000)
+							if(that.fromPath == 'order') {
+								uni.navigateTo({
+									url: '../myOrder/myOrder'
+								})
+							}else{
+								uni.navigateTo({
+										url:"../myEvaluate/myEvaluate"
+								})
+							}                    
+						},2000)
 					}else{
-							uni.showToast({
-									title:"您已评价此订单!",
-									duration:2000,
-									icon:"none",
-									mask:true
-							})
+						uni.showToast({
+							title: res.returnMsg|| "您已评价此订单!",
+							duration:2000,
+							icon:"none",
+							mask:true
+						})
 					}
 				}).finally(() => uni.hideLoading())
-      }
-		},
+	 
+			}
+		}
 		
 	}
 </script>

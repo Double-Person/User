@@ -37,7 +37,7 @@
 					<!-- 评分 -->
 					<view class="right-score">
 						<!-- 不可点击状态 -->
-						<uni-rate disabled="true" :value="item.MONTHLY_SALES" active-color="#FF5D06" size="18"></uni-rate>
+						<uni-rate disabled="true" :value="item.SCORE" active-color="#FF5D06" size="18"></uni-rate>
 						<text>{{item.SCORE || 0}}分</text>
 					</view>
 					<!-- 时间 -->
@@ -74,6 +74,10 @@
 		},
 
 		onLoad(options) {
+			uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
 			let shopId = options.shopId; //|| '9e98a5b1afb64ac6a00fc805c678e1e3';// options.shopId  
 			let ACTIVITY_ID = options.ACTIVITY_ID; // ACTIVITY_ID
 			findById({
@@ -90,7 +94,8 @@
 				let glist = [GOODS1, GOODS2, GOODS3, GOODS4, GOODS5];
 				glist = glist.filter(ele => ele);
 				this.hotInfo.glist = glist;
-			})
+				
+			}).finally(() => uni.hideLoading())
 
 		},
 		methods: {

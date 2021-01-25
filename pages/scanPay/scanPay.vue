@@ -348,7 +348,6 @@
 					STARCOINS: this.isRadio ? this.XBMoneyValid : 0,
 				}
 				offlinetradingService(query).then(res => {
-					console.log(res)
 					if (res.msgType == 0) {
 						let moneyTemp = Number(res.returnMsg.ACTUALPRICE)
 						this.ACTUALPRICE = moneyTemp < 0 ? 0 : moneyTemp
@@ -387,9 +386,8 @@
 					TYPES: this.payMode,
 					tradePass: this.val
 				}).then(res => {
-					uni.hideLoading()
-					console.log('---', res)
-					
+					uni.hideLoading();
+		
 					if(this.payMode == 1) {
 						this.weChatPay(res.returnMsg)
 						return false;
@@ -419,7 +417,8 @@
 			},
 			// 支付成功
 			paySuccess(order) {
-				order.total = this.ActualPayment;
+				// order.total = this.ActualPayment; // money
+				order.total = this.money; // money
 				setTimeout(() => {
 					uni.redirectTo({
 						url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
@@ -428,7 +427,6 @@
 			},
 			// 支付
 			pay(index) {
-				console.log(index)
 				this.payMode = index;
 				if (this.payMode === 3) {
 					uni.showToast({
@@ -468,7 +466,6 @@
 							let order = res.returnMsg;
 							self.paySuccess(order);
 						}, 2000);
-						console.log("success:" + JSON.stringify(res));
 					},
 					fail: err => {
 						uni.showToast({
@@ -490,7 +487,6 @@
 					provider: "alipay",
 					orderInfo: orderInfo,
 					success: res => {
-						console.log("success:" + JSON.stringify(res));
 						// 隐藏当前支付方式选择
 						this.payMaskHide = true;
 						uni.showToast({
@@ -510,10 +506,9 @@
 							duration: 2000,
 							mask: true
 						});
-						console.log("fail:" + JSON.stringify(err));
+				
 					},
 					complete: end => {
-						console.log(end);
 						this.payMode = 0
 					}
 				});
@@ -575,7 +570,7 @@
 						title: "支付中...",
 						mask: true
 					});
-					console.log(this.val)
+	
 					this.payPwdMaskHide = true;
 					// this.balancePay(this.val)
 					this.finallyPay()
@@ -641,12 +636,12 @@
 				} else {
 					xb = 0
 				}
-				console.log(this.isRadio, xb)
+	
 
 
 				let yh = 0; // 优惠
 				(this.YHMoney * 1 >= this.copeWith * 1) ? (yh = this.copeWith * 1) : (yh = this.YHMoney * 1)
-				console.log('星币', xb, '优惠金额', yh, this.YHMoney, '输入金额', this.money)
+	
 
 
 				let payMoney = this.copeWith - xb - yh

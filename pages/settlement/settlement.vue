@@ -52,7 +52,8 @@
 				<text class="iconfont icon-youjiantou"></text>
 			</view>
 			<view class="setting-content-radio">
-				<text>您有{{ XBMoney }}个星币，抵扣可省{{ XBMoneyValid }}元，是否抵扣</text>
+				<!-- 抵扣可省{{ XBMoneyValid }}元， -->
+				<text>您有{{ XBMoney }}个星币，是否抵扣</text>
 				<view class="xuanxiang">
 					<label class="radio" @tap="changeXB">
 						<radio value="" :checked="checked" />
@@ -404,7 +405,7 @@ export default {
 		// 前往地址
 		goAddress() {
 			uni.navigateTo({
-				url: '../myAddress/myAddress?state=' + 1
+				url: '../myAddress/myAddress?state=1'
 			});
 		},
 		// 提交订单
@@ -419,7 +420,11 @@ export default {
 				return false;
 			}
 
-			this.GOODS = this.GOODS.filter(ele => ele.COUTNS != 0)
+			this.GOODS = this.GOODS.filter(ele => ele.COUTNS != 0);
+			uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
 	
 			var obj = {
 				PAYABLE: this.total,
@@ -435,7 +440,7 @@ export default {
 			orderPay(obj).then(res => {
 					if(res.msgType != '0') {
 						return uni.showToast({
-							title: '提交失败！',
+							title: res.returnMsg ||'提交失败！',
 							icon: 'none',
 							duration: 2000,
 							mask: true
@@ -458,7 +463,7 @@ export default {
 						title: '提交失败，请稍后再试!',
 						icon: 'none'
 					});
-				});
+				}).finally(() => uni.hideLoading())
 		},
 		// 获取输入的值
 		//取值
@@ -731,18 +736,21 @@ export default {
 		},
 		// 获取星币
 		_personal(USERINFO_ID) {
+			uni.showLoading({
+				title: '加载中',
+				mask: true
+			})
 			personal({ USERINFO_ID }).then(res => {
 				// 星币可全部抵扣
 				if(res.returnMsg.userInfo.STARCOINS < this.submitTotal) {
 					this.XBMoneyValid = res.returnMsg.userInfo.STARCOINS;
 				}else {
 					this.XBMoneyValid =this.submitTotal;
-				}
-				
+				}			
 				this.XBMoney = res.returnMsg.userInfo.STARCOINS;
 				//  显示余额
 				this.BALANCE = res.returnMsg.BALANCE || '0' ;
-			});
+			}).finally(() => uni.hideLoading())
 		}
 	},
 	

@@ -87,47 +87,50 @@
 			}
 		},
 
-		 mounted() {
+		mounted() {
 			let that = this;
-			let saveStata = uni.getStorageSync('saveStata');
-			if(saveStata) {
-				try{
-					uni.getStorage({
-						key: 'name',
-						success: (data) => {
-							let {
-								PHONE,
-								PASSWORD,
-								openId = '',
-								nickName = ''
-							} = JSON.parse(data.data);
-							this.phone = PHONE;
-							this.pwd = PASSWORD;
-							this.phoneState = true;
-							this.pwdState = true;
-							this.loginState();
-							that.saveObj = {
-								PHONE,
-								PASSWORD,
-								openId: '',
-								nickName: ''
-							}
-							that.loginSendData()
-							
-						},
-						
-					})
-				}catch(e){
-					//TODO handle the exception
-				}
-			}
+			uni.getStorage({
+			    key: 'saveStata',
+			    success: function (res) {
+					let saveStata = res.data;
+					if (saveStata) {
+						try {
+							uni.getStorage({
+								key: 'name',
+								success: (data) => {
+									let {
+										PHONE,
+										PASSWORD,
+										openId = '',
+										nickName = ''
+									} = JSON.parse(data.data);
+									that.phone = PHONE;
+									that.pwd = PASSWORD;
+									that.phoneState = true;
+									that.pwdState = true;
+									that.loginState();
+									that.saveObj = {
+										PHONE,
+										PASSWORD,
+										openId: '',
+										nickName: ''
+									}
+									that.loginSendData()
+					
+								},
+					
+							})
+						} catch (e) {
+							//TODO handle the exception
+						}
+					}
+			    }
+			});
 			
 			
 
-			
-			
 		},
-		methods: {		
+		methods: {
 			// 获取输入手机号
 			inputPhone(e) {
 				if (e.detail.value.length === 11) {
@@ -177,8 +180,7 @@
 				try {
 					that.saveObj.openId = getApp().globalData.openid ? getApp().globalData.openid : '';
 					that.saveObj.nickName = getApp().globalData.nickName ? getApp().globalData.nickName : '';
-				} catch (err) {
-				}
+				} catch (err) {}
 
 
 				this.loginSendData()
@@ -188,12 +190,10 @@
 				let that = this;
 				// 登录请求
 				login(that.saveObj).then(res => {
-
 					uni.showToast({
 						title: res.errMsg,
 						icon: 'none'
 					})
-
 					if (res.returnMsg.status == '00') {
 						// 用户ID存入全局
 						uni.setStorage({
@@ -201,8 +201,6 @@
 							data: res.returnMsg.USERINFO_ID
 						});
 						that.rememberPwdHide = false;
-
-
 						// alert('登录-')
 						uni.getStorage({
 							key: 'saveStata',
@@ -288,31 +286,34 @@
 			// 取消保存
 			async cancelSave() {
 				// 保存状态到本地
-				await uni.setStorageSync({
-					key: 'saveStata',
-					data: false
-				})
-				// 移出本地数据
-				await uni.removeStorageSync({
+				let that = this;
+				await uni.setStorage({ key: 'saveStata', data: false });
+				await uni.removeStorage({
 					key: 'name',
 					success: () => {
+						
+					},
+					complete() {
 						this.rememberPwdHide = true;
-
-						uni.redirectTo({
-							url: '/pages/index/index'
+						uni.reLaunch({
+							url: "/pages/index/index"
 						})
 					}
 				})
+				
 			},
 			bindPhone() {
-				if(this.PHONE.length !== 11) {
+				if (this.PHONE.length !== 11) {
 					return uni.showToast({
 						title: '请输入正确的手机号',
 						icon: 'none'
 					})
 				}
-				wxTel({ PHONE: this.PHONE, WX:this.openIdBind }).then(res=> {
-					if(res.msgType == 0){
+				wxTel({
+					PHONE: this.PHONE,
+					WX: this.openIdBind
+				}).then(res => {
+					if (res.msgType == 0) {
 						this.PHONE = '';
 						uni.reLaunch({
 							url: '../index/index'
@@ -338,7 +339,7 @@
 								getApp().globalData.openid = loginRes.authResult.openid;
 								uni.hideLoading()
 								that.openIdBind = loginRes.authResult.openid;
-								
+
 								uni.showLoading({
 									title: '登录中...',
 									mask: true
@@ -348,7 +349,7 @@
 									"code": '',
 									"accessToken": loginRes.authResult.access_token
 								}).then(res => {
-									
+
 									getApp().globalData.nickName = res.returnMsg.nickName;
 									if (res.returnMsg.status == '00') {
 										uni.setStorage({
@@ -375,7 +376,7 @@
 										title: '登录失败！',
 										icon: 'none'
 									})
-								}).finally( () => uni.hideLoading())
+								}).finally(() => uni.hideLoading())
 							},
 							fail: (err) => {
 								uni.showToast({

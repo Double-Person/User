@@ -157,7 +157,7 @@
 						</view>
 						<view class="item-content">
 							<view v-for="(good,indez) in shopItem.goodes" 
-							:key="indez" @click="toShop(good.SHOP_ID)" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 15rpx;">
+							:key="indez" style="width:100%;display: flex;justify-content: space-between;margin-bottom: 15rpx;">
 								<view class="left">
 									<image :src="imgBaseUrl + good.IMG" mode="" @click="toShop(good.SHOP_ID)"></image>
 									<view>
@@ -240,6 +240,7 @@
 		wxpay,
 		shopBygoodList,
 		orderDelete,
+		evaluateSelect,
 		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
@@ -264,9 +265,20 @@
 		},
 		methods: {
 			evaluation(orderId, GOODS_ID) { // ORDERSUMMARY_ID  ORDERSUMMARY_ID
-				uni.navigateTo({
-					url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order' + '&goodsId=' + GOODS_ID 
-				})
+			let obj ={
+				GOODS_ID,
+				USERINFO_ID: uni.getStorageSync('USERINFO_ID'),
+				ORDERSUMMARY_ID: orderId
+			}
+			evaluateSelect(obj).then(res => {
+					console.log(res)
+					let EVALUATE_ID = res.returnMsg.evaluate.EVALUATE_ID;
+					console.log(EVALUATE_ID)
+					uni.navigateTo({
+						url: '../evaluate/evaluate?ORDERSUMMARY_ID=' + orderId + '&from=order' + '&goodsId=' + GOODS_ID + '&EVALUATE_ID=' + EVALUATE_ID
+					})
+			})
+				
 			},
 			orderDel(ORDERSUMMARY_ID) {
 				const that = this;

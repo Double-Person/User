@@ -3,7 +3,16 @@
 		<!-- header -->
 		<commonHeader headerTitl="我的评价" xingHide=true lingHide=true fenxiangHide=true></commonHeader>
 		<!-- 内容开始 -->
-		<view class="myEvaluate-content" v-if="myEvaluateList.length>0">
+		
+		 
+		<view v-if="myEvaluateList.length == 0" style="text-align: center;color: #999;">
+            暂无评价
+        </view>
+		
+		<!-- 内容结束 -->
+		
+		<view class="myEvaluate-content" v-if="myEvaluateList.length != 0">
+
 			<view class="myEvaluate-content-item" v-for="item in myEvaluateList" :key="item.EVALUATE_ID">
 				<view class="title">
 					{{item.SHOP_NAME}}
@@ -22,8 +31,8 @@
 				<view class="comments-warp">
 					用户评论：{{ item.CONTENT }}
 				</view>
-				<view class="comments-warp" v-if="item.HF">
-					商家回复：{{ item.HF[0].REPLY }}
+				<view class="comments-warp" v-if="item.HF && item.HF.length">
+					商家回复：{{ item.HF && item.HF.length && item.HF[0].REPLY }}
 				</view>
 				<view class="btn">
 					<text v-if="item.EVALUATE_ID" @tap="deleteEvaluate(item.EVALUATE_ID)">删除</text>
@@ -31,10 +40,7 @@
 				</view>
 			</view>
 		</view>
-        <view v-else style="text-align: center;color: #999;">
-            暂无评价
-        </view>
-		<!-- 内容结束 -->
+		
 		<!-- tabbar -->
 		<tabbar></tabbar>
 	</view>
@@ -47,6 +53,10 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
     import {evaluateList,delEvaluate, imgBaseUrl} from "@/common/apis.js"
 	export default {
+		components:{
+			commonHeader,
+			tabbar
+		},
 		data() {
 			return {
 				imgBaseUrl: imgBaseUrl,
@@ -88,19 +98,16 @@
                 uni.getStorage({
                     key:'USERINFO_ID',
                     success:res => {
-						uni.showLoading({ title: '加载中', mask: true })
+						uni.showLoading({ title: '加载中', mask: true });
                         evaluateList({"USERINFO_ID":res.data}).then(res => {
-                            this.myEvaluateList = res.returnMsg.evaluate
+                            this.myEvaluateList = res.returnMsg.evaluate;
                         }).finally(() => uni.hideLoading())
                     }
                 })
             }
 		},
-		components:{
-			commonHeader,
-			tabbar
-		},
-        mounted() {
+		
+        onLoad() {
            this.getList()
         }
 	}

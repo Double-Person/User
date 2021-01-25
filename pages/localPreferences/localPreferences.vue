@@ -107,6 +107,7 @@
 			// 本地优惠
 			getArea(obj) {
 				area(obj).then(res => {
+					console.log(res)
 					this.hotLIst = res.returnMsg.data
 				})
 			},

@@ -27,7 +27,7 @@
 						{{item.TYPES == 'STRATEGIC_EXCHANGE' && '星币兑换'||item.TYPES == 'PAY_PAID' && '购物' || item.TYPES == 'STRATEGIC_DIVIDEND' && '分利' || item.TYPES == 'STRATEGIC_AFFIRM' && '星币退款'}}
 						</text>
 						<view v-if="item.CHARGE">
-							手续费{{item.CHARGE}}
+							手续费 {{ computedPoundage(item.COINS, item.CHARGE, item.TYPES) }}
 						</view>
 						<view>
 							{{item.TRADETIME}}
@@ -82,6 +82,28 @@
 			this.getData()
 		},
 		methods: {
+			computedPoundage(count ,charge, type) {
+				let endwith = charge.toString().endsWith('%');
+				let str = '';
+				let result = 0;
+				if(endwith) {
+					str = charge.toString().slice(0, charge.toString().length -1)
+				}else {
+					if(charge == '0') {
+						return result;
+					}
+					str = charge
+				}
+				result = (count / ( 1 - str / 100 )) - count;
+			
+				if(type == 'STRATEGIC_EXCHANGE') {  // 星币兑换保留八位小数
+					return result.toFixed(8)
+				}else {
+					return result.toFixed(2)
+				}
+				
+				
+			},
 			// 日期选择
 			bindDateChange: function(e) {
 				var arr = e.detail.value.split('-');
@@ -113,6 +135,10 @@
 							"USERINFO_ID": res.data,
 							"TRADETIME": this.timeStamp ? this.timeStamp : ''
 						}
+						uni.showLoading({
+							title:"加载中",
+							mask: true
+						})
 						myPentacle(obj).then(res => {
 							this.listData = res.returnMsg.varList
 						}).catch(err => {
@@ -120,7 +146,7 @@
 								title: '请求失败',
 								icon: 'none'
 							})
-						})
+						}).finally(() => uni.hideLoading())
 					}
 				})
 			}
