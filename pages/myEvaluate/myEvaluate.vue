@@ -30,6 +30,9 @@
 				</view>
 				<view class="comments-warp">
 					用户评论：{{ item.CONTENT }}
+					<view class="content-img-warp">
+						<image :src="imgBaseUrl + item.IMGS" mode=""></image>
+					</view>
 				</view>
 				<view class="comments-warp" v-if="item.HF && item.HF.length">
 					商家回复：{{ item.HF && item.HF.length && item.HF[0].REPLY }}
@@ -114,6 +117,14 @@
 </script>
 
 <style lang="less">
+	.content-img-warp{
+		width: 100%;
+		image{
+			width: 150rpx;
+			height: 150rpx;
+			margin-left: 150rpx;
+		}
+	}
 	.comments-warp{
 
 		background: #F7F7F7;

@@ -57,6 +57,7 @@
 </template>
 
 <script>
+	import { SHARE_CONFIG } from '@/common/commonConfig.js'
 	export default {
 		props: {
 			headerTitl: {
@@ -110,39 +111,61 @@
 				})
 			},
 			backPage() {
+				//  需要返回首页的  页面
+				const backIndekList = ['pages/news/news', 'pages/cart/cart'];
+				//  需要返回个人中心的  页面
+				const backPersonalList = ['pages/myEvaluate/myEvaluate', 'pages/evaluate/evaluate'];
 				// #ifdef H5
 				let canBack = true;
 				const pages = getCurrentPages();
-
-				if ((pages.route == 'pages/news/news') || (pages.route == 'pages/cart/cart')) {
+				//  需要返回首页的  页面
+				// if ((pages.route == 'pages/news/news') || (pages.route == 'pages/cart/cart')) {
+				if (backIndekList.includes(pages.route)) {
 					uni.navigateTo({
 						url: "/pages/index/index"
 					})
 				}
+				
+				//  需要返回个人中心的  页面
+				if (backPersonalList.includes(pages.route)) {
+					uni.navigateTo({
+						url: "/pages/personal/personal"
+					})
+				}
+				
 				// 有可返回的页面则直接返回，uni.navigateBack默认返回失败之后会自动刷新页面 ，无法继续返回  
 				if (pages.length > 1) {
 					uni.navigateBack(1)
 					return;
 				}
-				// vue router 可以返回uni.navigateBack失败的页面 但是会重新加载  
+				// vue router 可以返回uni.navigateBack失败的页面 但是会重新加载   router.go失败之后则重定向到首页 
 				let a = this.$router.go(-1)
-				// router.go失败之后则重定向到首页 
 				if (a == undefined) {
 					uni.reLaunch({
 						url: "/pages/index/index"
 					})
 				}
 				return;
+				
+				
 				// #endif
 				// 修复小程序app返回退出应用bug(无法返回重定向至首页)
+				
 				var pagelength = getCurrentPages();
 
 				var pageLast = pagelength[pagelength.length - 1];
 				var currentWebview = pageLast.$getAppWebview();
-				let currentRouter = currentWebview.__uniapp_route
-				if ((currentRouter == 'pages/news/news') || (currentRouter == 'pages/cart/cart')) {
+				let currentRouter = currentWebview.__uniapp_route;
+
+				if (backIndekList.includes(currentRouter)) {
 					uni.navigateTo({
 						url: "/pages/index/index"
+					})
+					return false;
+				}
+				if (backPersonalList.includes(currentRouter)) {
+					uni.navigateTo({
+						url: "/pages/personal/personal"
 					})
 					return false;
 				}
@@ -156,6 +179,7 @@
 				} else {
 					uni.navigateBack(1)
 				}
+				
 			},
 			// 进入消息
 			goNews() {
@@ -166,22 +190,21 @@
 			// 分享
 			// #ifdef APP-PLUS
 			shareDemo(platform, type, typeNum = 0) {
-				
+				const { href, title, summary, imageUrl, miniProgram: { id, path, webUrl } } = SHARE_CONFIG;
 				uni.share({
 					provider: platform,
 					scene: type,
 					type: typeNum,
-					href: "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI0ODY3NzQ3MQ==&scene=124#wechat_redirect",
-					// href: this.currentUrl,
-					// http://www.qfl168.cn/static/#/pages/news/news
-					title: "趣分利",
-					summary: "我正在使用趣分利，赶紧跟我一起来体验！",
-					imageUrl: "../../static/images/logo.png",
+					
+					href: href,
+					title: title,
+					summary: summary,
+					imageUrl: imageUrl,
 					miniProgram: {
-						id: 'wx9a062afb3e6ff487',
-						path: '/pages/index/index',
+						id: id,
+						path: path,
 						type: 0,
-						webUrl: 'http://uniapp.dcloud.io'
+						webUrl: webUrl
 					},
 					success: function(res) {
 						console.log("分享success:" + res);

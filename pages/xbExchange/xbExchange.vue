@@ -169,13 +169,13 @@
 						title: '请输入兑换数量!',
 						icon: 'none'
 					})
-					
+
 				}
 				uni.showLoading({
 					title: '兑换中...',
 					mask: true
 				})
-			
+
 				var obj = {
 					"number": this.value,
 					"USERINFO_ID": this.USERINFO_ID
@@ -203,34 +203,55 @@
 						uni.hideLoading()
 					}
 				}).catch(() => uni.hideLoading())
+			},
+
+			async getInfo() {
+				// 获取星币
+				await personal({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(res => {
+					this.newNum = res.returnMsg.STARCOINS
+				}).catch(() => uni.showToast({
+					title: '系统错误',
+					icon: 'none'
+				}))
+				// 获取用户等级规则
+				await level({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(res => {
+					this.gradeList = res.returnMsg.list
+					this.gradeList.length && this.gradeList.sort((a, b) => a.level - b.level)
+				}).catch(() => uni.showToast({
+					title: '系统错误',
+					icon: 'none'
+				}))
+				await uni.hideLoading()
 			}
+
 		},
-		async mounted() {
-			await uni.showLoading({
+		onLoad() {
+			uni.showLoading({
 				title: '加载中',
 				mask: true
 			})
-			await uni.getStorage({
+			uni.getStorage({
 				key: 'USERINFO_ID',
 				fail() {
-					uni.showToast({ title: '系统错误', icon: 'none' })
+					uni.showToast({
+						title: '系统错误',
+						icon: 'none'
+					})
 				},
-				success: res => this.USERINFO_ID = res.data
+				success: res => {
+					this.USERINFO_ID = res.data
+					this.getInfo()
+				},
+				fail() {
+					uni.hideLoading()
+				}
 			})
-			// 获取星币
-			await personal({
-				USERINFO_ID: this.USERINFO_ID
-			}).then(res => {
-				this.newNum = res.returnMsg.STARCOINS
-			}).catch(() => uni.showToast({ title: '系统错误', icon: 'none' }))
-			// 获取用户等级规则
-			await level({
-				USERINFO_ID: this.USERINFO_ID
-			}).then(res => {
-				this.gradeList = res.returnMsg.list
-				this.gradeList.length && this.gradeList.sort((a, b) => a.level - b.level)
-			}).catch(() => uni.showToast({ title: '系统错误', icon: 'none' }))
-			await uni.hideLoading()
+
+
 		}
 	}
 </script>

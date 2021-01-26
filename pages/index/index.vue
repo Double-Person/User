@@ -111,7 +111,7 @@
 		},
 		data() {
 			return {
-				
+				passCity2Loca: '',
 				passCity: '',
 				imgBaseUrl: imgBaseUrl,
 				cityShow: '',
@@ -280,10 +280,16 @@
 
 			// 前往本地优惠
 			goLocalPre() {
-
-				uni.navigateTo({
+				let citys = '';
+				// if(this.passCity2Loca == '') {
+				// 	citys = this.passCity;
+				// }else {
+				// 	citys = this.passCity2Loca;
+				// }
+				uni.navigateTo({ // passCity2Loca   passCity
+				
 					url: '../localPreferences/localPreferences?longitude=' + this.longitude + '&latitude=' + this.latitude +
-						'&area=' + this.area + '&city=' + this.passCity
+						'&area=' + this.area + '&city=' + citys
 				});
 			},
 			// banner跳转
@@ -313,6 +319,7 @@
 					},
 					method: 'POST',
 					success: (res) => {
+						console.log(res)
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',
@@ -341,6 +348,8 @@
 			// 手动设置城市
 			setCity(data) {
 				this.newCity = data.data.slice(1, 3).join('');
+				console.log(data.data)
+				this.passCity2Loca = data.data[1] || ''
 				
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);

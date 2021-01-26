@@ -141,8 +141,8 @@
 				let that = this;
 				if(this.active<0 || this.content.trim() == ''){
 					 return uni.showToast({
-								title:'请完善信息!',
-								icon:'none'
+						title:'请完善信息!',
+						icon:'none'
 					 })
 				}
 		   
@@ -163,15 +163,18 @@
 								mask:true
 						})
 						setTimeout(()=>{
-							if(that.fromPath == 'order') {
-								uni.navigateTo({
-									url: '../myOrder/myOrder'
-								})
-							}else{
-								uni.navigateTo({
-										url:"../myEvaluate/myEvaluate"
-								})
-							}                    
+							uni.navigateTo({
+									url:"../myEvaluate/myEvaluate"
+							})
+							// if(that.fromPath == 'order') {
+							// 	uni.navigateTo({
+							// 		url: '../myOrder/myOrder'
+							// 	})
+							// }else{
+							// 	uni.navigateTo({
+							// 			url:"../myEvaluate/myEvaluate"
+							// 	})
+							// }                    
 						},2000)
 					}else{
 						uni.showToast({

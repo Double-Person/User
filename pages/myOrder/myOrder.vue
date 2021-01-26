@@ -310,14 +310,8 @@
 			},
 			// 去支付
 			toPay(item) {
-
-				console.log(item)
 				let goodsInfo = item.shop.map(ele => ele.goodes);
-				console.log(goodsInfo)
 				item.goodsInfo = [...goodsInfo]
-
-
-
 
 				uni.setStorageSync('myOrderPayment', JSON.stringify(item));
 				// page == 'myOrder'

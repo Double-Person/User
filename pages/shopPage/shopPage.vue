@@ -216,6 +216,7 @@
 </template>
 
 <script>
+	import { SHARE_CONFIG } from '@/common/commonConfig.js'
 	// #ifdef H5
 	// 复制
 	import h5Copy from "@/components/junyi-h5-copy/junyi-h5-copy.js";
@@ -254,6 +255,7 @@
 			};
 		},
 		onLoad(e) {
+			
 			uni.showLoading({
 				title: '加载中',
 				mask: true
@@ -642,6 +644,7 @@
 			},
 			// 分享功能开始
 			share(index) {
+				const { href, title, summary, imageUrl, link } = SHARE_CONFIG
 				// #ifdef APP-PLUS
 				// 分享到微信
 				if (index === 1) {
@@ -649,10 +652,10 @@
 						provider: "weixin",
 						scene: "WXSceneSession",
 						type: 0,
-						href: "http://uniapp.dcloud.io/",
-						title: "uni-app分享",
-						summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-						imageUrl: "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png",
+						href: href,
+						title: title,
+						summary: summary,
+						imageUrl: imageUrl,
 						success: function(res) {
 							console.log("success:" + JSON.stringify(res));
 						},
@@ -667,10 +670,10 @@
 						provider: "weixin",
 						scene: "WXSenceTimeline",
 						type: 0,
-						href: "http://uniapp.dcloud.io/",
-						title: "uni-app分享",
-						summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-						imageUrl: "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png",
+						href: href,
+						title: title,
+						summary: summary,
+						imageUrl: imageUrl,
 						success: function(res) {
 							console.log("success:" + JSON.stringify(res));
 						},
@@ -685,10 +688,10 @@
 				if (index === 1) {
 					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
 						this.jweixin.updateAppMessageShareData({
-							title: '公众号分享', // 分享标题
-							desc: '这是一个测试', // 分享描述
-							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: '../../static/images/youhui.png', // 分享图标
+							title: title, // 分享标题
+							desc: summary, // 分享描述
+							link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+							imgUrl: imageUrl, // 分享图标
 							success: function() {
 								// 设置成功
 								alert('分享成功')
@@ -699,9 +702,9 @@
 				if (index === 2) {
 					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
 						this.jweixin.updateTimelineShareData({
-							title: '公众号分享', // 分享标题
-							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: '../../static/images/youhui.png', // 分享图标
+							title: title, // 分享标题
+							link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+							imgUrl: imageUrl, // 分享图标
 							success: function() {
 								// 设置成功
 								alert('分享成功')
@@ -715,10 +718,10 @@
 					uni.share({
 						provider: "sinaweibo",
 						type: 0,
-						href: "http://uniapp.dcloud.io/",
-						title: "uni-app分享",
-						summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-						imageUrl: "../../static/images/youhui.png",
+						href: href,
+						title: title,
+						summary: summary,
+						imageUrl: imageUrl,
 						success: function(res) {
 							console.log("success:" + JSON.stringify(res));
 						},
@@ -732,10 +735,10 @@
 					uni.share({
 						provider: "qq",
 						type: 1,
-						href: "http://uniapp.dcloud.io/",
-						title: "uni-app分享", // qq分享必填
-						summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-						imageUrl: "../../static/logo.png",
+						href: href,
+						title: title,
+						summary: summary,
+						imageUrl: imageUrl,
 						success: function(res) {
 							console.log("success:" + JSON.stringify(res));
 						},

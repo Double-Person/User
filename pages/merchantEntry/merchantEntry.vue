@@ -142,6 +142,7 @@
 	//引入高德地图
 	import amap from '@/components/amap-wx.js';
 	import amapPlugin from '@/components/initMap.js';
+	import { INDEX_KEY } from "@/common/commonConfig.js"
 	// 引入请求接口
 	import {
 		shopAuth,
@@ -336,21 +337,34 @@
 					FACEICON:  this.imgUrl3  // // 头像
 				}
 				
+				console.log(obj)
 				
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
 				 
 				let res = await shopAuth(obj)
-				if(res.msgType == 0) {
-					
-					uni.showToast({
-						title: '申请提交成功',
-						icon: 'none'
-					})
-				}else{
+				console.log(res)
+				uni.hideLoading()
+				setTimeout(() => {
 					uni.showToast({
 						title: res.returnMsg || '提交失败',
 						icon: 'none'
 					})
-				}
+				}, 500)
+				
+				// if(res.msgType == 0) {
+				// 	uni.showToast({
+				// 		title: '申请提交成功',
+				// 		icon: 'none'
+				// 	})
+				// }else{
+				// 	uni.showToast({
+				// 		title: res.returnMsg || '提交失败',
+				// 		icon: 'none'
+				// 	})
+				// }
 			},
 			//   金纬度转位置
 			conversionPoint(res) {
@@ -358,14 +372,14 @@
 					url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
 					method: 'GET',
 					data: {
-						key: 'f0d8604522a34fea7af419d353f98e8f',
+						key: INDEX_KEY,
 						location: `${res.longitude}, ${res.latitude}`
 					},
 					success: (data) => {
 						try{
 							
 							this.addressObj = data.data.regeocode.addressComponent;
-							console.log(this.addressObj)
+							
 							let addStr = data.data.regeocode.formatted_address.split(this.addressObj.district);
 							this.city = addStr[1];
 						}catch(e){
@@ -387,7 +401,6 @@
 				uni.getLocation({
 					type: 'wgs84',
 					success: (res) => {
-	
 						this.longitude = res.longitude
 						this.latitude = res.latitude
 						this.conversionPoint(res)

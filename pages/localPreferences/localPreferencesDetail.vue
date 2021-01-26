@@ -192,6 +192,9 @@
 			border-radius: 20rpx;
 			margin: 20rpx auto 0;
 			box-shadow: 0 8rpx 20rpx #999;
+			&:last-child{
+				margin-bottom: 100rpx;
+			}
 
 			.left {
 				width: 213rpx;

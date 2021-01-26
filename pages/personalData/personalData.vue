@@ -136,33 +136,45 @@
 				}).finally(() => {
 					uni.hideLoading()
 				})
+			},
+			
+			getInfo() {
+				personal({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(res => {
+					if (res.returnMsg.status == '00') {
+						let { FACEICON, USERNAME } = res.returnMsg.userInfo
+						if (FACEICON) {
+							this.imgUrl = FACEICON
+							this.imgHide = false;
+						}
+						this.username = USERNAME
+					} else {
+						uni.showToast({
+							title: '网络出小差了！',
+							icon: 'none'
+						})
+					}
+				}).finally(() => uni.hideLoading())
 			}
 		},
-		mounted() {
-			uni.getStorage({
-				key: 'USERINFO_ID',
-				success: res => this.USERINFO_ID = res.data
-			})
-			uni.showLoading({
+		async mounted() {
+			await uni.showLoading({
 				title: '加载中', mask: true
 			})
-			personal({
-				USERINFO_ID: this.USERINFO_ID
-			}).then(res => {
-				if (res.returnMsg.status == '00') {
-					let { FACEICON, USERNAME } = res.returnMsg.userInfo
-					if (FACEICON) {
-						this.imgUrl = FACEICON
-						this.imgHide = false;
-					}
-					this.username = USERNAME
-				} else {
-					uni.showToast({
-						title: '网络出小差了！',
-						icon: 'none'
-					})
+			await uni.getStorage({
+				key: 'USERINFO_ID',
+				success: res => {
+					this.USERINFO_ID = res.data
+					this.getInfo()
+				},
+				fail() {
+					uni.hideLoading()
 				}
-			}).finally(() => uni.hideLoading())
+				
+			})
+			
+			
 		}
 	}
 </script>
