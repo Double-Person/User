@@ -27,7 +27,7 @@
 								<text>{{item.NUMBER}}</text>
 							</view>
 							<view class="price">
-								-￥{{item.ACTUALPRICE}}
+								-￥{{item.ORIGINALPRICE}}
 							</view>
 						</view>
 						<view class="bottom">

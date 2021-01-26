@@ -138,7 +138,8 @@
 							types: item.TYPES,
 							title: '',
 							description: '',
-							path: item.URL
+							path: item.URL,
+							shopId: item.SHOP_ID
 						}
 					})
 				
