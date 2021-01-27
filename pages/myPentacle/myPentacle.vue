@@ -94,14 +94,14 @@
 					}
 					str = charge
 				}
-				result = (count / ( 1 - str / 100 )) - count;
+				// result = (count / ( 1 - str / 100 )) - count;
+				result = count * (str/100);
 			
 				if(type == 'STRATEGIC_EXCHANGE') {  // 星币兑换保留八位小数
 					return result.toFixed(8)
 				}else {
 					return result.toFixed(2)
-				}
-				
+				}	
 				
 			},
 			// 日期选择

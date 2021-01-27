@@ -52,6 +52,12 @@
 						<view class="text">
 							{{item.CONTENT}}
 						</view>
+						<view class="text">
+							<image :src="imgBaseUrl + item.IMGS" mode="" class="content-img"></image>
+						</view>
+						<view class="text" v-if="item.REPLY">
+							商家回复：{{item.REPLY}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -96,7 +102,6 @@
 		},
 		methods: {
 			previewImage(imgs) {
-				console.log(imgs)
 				let urls = imgs.map(ele => (this.imgBaseUrl + ele.IMG))
 				uni.previewImage({ urls });
 			}
@@ -105,6 +110,10 @@
 </script>
 
 <style lang="less">
+	.content-img{
+		width: 150rpx;
+		height: 150rpx;
+	}
 	.goodsDetails {
 		background: #f7f7f7;
 		color: #333;

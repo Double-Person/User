@@ -31,7 +31,7 @@
 				<view class="comments-warp">
 					用户评论：{{ item.CONTENT }}
 					<view class="content-img-warp">
-						<image :src="imgBaseUrl + item.IMGS" mode=""></image>
+						<image :src="imgBaseUrl + item.IMGS" mode="" @click="previewImage(imgBaseUrl + item.IMGS)"></image>
 					</view>
 				</view>
 				<view class="comments-warp" v-if="item.HF && item.HF.length">
@@ -68,6 +68,9 @@
 			};
 		},
 		methods:{
+			previewImage(urls) {
+				uni.previewImage({ urls: [urls] });
+			},
 			// 删除
 			deleteEvaluate(EVALUATE_ID){
                 var obj = { EVALUATE_ID }

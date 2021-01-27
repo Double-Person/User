@@ -24,7 +24,7 @@
 								{{shopItem.PHONE}}
 							</view>
 						</view>
-						<view v-if="item.address!='线下支付'" @click="again(item.shopId)" class="anotherList">再来一单</view>
+						<view v-if="item.address!='线下支付'" @click="again(shopItem.SHOP_ID)" class="anotherList">再来一单</view>
 						<view class="item-content">
 							<view v-for="(good,indez) in shopItem.goodes" :key="indez" style="width:100%; display: flex;justify-content: space-between; margin-bottom: 15rpx;">
 								<view class="left">
@@ -204,7 +204,7 @@
 						</view>
 					</view>
 					<view class="item-btn" v-if="active===2">
-						<text @click="again(item.SHOP_ID)">进入店铺</text>
+						<text @click="again(item.SHOP_ID)" style="margin-right: 15rpx;">进入店铺</text>
 						<text @click="cancelRefund(item)">撤销退款</text>
 					</view>
 				</view>

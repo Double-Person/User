@@ -23,8 +23,9 @@
 					</text>
 					<view class="text">
 						<text>{{item.TYPES==0&&'购物'||item.TYPES==1&&'提现'||item.TYPES==2&&'星币兑换'||item.TYPES==3&&'系统奖励'||item.TYPES==4&&'退款'}}</text>
-						<view v-if="item.CHARGE !=0">
-							手续费 {{item.CHARGE}}
+						
+						<view v-if="item.CHARGE != 0">
+							手续费 {{ computedPoundage(item.MONEY, item.CHARGE, item.TYPES) }}
 						</view>
 						<view>
 							{{item.TRADETIME}}
@@ -32,8 +33,7 @@
 					</view>
 				</view>
 				<view class="right">
-					<!-- {{item.TYPES==1&&'-'||item.TYPES==2&&'-'||item.TYPES==3&&'+'}}￥{{item.MONEY}} -->
-					{{item.TYPES==0?'-':'+'}}￥{{item.MONEY}}
+					{{item.TYPES==0&&'-'||item.TYPES==1&&'-'||item.TYPES==2&&'+'||item.TYPES==3&&'+'||item.TYPES==4&&'+'}} ￥{{item.MONEY}}
 				</view>
 			</view>
 		</view>
@@ -65,6 +65,28 @@
 			}
 		},
 		methods: {
+			computedPoundage(count ,charge, type) {
+				let endwith = charge.toString().endsWith('%');
+				let str = '';
+				let result = 0;
+				if(endwith) {
+					str = charge.toString().slice(0, charge.toString().length -1)
+				}else {
+					if(charge == '0') {
+						return result;
+					}
+					str = charge
+				}
+				// result = (count / ( 1 - str / 100 )) - count;
+				result = count * (str/100);
+			
+				if(type == 'STRATEGIC_EXCHANGE') {  // 星币兑换保留八位小数
+					return result.toFixed(8)
+				}else {
+					return result.toFixed(2)
+				}	
+				
+			},
 			// 日期选择
 			bindDateChange: function(e) {
 				var arr = e.detail.value.split('-');
