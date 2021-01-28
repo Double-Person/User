@@ -19,7 +19,7 @@
 					</view>
 					<view class="right">
 						<view class="right-title">
-							<text>{{item.NAME}}</text>
+							<text>{{item.SHOP_NAME}}</text>
 							<view>
 								<text class="iconfont icon-youjiantou"></text>
 							</view>
@@ -30,8 +30,8 @@
 						<!-- 评分 -->
 						<view class="right-score">
 							<!-- 不可点击状态 -->
-							<uni-rate disabled="true" :value="item.SCORE" active-color="#FF5D06" size="18"></uni-rate>
-							<text>{{item.SCORE}}分</text>
+							<uni-rate disabled="true" :value="5" active-color="#FF5D06" size="18"></uni-rate>
+							<text>5分</text>
 						</view>
 						<!-- 时间 -->
 						<view class="right-date">

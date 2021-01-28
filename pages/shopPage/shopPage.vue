@@ -31,7 +31,7 @@
 					<view>
 						联系电话：{{vendor.PHONE}}
 						<image style="marginLeft: 10rpx;" src="/static/images/phone.jpg" mode="aspectFit" @tap="callPhone" />
-						<image src="/static/images/weixin.jpg" mode="aspectFit" @tap="weixinMaskHide=false" />
+						<image style="marginLeft: 10rpx;" src="/static/images/weixin.jpg" mode="aspectFit" @tap="weixinMaskHide=false" />
 					</view>
 				</view>
 			</view>
@@ -450,6 +450,7 @@
 			},
 			// 拨打电话
 			callPhone() {
+				console.log(this.vendor.PHONE)
 				uni.makePhoneCall({
 					phoneNumber: this.vendor.CELLPHONE //仅为示例
 				});

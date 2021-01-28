@@ -9,8 +9,8 @@ export const INDEX_KEY = 'f0d8604522a34fea7af419d353f98e8f';
 
 
 
-// export const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
-export const COMMON_URL = 'http://192.168.0.109:8081';
+export const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
+// export const COMMON_URL = 'http://192.168.0.103:8081';
 
 // 分享文件配置
 export const SHARE_CONFIG = {

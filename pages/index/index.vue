@@ -144,87 +144,99 @@
 			};
 		},
 
-		created() {
-
-			let that = this;
+		async created() {
 			// #ifdef APP-PLUS
 			// plus 获取经纬度
-
-			uni.getLocation({
-				type: 'wgs84',
-				geocode: true, //设置该参数为true可直接获取经纬度及城市信息
-				success: async (res) => {
-					this.longitude = res.longitude
-					this.latitude = res.latitude
-					var points = new plus.maps.Point(res.longitude, res.latitude);
-
-					plus.maps.Map.reverseGeocode(
-						points, {},
-						function(event) {
-							var address = event.address; // 转换后的地理位置
-							var point = event.coord; // 转换后的坐标信息
-							var coordType = event.coordType; // 转换后的坐标系类型
-							var reg = /.+?(省|市|自治区|自治州|县|区)/g;
-							let addressList = address.match(reg).toString().split(",");
-							uni.setStorageSync('addressList', addressList)
-							// addressList[0] +
-							this.newCity = addressList[1] + addressList[2]
-						},
-						function(e) {}
-					);
-
-
-
-					await uni.setStorageSync('locationPoint', JSON.stringify(res));
-					await this.conversionPoint(res)
-					// 位置转换
-					await uni.request({
-						url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
-						method: 'GET',
-						data: {
-							key: that.key,
-							location: `${res.longitude}, ${res.latitude}`
-						},
-						success: (data) => {
-							getApp().globalData.city = [];
-							let {
-								city,
-								district
-							} = data.data.regeocode.addressComponent;
-							this.newCity = city + district;
-							this.cityShow = district;
-							this.passCity = city;
-							getApp().globalData.city.push(city, district);
-						},
-						fail(err) {
-							uni.showToast({ title: "定位失败！手动选择", icon: 'none' })
-						}
-					})
-
-				},
-				fail() {
-					uni.showModal({
-						title: '提示',
-						content: '请打开手机定位权限',
-						showCancel: false,
-
-					});
-				}
-			});
+			await this.showLoad();
+			await this.getLocations()
 
 			// #endif
 			// this.getPoint()
 	
-			this._homePage()
-			this.$forceUpdate()
+			await this._homePage()
+			
 
 			// #ifdef H5
-			this.getBannerList()
+			await this.getBannerList()
 			// #endif
-
+			await this.hideLoad()
+			await this.$forceUpdate()
 		},
 
 		methods: {
+			showLoad() {
+				uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
+			},
+			hideLoad() {
+				uni.hideLoading()
+			},
+			getLocations() {
+				let that = this;
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
+					success: async (res) => {
+						this.longitude = res.longitude
+						this.latitude = res.latitude
+						var points = new plus.maps.Point(res.longitude, res.latitude);
+				
+						plus.maps.Map.reverseGeocode(
+							points, {},
+							function(event) {
+								var address = event.address; // 转换后的地理位置
+								var point = event.coord; // 转换后的坐标信息
+								var coordType = event.coordType; // 转换后的坐标系类型
+								var reg = /.+?(省|市|自治区|自治州|县|区)/g;
+								let addressList = address.match(reg).toString().split(",");
+								uni.setStorageSync('addressList', addressList)
+								// addressList[0] +
+								this.newCity = addressList[1] + addressList[2]
+							},
+							function(e) {}
+						);
+				
+				
+				
+						await uni.setStorageSync('locationPoint', JSON.stringify(res));
+						await this.conversionPoint(res)
+						// 位置转换
+						await uni.request({
+							url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+							method: 'GET',
+							data: {
+								key: that.key,
+								location: `${res.longitude}, ${res.latitude}`
+							},
+							success: (data) => {
+								getApp().globalData.city = [];
+								let {
+									city,
+									district
+								} = data.data.regeocode.addressComponent;
+								this.newCity = city + district;
+								this.cityShow = district;
+								this.passCity = city;
+								getApp().globalData.city.push(city, district);
+							},
+							fail(err) {
+								uni.showToast({ title: "定位失败！手动选择", icon: 'none' })
+							}
+						})
+				
+					},
+					fail() {
+						uni.showModal({
+							title: '提示',
+							content: '请打开手机定位权限',
+							showCancel: false,
+				
+						});
+					}
+				});
+			},
 			// 獲取分類
 			_homePage() {
 				homePage().then(res => {
@@ -300,10 +312,7 @@
 			},
 			// 根据定位请求数据
 			getPositonData(LATITUDE, LONGITUDE, AREA, CATEGORY_ID) {
-				uni.showLoading({
-					title: '加载中',
-					mask: true
-				})
+				
 				this.cityShow = AREA;
 				uni.request({
 					url: baseUrl + '/api/ordersummary/push/newvendor',
@@ -334,21 +343,18 @@
 						}
 					},
 					fail: () => {
-						uni.showLoading({
+						uni.showToast({
 							title: '获取数据失败！',
 							icon: 'none'
 						});
 					},
-					complete() {
-						uni.hideLoading()
-					}
+					
 				})
 
 			},
 			// 手动设置城市
 			setCity(data) {
 				this.newCity = data.data.slice(1, 3).join('');
-				console.log(data.data)
 				this.passCity2Loca = data.data[1] || ''
 				
 				// 存入全局变量

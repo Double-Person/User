@@ -50,12 +50,12 @@
 						<!-- {{list[0].BANK}} ({{ (list[0].CARDNO).length > 4 ? (list[0].CARDNO).slice((list[0].CARDNO).length-4, (list[0].CARDNO).length) : list[0].CARDNO }}) -->
 					</view>
 				</view>
-				<view class="icon" @click="showCardList">
+				<view class="icon">
 					<image class="img" src="/static/images/more.png" mode=""></image>
 				</view>
 
 			</view>
-			<view class="" v-show="isShowChangeCard" class="change-card-list">
+			<view class="" class="change-card-list">
 				<view class="list">
 					<view class="fl-center-between item" @click="changeCardId('wx', 'wechat')">
 						<view>微信 <text style="margin-left: 30rpx;">{{bindList.Wx}}</text></view>
@@ -81,10 +81,26 @@
 		</view>
 
 
+		
+		<uni-popup ref="popup" type="dialog">
+			<view class="dialog">
+				<input type="password" v-model="TRADRPASS" placeholder="请输入交易密码"/>
+				<view class="bottom">
+					<view class="is-agree" @click="checkTradrPass(false)">取消</view>
+					
+					<view class="is-agree" @click="checkTradrPass(true)">确定</view>
+				</view>
+			</view>
+		</uni-popup>
+
+		
 	</view>
 </template>
 
 <script>
+	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import uniPopupMessage from '@/components/uni-popup/uni-popup-message.vue'
+	import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {
@@ -98,13 +114,16 @@
 	export default {
 		components: {
 			commonHeader,
+			uniPopup,
+			uniPopupMessage,
+			uniPopupDialog
 		},
 		data() {
 			return {
+				TRADRPASS: '',
 				type: '',
 				imgBaseUrl: imgBaseUrl,
 				userInfo: {},
-				isShowChangeCard: false,
 				list: [],
 				bindList: {},
 				money: null,
@@ -136,11 +155,8 @@
 			changeCardId(card, type) {
 				this.type = type;
 				this.cardNum = card
-				this.isShowChangeCard = false
 			},
-			showCardList() {
-				this.isShowChangeCard = !this.isShowChangeCard
-			},
+			
 			userInfolick() {
 				uni.navigateTo({
 					url: '/pages/personalData/personalData'
@@ -153,9 +169,7 @@
 
 
 			// 提现
-			getWithdrawal() {
-				
-				let userinfo_id = uni.getStorageSync('USERINFO_ID');
+			getWithdrawal() {				
 				if (this.kbalance == 0) {
 					return uni.showToast({
 						title: '暂无可提现金额',
@@ -197,6 +211,31 @@
 					}
 					
 				}
+				
+				// 判断交易密码
+				this.$refs.popup.open()
+				
+				
+			},
+			
+			// 判断交易密码
+			checkTradrPass(boo) {
+				if(!boo) {
+					this.$refs.popup.close();
+					return false;
+				}
+				// PASSWORD
+				console.log(this.userInfo)
+				let { TRADRPASS } = this.userInfo;
+				if(TRADRPASS != this.TRADRPASS) {
+					this.TRADRPASS = '';
+					return uni.showToast({
+						title:"密码错误",
+						icon: 'none'
+					})
+				}
+				
+				let userinfo_id = uni.getStorageSync('USERINFO_ID');
 				let obj = {
 					id:userinfo_id, // 参数userinfo_id  用户id
 					types: 0, // 0用户、1商家
@@ -210,8 +249,8 @@
 				}else if(this.type == 'ali') {
 					this.aliWithdrawal(obj)
 				}
-				
 			},
+			
 			// 微信提现
 			weChatWithdrawal(obj) {
 				wxtx(obj).then(res => {
@@ -233,6 +272,8 @@
 							url: '/pages/personal/personal'
 						})
 					}, 1000)
+				}).finally(() => {
+					this.$refs.popup.close();
 				})
 			},
 			// 支付宝提现
@@ -258,6 +299,8 @@
 							url: '/pages/personal/personal'
 						})
 					}, 1000)
+				}).finally(() => {
+					this.$refs.popup.close();
 				})
 			},
 			
@@ -270,6 +313,7 @@
 						uni.getUserInfo({
 							provider: 'weixin',
 							success: function(infoRes) {
+								//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
 								console.log('用户昵称为：', infoRes.userInfo);
 								that.openid = infoRes.userInfo.openId
 							}
@@ -283,6 +327,27 @@
 </script>
 
 <style lang="less" scoped>
+	.dialog{
+		width: 500rpx;
+		background: #fff;
+		border-radius: 10rpx;
+		padding: 50rpx;
+		input{
+			height: 50rpx;
+			margin: 0 auto;
+			background: #eee;
+		}
+		.bottom{
+			display: flex;
+			justify-content: space-around;
+			margin-top: 50rpx;
+			.is-agree{
+				border-radius: 10rpx;
+				border: 2rpx solid #999;
+				padding: 5rpx 15rpx;
+			}
+		}
+	}
 	.content {
 		width: 690rpx;
 		margin: 0 auto;

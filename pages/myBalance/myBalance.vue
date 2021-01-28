@@ -78,7 +78,7 @@
 					str = charge
 				}
 				// result = (count / ( 1 - str / 100 )) - count;
-				result = count * (str/100);
+				result = count - count / ( 1 + str / 100 );
 			
 				if(type == 'STRATEGIC_EXCHANGE') {  // 星币兑换保留八位小数
 					return result.toFixed(8)

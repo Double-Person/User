@@ -19,7 +19,7 @@
 						mode="" @tap="goSetting">
 					</image>
 					<view class="title">
-						<text class="name">{{ userInfo1.userInfo.USERNAME ? userInfo1.userInfo.USERNAME : 'admin' }}</text>
+						<text class="name">{{ userInfo1.userInfo.NAME ? userInfo1.userInfo.NAME : (userInfo1.userInfo.USERNAME || '') }}</text>
 						<view class="dengji" @tap="goGrade">
 							<text class="iconfont icon-w_dengji"></text>
 							V{{ userInfo1.userInfo.LEVEL }}

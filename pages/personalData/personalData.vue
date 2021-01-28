@@ -22,7 +22,7 @@
 				<view class="left">
 					用户名
 				</view>
-				<input type="text" value="" v-model="username" placeholder="请输入用户名" placeholder-style="color:#999" />
+				<input type="text" v-model="username" placeholder="请输入用户名" placeholder-style="color:#999" />
 			</view>
 		</view>
 
@@ -143,12 +143,12 @@
 					USERINFO_ID: this.USERINFO_ID
 				}).then(res => {
 					if (res.returnMsg.status == '00') {
-						let { FACEICON, USERNAME } = res.returnMsg.userInfo
+						let { FACEICON, NAME } = res.returnMsg.userInfo
 						if (FACEICON) {
 							this.imgUrl = FACEICON
 							this.imgHide = false;
 						}
-						this.username = USERNAME
+						this.username = NAME
 					} else {
 						uni.showToast({
 							title: '网络出小差了！',
