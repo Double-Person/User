@@ -24,7 +24,7 @@
 					<view class="text">
 						<text>{{item.TYPES==0&&'购物'||item.TYPES==1&&'提现'||item.TYPES==2&&'星币兑换'||item.TYPES==3&&'系统奖励'||item.TYPES==4&&'退款'}}</text>
 						
-						<view v-if="item.CHARGE != 0">
+						<view v-if="item.CHARGE != 0 && item.TYPES!=2">
 							手续费 {{ computedPoundage(item.MONEY, item.CHARGE, item.TYPES) }}
 						</view>
 						<view>

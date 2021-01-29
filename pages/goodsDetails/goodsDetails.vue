@@ -15,6 +15,7 @@
 			<view class="goodsDetails-content-title">
 				<view class="title">
 					{{Detail.NAME}}
+					 
 				</view>
 				<view class="sale">
 					<text>月售{{Detail.MONTHLY_SALES || 0}}</text>
@@ -22,9 +23,13 @@
 				<view class="jiesao">
 					主要原料：{{Detail.MARERIAL}}
 				</view>
-				<view class="price">
-					￥{{Detail.PRICE || 0}}
+				<view class="fl">
+					<view class="price">￥{{Detail.PRICE || 0}}</view>
+					<view class="cart" @click="_addCarts">
+					加入购物车	
+					</view>
 				</view>
+				
 			</view>
 			<view class="goodsDetails-content-details">
 				<view class="title">
@@ -52,7 +57,7 @@
 						<view class="text">
 							{{item.CONTENT}}
 						</view>
-						<view class="text">
+						<view class="text" v-if="item.IMGS">
 							<image :src="imgBaseUrl + item.IMGS" mode="" class="content-img"></image>
 						</view>
 						<view class="text" v-if="item.REPLY">
@@ -71,12 +76,14 @@
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	import {
+		addCarts,
 		shopDetails,
 		imgBaseUrl
 	} from "@/common/apis.js";
 	export default {
 		data() {
 			return {
+				goodsId: '',
 				Detail: {},
 				imgBaseUrl: imgBaseUrl,
 			};
@@ -87,11 +94,13 @@
 		},
 
 		onLoad(opetion) {
+			this.goodsId = opetion.shopId;
 			shopDetails({
 				goodsId: opetion.shopId
 			}).then(res => {
 				this.Detail = res.returnMsg.newevaluate
-
+				let cons = this.Detail.varlist.filter(item => item.CONTENT)
+				this.Detail.varlist = cons
 			}).catch(err => {
 				uni.showToast({
 					title: '请求失败！',
@@ -101,6 +110,24 @@
 
 		},
 		methods: {
+			_addCarts() {
+				const data = {
+					GOODS_ID: this.goodsId,
+					COUNTS: 1,
+					USERINFO_ID: uni.getStorageSync('USERINFO_ID')
+				}
+				addCarts(data).then(({ msgType }) => {
+					if (msgType == 0) {
+						uni.showToast({
+							title: '添加购物车成功'
+						})
+					} else {
+						uni.showToast({
+							title: '添加购物车失败'
+						})
+					}
+				})
+			},
 			previewImage(imgs) {
 				let urls = imgs.map(ele => (this.imgBaseUrl + ele.IMG))
 				uni.previewImage({ urls });
@@ -167,12 +194,24 @@
 				.jiesao {
 					margin-top: 5rpx;
 				}
-
-				.price {
-					font-size: 28rpx;
-					color: #FF5A32;
-					margin-top: 15rpx;
+				.fl{
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					.price {
+						font-size: 28rpx;
+						color: #FF5A32;
+						margin-top: 15rpx;
+					}
+					.cart{
+						background: rgb(255, 132, 39);
+						font-size: 30rpx;
+						color: #fff;
+						border-radius: 10rpx;
+						padding: 15rpx 15rpx;
+					}
 				}
+				
 			}
 
 			.goodsDetails-content-details {

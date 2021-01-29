@@ -54,14 +54,14 @@
 					<text class="iconfont icon-youjiantou"></text>
 				</view>
 			</view>
-			<view class="setting-content-item" @tap="phoneMaskShow=true;type1=false">
+			<!-- <view class="setting-content-item" @tap="phoneMaskShow=true;type1=false">
 				<view class="left">
 					账号注销
 				</view>
 				<view class="right">
 					<text class="iconfont icon-youjiantou"></text>
 				</view>
-			</view>
+			</view> -->
 			<view class="setting-content-item" @tap="goChangePhone();type1=true">
 				<view class="left">
 					手机号更换

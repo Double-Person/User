@@ -120,6 +120,7 @@
 		},
 		data() {
 			return {
+				disabel: false, // tixian
 				TRADRPASS: '',
 				type: '',
 				imgBaseUrl: imgBaseUrl,
@@ -153,6 +154,9 @@
 
 			// 选择提现的卡
 			changeCardId(card, type) {
+				if(type == 'wechat' && this.openid =='') {
+					this.getOpenIdByWchat();
+				}
 				this.type = type;
 				this.cardNum = card
 			},
@@ -171,51 +175,33 @@
 			// 提现
 			getWithdrawal() {				
 				if (this.kbalance == 0) {
-					return uni.showToast({
-						title: '暂无可提现金额',
-						icon: 'none'
-					})
+					return uni.showToast({ title: '暂无可提现金额', icon: 'none' })
 				}
 
 				this.money = Number(Number(this.money).toFixed(2))
 				if (this.kbalance < this.money) {
-					return uni.showToast({
-						title: '输入的提现金额大于可提现金额',
-						icon: 'none'
-					})
+					return uni.showToast({ title: '输入的提现金额大于可提现金额', icon: 'none' })
 				}
 
-
 				if (this.money < 1) {
-					return uni.showToast({
-						title: '提现金额必须大于1元',
-						icon: 'none'
-					})
+					return uni.showToast({ title: '提现金额必须大于1元', icon: 'none' })
 				}
 			
 				if (!this.cardNum) {
-					return uni.showToast({
-						title: '请选择提现位置',
-						icon: 'none'
-					})
+					return uni.showToast({ title: '请选择提现位置', icon: 'none' })
 				}
 				if(!this.openid) {
-					 
 					if(this.type == 'wechat') {
 						uni.showToast({
-							title: '请授权登录',
+							title: '请微信授权登录',
 							icon: 'none'
 						})
 						this.getOpenIdByWchat()
 						return false
 					}
-					
 				}
-				
 				// 判断交易密码
 				this.$refs.popup.open()
-				
-				
 			},
 			
 			// 判断交易密码
@@ -234,6 +220,10 @@
 						icon: 'none'
 					})
 				}
+				if(this.disabel) {
+					return false;
+				}
+				this.disabel = true;
 				
 				let userinfo_id = uni.getStorageSync('USERINFO_ID');
 				let obj = {
@@ -254,7 +244,6 @@
 			// 微信提现
 			weChatWithdrawal(obj) {
 				wxtx(obj).then(res => {
-					console.log(res)
 					if (res.msgType == 0) {
 						uni.showToast({
 							title: '提现成功',
@@ -273,6 +262,7 @@
 						})
 					}, 1000)
 				}).finally(() => {
+					this.disabel = false;
 					this.$refs.popup.close();
 				})
 			},
@@ -300,6 +290,7 @@
 						})
 					}, 1000)
 				}).finally(() => {
+					this.disabel = false;
 					this.$refs.popup.close();
 				})
 			},
@@ -386,7 +377,7 @@
 		.user-ava {
 			width: 120rpx;
 			height: 100rpx;
-			padding-right: 20rpx;
+			margin-right: 20rpx;
 			border-radius: 50%;
 			border: none;
 		}

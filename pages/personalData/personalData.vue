@@ -143,12 +143,12 @@
 					USERINFO_ID: this.USERINFO_ID
 				}).then(res => {
 					if (res.returnMsg.status == '00') {
-						let { FACEICON, NAME } = res.returnMsg.userInfo
+						let { FACEICON, USERNAME } = res.returnMsg.userInfo
 						if (FACEICON) {
 							this.imgUrl = FACEICON
 							this.imgHide = false;
 						}
-						this.username = NAME
+						this.username = USERNAME
 					} else {
 						uni.showToast({
 							title: '网络出小差了！',

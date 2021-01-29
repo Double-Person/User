@@ -200,7 +200,7 @@
 					
 					this.userInfo = res.returnMsg.userInfo
 					
-					this.username = res.returnMsg.userInfo.USERNAME ? res.returnMsg.userInfo.USERNAME : '';
+					this.username = res.returnMsg.userInfo.NAME ? res.returnMsg.userInfo.NAME : '';
 					if (res.returnMsg.userInfo.IDCARDFRONT) {
 						this.imgHide1 = false;
 						this.imgUrl1 = res.returnMsg.userInfo.IDCARDFRONT;

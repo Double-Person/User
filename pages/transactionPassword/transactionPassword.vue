@@ -5,7 +5,7 @@
 		<view class="tips">
                 请输入交易密码
 		</view>
-		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="oldPwd" placeholder="请输入原密码" v-if="!isEdit"/>
+		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="oldPwd" placeholder="请输入原密码" v-if="isEdit"/>
 		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="newPwd" placeholder="请输入新密码"/>
 		<input type="number" password="true" maxlength="6" placeholder-style="color:#333" v-model="pwd" placeholder="请再次输入新密码"/>
 		<view class="submit" @tap="submit">
@@ -35,7 +35,7 @@
 			check(){
 				let userinfo_id = uni.getStorageSync('USERINFO_ID')
 				pwdInfo({userinfo_id}).then(res => {
-					this.isEdit = (res.returnMsg == "已经设置交易密码")
+					this.isEdit = (res.returnMsg == "已经设置交易密码");
 				})
 			},
 			submit(){
@@ -61,7 +61,8 @@
                     return false
                 }
                 uni.showLoading({
-                    title:'加载中...'
+                    title:'加载中...',
+					mask: true
                 })
 				 
                 var obj = {

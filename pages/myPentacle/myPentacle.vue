@@ -21,10 +21,10 @@
 					<text class="icon">
 						<text class="iconfont icon-xingxing"></text>
 					</text>
-					
+
 					<view class="text">
 						<text>
-						{{item.TYPES == 'STRATEGIC_EXCHANGE' && '星币兑换'||item.TYPES == 'PAY_PAID' && '购物' || item.TYPES == 'STRATEGIC_DIVIDEND' && '分利' || item.TYPES == 'STRATEGIC_AFFIRM' && '星币退款'}}
+							{{item.TYPES == 'STRATEGIC_EXCHANGE' && '星币兑换'||item.TYPES == 'PAY_PAID' && '购物' || item.TYPES == 'STRATEGIC_DIVIDEND' && '分利' || item.TYPES == 'STRATEGIC_AFFIRM' && '星币退款'}}
 						</text>
 						<view v-if="item.CHARGE">
 							手续费 {{ computedPoundage(item.COINS, item.CHARGE, item.TYPES) }}
@@ -35,7 +35,7 @@
 					</view>
 				</view>
 				<view class="right">
-					-￥{{item.COINS}}
+					{{ item.TYPES == 'STRATEGIC_DIVIDEND' ? '+':'-' }}￥{{item.COINS}}
 				</view>
 			</view>
 		</view>
@@ -82,27 +82,32 @@
 			this.getData()
 		},
 		methods: {
-			computedPoundage(count ,charge, type) {
+			computedPoundage(count, charge, type) {
 				let endwith = charge.toString().endsWith('%');
 				let str = '';
 				let result = 0;
-				if(endwith) {
-					str = charge.toString().slice(0, charge.toString().length -1)
-				}else {
-					if(charge == '0') {
+				if (endwith) {
+					str = charge.toString().slice(0, charge.toString().length - 1)
+				} else {
+					if (charge == '0') {
 						return result;
 					}
 					str = charge
 				}
 				// result = (count / ( 1 - str / 100 )) - count;
-				result = count - count / ( 1 + str / 100 );
-			
-				if(type == 'STRATEGIC_EXCHANGE') {  // 星币兑换保留八位小数
+				// result = count - count / ( 1 + str / 100 );
+				// result = count * (str / 100);
+				if (type == 'STRATEGIC_EXCHANGE') { // 星币兑换
+					result = count * (str / 100);
 					return result.toFixed(8)
-				}else {
+				} else if (type == 'PAY_PAID') { // 购物
+					result = count - count / (1 + str / 100);
 					return result.toFixed(8)
-				}	
-				
+				} else {
+					return 0
+				}
+
+
 			},
 			// 日期选择
 			bindDateChange: function(e) {
@@ -136,7 +141,7 @@
 							"TRADETIME": this.timeStamp ? this.timeStamp : ''
 						}
 						uni.showLoading({
-							title:"加载中",
+							title: "加载中",
 							mask: true
 						})
 						myPentacle(obj).then(res => {
@@ -151,7 +156,7 @@
 				})
 			}
 		},
-		
+
 	}
 </script>
 

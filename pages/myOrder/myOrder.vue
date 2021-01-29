@@ -61,7 +61,7 @@
 						备注：{{ item.REMARKS }}
 					</view>
 					<view class="item-pay border-bottom">
-						收获地址：{{ item.ADDRESS }}
+						收获地址：{{ item.ADDRESS || '' }}
 					</view>
 
 
@@ -120,10 +120,10 @@
 						下单时间：{{ item.CREATETIME }}
 					</view>
 					<view class="item-pay" v-if="item.REMARKS">
-						备注：{{ item.REMARKS }}
+						备注：{{ item.REMARKS || '' }}
 					</view>
 					<view class="item-pay border-bottom">
-						收获地址：{{ item.ADDRESS }}
+						收获地址：{{ item.ADDRESS || '' }}
 					</view>
 
 					<view class="item-total" style="align-items: center;">
@@ -188,10 +188,10 @@
 						下单时间：{{ item.CREATETIME }}
 					</view>
 					<view class="item-pay" v-if="item.REMARKS">
-						备注：{{ item.REMARKS }}
+						备注：{{ item.REMARKS || '' }}
 					</view>
 					<view class="item-pay border-bottom">
-						收获地址：{{ item.ADDRESS }}
+						收获地址：{{ item.ADDRESS || '' }}
 					</view>
 
 

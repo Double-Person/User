@@ -32,7 +32,7 @@
 								</view>
 							</view>
 							<view class="price">
-								{{item.paytype == 0 ? '+' : '-'}} ￥ {{item.actualPay}}
+								<!-- {{item.paytype == 0 ? '+' : '-'}} -->  ￥ {{item.actualPay}}
 							</view>
 						</view>
 						<view class="bottom">

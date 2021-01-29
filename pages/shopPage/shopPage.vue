@@ -452,7 +452,7 @@
 			callPhone() {
 				console.log(this.vendor.PHONE)
 				uni.makePhoneCall({
-					phoneNumber: this.vendor.CELLPHONE //仅为示例
+					phoneNumber: this.vendor.PHONE //仅为示例
 				});
 			},
 			// 打开微信
