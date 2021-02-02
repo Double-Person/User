@@ -41,7 +41,7 @@
 			<view class="payMode">
 				<text>应付：{{copeWith}}元</text>
 				<view class="right">
-					<text>实付：{{ActualPayment}}元</text>
+					<!-- <text>实付：{{ActualPayment}}元</text> -->
 					<view @tap="submitPay">支付</view>
 				</view>
 			</view>

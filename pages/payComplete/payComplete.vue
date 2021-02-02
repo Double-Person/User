@@ -7,7 +7,7 @@
 			<view class="payComplete-title">支付成功</view>
 		</view>
 		<view class="order-info">
-			<view class="money">￥ {{info.total || 0}}</view>
+			<view class="money">￥{{info.total || 0}}</view>
 
 			<view class="info-list" v-if="info.SHOP_NAME">
 				<text>商家名称</text>
@@ -117,7 +117,7 @@
 
 		.money {
 			color: $minColor;
-			font-size: 40rpx;
+			font-size: 90rpx;
 			font-weight: 600;
 			text-align: center;
 			border-bottom: dashed 4rpx $bgc;

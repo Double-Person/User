@@ -35,7 +35,7 @@
 					</view>
 				</view>
 				<view class="right">
-					{{ item.TYPES == 'STRATEGIC_DIVIDEND' ? '+':'-' }}￥{{item.COINS}}
+					{{ item.TYPES == 'STRATEGIC_DIVIDEND' ? '+':'-' }}￥{{conputedCoins(item.COINS)}}
 				</view>
 			</view>
 		</view>
@@ -82,6 +82,14 @@
 			this.getData()
 		},
 		methods: {
+			conputedCoins(coins) {
+				let [a, b] = coins.toString().split('.');
+				if(b && b.length > 8) {
+					let result = a + '.' + b.slice(0,8)
+					return result
+				}
+				return coins
+			},
 			computedPoundage(count, charge, type) {
 				let endwith = charge.toString().endsWith('%');
 				let str = '';
