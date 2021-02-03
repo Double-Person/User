@@ -211,7 +211,7 @@
 					return false;
 				}
 				// PASSWORD
-				console.log(this.userInfo)
+				
 				let { TRADRPASS } = this.userInfo;
 				if(TRADRPASS != this.TRADRPASS) {
 					this.TRADRPASS = '';
@@ -233,6 +233,7 @@
 					money: Number(this.money), // amount  金额  
 					openid: this.openid
 				}
+				
 				// 微信提现
 				if(this.type == 'wechat') {
 					this.weChatWithdrawal(obj)
@@ -244,25 +245,10 @@
 			// 微信提现
 			weChatWithdrawal(obj) {
 				wxtx(obj).then(res => {
-					if (res.msgType == 0) {
-						uni.showToast({
-							title: '提现成功',
-							icon: 'none'
-						})
-					} else {
-						uni.showToast({
-							title: res.returnMsg || '提现失败' ,
-							icon: 'none'
-						})
-					}
-				
-					setTimeout(() => {
-						uni.navigateTo({
-							url: '/pages/personal/personal'
-						})
-					}, 1000)
+					this.showMsg(res);
 				}).finally(() => {
-					this.disabel = false;
+					// this.disabel = false;
+					this.TRADRPASS = '';
 					this.$refs.popup.close();
 				})
 			},
@@ -271,28 +257,35 @@
 				obj.openid = '';
 				obj.zfb = this.cardNum;
 				alitx(obj).then(res => {
-					console.log(res)
-					if (res.msgType == 0) {
-						uni.showToast({
-							title: '提现成功',
-							icon: 'none'
-						})
-					} else {
-						uni.showToast({
-							title: res.returnMsg || '提现失败' ,
-							icon: 'none'
-						})
-					}
-				
-					setTimeout(() => {
-						uni.navigateTo({
-							url: '/pages/personal/personal'
-						})
-					}, 1000)
+					this.showMsg(res);
+					
 				}).finally(() => {
-					this.disabel = false;
+					// this.disabel = false;
+					this.TRADRPASS = '';
 					this.$refs.popup.close();
 				})
+			},
+			
+			showMsg(res) {
+				this.TRADRPASS = '';
+				this.$refs.popup.close();
+				if (res.msgType == 0) {
+					uni.showToast({
+						title: '提现成功',
+						icon: 'none'
+					})
+				} else {
+					uni.showToast({
+						title: res.returnMsg || '提现失败' ,
+						icon: 'none'
+					})
+				}
+								
+				setTimeout(() => {
+					uni.navigateTo({
+						url: '/pages/personal/personal'
+					})
+				}, 1000)
 			},
 			
 			// 获取微信openId

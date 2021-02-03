@@ -328,7 +328,6 @@
 					},
 					method: 'POST',
 					success: (res) => {
-						console.log(res)
 						if (res.data.status != '00') {
 							uni.showToast({
 								title: '请手动设置地区!',

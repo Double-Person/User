@@ -272,20 +272,27 @@
 			},
 			// 获取输入登录密码
 			getPwd(val) {
-				let info = uni.getStorageSync('name');
-				let PASSWORD = JSON.parse(info).PASSWORD;
-				if (val == PASSWORD) {
-					this.hideBox = true;
-					if (this.type === 2 || this.type === 0) {
-						this.phoneMaskShow = true;
-						uni.clearStorageSync();
-						uni.reLaunch({
-							url: "../login/login"
-						})
+				uni.getStorage({
+					key: 'name',
+					success:res => {
+						let PASSWORD = JSON.parse(res.data).password;
+						if (val == PASSWORD) {
+							this.hideBox = true;
+							if (this.type === 2 || this.type === 0) {
+								this.phoneMaskShow = true;
+								uni.clearStorageSync();
+								uni.reLaunch({
+									url: "../login/login"
+								})
+							}
+						} else {
+							this.hideTips = true;
+						}
 					}
-				} else {
-					this.hideTips = true;
-				}
+				})
+				
+				
+				
 			},
 			// 获取输入交易密码、
 			getPwd1(val) {

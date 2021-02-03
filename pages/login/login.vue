@@ -48,17 +48,22 @@
 			快捷登录方式 <text class="iconfont icon-weixin" @tap="weixinLogin"></text>
 		</view>
 
+
+		<!-- #endif -->
 		<view class="mask-bind" v-if="isShowMask">
 			<view class="bind-phone">
 				<view class="form">
-					<text>手机号码：</text> <input type="number" v-model="PHONE" :maxlength="11" />
+					<text>+86：</text> <input type="number" v-model="PHONE" :maxlength="11" />
+					<button class="send-code" @click="getCode">{{codeText}}</button>
+				</view>
+				<view class="form">
+					<text>验证码：</text> <input type="number" v-model="code" :maxlength="6" />
 				</view>
 				<view class="btn-bind-wx" @click="bindPhone">
 					绑定手机
 				</view>
 			</view>
 		</view>
-		<!-- #endif -->
 	</view>
 </template>
 
@@ -67,7 +72,8 @@
 	import {
 		login,
 		wxLogin,
-		wxTel
+		wxTel,
+		sendCode
 	} from "@/common/apis.js";
 
 	export default {
@@ -76,6 +82,9 @@
 				openIdBind: '',
 				isShowMask: false,
 				PHONE: '',
+				code: '', //  绑定手机验证码
+				point: {},
+				codeText: "获取验证码",
 				codeText: "获取验证码",
 				btnState: true,
 				phone: "", // 13258188656 18398207590
@@ -89,9 +98,10 @@
 
 		mounted() {
 			let that = this;
+			this.getPoint();
 			uni.getStorage({
-			    key: 'saveStata',
-			    success: function (res) {
+				key: 'saveStata',
+				success: function(res) {
 					let saveStata = res.data;
 					if (saveStata) {
 						try {
@@ -116,21 +126,73 @@
 										nickName: ''
 									}
 									that.loginSendData()
-					
+
 								},
-					
+
 							})
 						} catch (e) {
 							//TODO handle the exception
+
 						}
 					}
-			    }
+				}
 			});
-			
-			
+
 
 		},
 		methods: {
+			// 获取验证码
+			getCode() {
+				if (this.PHONE.length != 11) {
+					return uni.showToast({ title: '请输入手机号码！', icon: 'none' })
+				}
+				var time = 59;
+				this.codeText = time + 's后重新获取';
+				sendCode({
+					MOBILE: this.PHONE
+				}).then(res => {
+					if (res.returnMsg.status == '00') {
+						uni.showToast({
+							title: '发送成功！',
+							icon: 'none'
+						})
+					} else {
+						uni.showToast({
+							title: '发送失败！',
+							icon: 'none'
+						})
+					}
+				}).catch(err => {
+					uni.showToast({
+						title: '发送失败！',
+						icon: 'none'
+					})
+				})
+				var setTime = setInterval(() => {
+					time--;
+					this.codeText = time + 's后重新获取';
+				}, 1000)
+				setTimeout(() => {
+					this.codeText = "获取验证码";
+					clearInterval(setTime);
+				}, 59000)
+
+			},
+			getPoint() {
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
+					success: ({ longitude, latitude, address: { province, city, district } }) => {
+						this.point = {
+							CITY: city,
+							AREA: district
+						}
+					},
+					fail(err) {
+						uni.showToast({ title: '定位失败', icon: 'none' })
+					}
+				});
+			},
 			// 获取输入手机号
 			inputPhone(e) {
 				if (e.detail.value.length === 11) {
@@ -287,11 +349,14 @@
 			async cancelSave() {
 				// 保存状态到本地
 				let that = this;
-				await uni.setStorage({ key: 'saveStata', data: false });
+				await uni.setStorage({
+					key: 'saveStata',
+					data: false
+				});
 				await uni.removeStorage({
 					key: 'name',
 					success: () => {
-						
+
 					},
 					complete() {
 						this.rememberPwdHide = true;
@@ -300,7 +365,7 @@
 						})
 					}
 				})
-				
+
 			},
 			bindPhone() {
 				if (this.PHONE.length !== 11) {
@@ -309,17 +374,54 @@
 						icon: 'none'
 					})
 				}
+				if (this.code.length == 0) {
+					return uni.showToast({
+						title: '请输入验证码',
+						icon: 'none'
+					})
+				}
+				if (!this.point.CITY) {
+					uni.showToast({
+						title: '定位失败',
+						icon: 'none'
+					})
+					this.getPoint()
+					return false;
+				}
 				wxTel({
 					PHONE: this.PHONE,
-					WX: this.openIdBind
+					code: this.code,
+					WX: this.openIdBind,
+					...this.point
 				}).then(res => {
-					if (res.msgType == 0) {
+					console.log(res)
+					if (res.returnMsg.status == '00') {
 						this.PHONE = '';
+						this.code = '';
+						uni.setStorage({
+							key: 'USERINFO_ID',
+							data: res.returnMsg.USERINFO_ID
+						});
 						uni.reLaunch({
 							url: '../index/index'
 						})
+					} else if (res.returnMsg.status == '01') {
+						this.code = '';
+						return uni.showToast({
+							title: res.returnMsg.Msg || '验证码错误',
+							icon: 'none'
+						})
+					} else {
+						this.PHONE = '';
+						return uni.showToast({
+							title: '系统错误',
+							icon: 'none'
+						})
 					}
-				})
+				}).catch(() => uni.showToast({
+					title: '系统错误',
+					icon: 'none'
+				}))
 			},
 			// 微信登录
 			// #ifdef APP-PLUS
@@ -396,6 +498,11 @@
 </script>
 
 <style lang="less" scoped>
+	.send-code {
+		width: 300rpx;
+		font-size: 25rpx;
+	}
+
 	.mask-bind {
 		position: fixed;
 		z-index: 10;
