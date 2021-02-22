@@ -4,7 +4,7 @@
 		<!-- header -->
 		<commonHeader headerTitl="用户须知" xingHide="true" lingHide="true" fenxiangHide="true"></commonHeader>
 		<view class="content">
-			<view class="title"><text>用户使用与隐私协议</text></view>
+			<view class="title"><text>用户协议</text></view>
 			<view class="content-body">
 				<view>
 					本服务协议是趣分利的经营者湖南趣分利电子商务有限公司(以下简称为“趣分利”或“我方”)，与用户(下称为“您”)，

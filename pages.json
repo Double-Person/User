@@ -167,7 +167,10 @@
 		}, {
 			"path": "pages/userAgreement/userAgreement",
 			"style": {}
-		}, {
+		},{
+			"path": "pages/userAgreement/privacyAgreement",
+			"style": {}
+		},{
 			"path": "pages/bankphone/bankphone",
 			"style": {}
 		}, {

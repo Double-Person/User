@@ -26,7 +26,8 @@
 			您需要绑定手机才能享受正常服务。
 			<view class="" style="text-align: center;margin-top: 30rpx;">
 				登录或注册即代表已同意
-				<navigator url="../userAgreement/userAgreement" style="color:#FF5904;display: inline-block;">《用户使用与隐私协议》</navigator>
+				<navigator url="../userAgreement/userAgreement" style="color:#FF5904;display: inline-block;">《用户协议》</navigator>与
+				<navigator url="../userAgreement/privacyAgreement" style="color:#FF5904;display: inline-block;">《隐私协议》</navigator>
 			</view>
 		</view>
 		<!-- 记住密码提示 -->
@@ -451,13 +452,24 @@
 									"code": '',
 									"accessToken": loginRes.authResult.access_token
 								}).then(res => {
-
 									getApp().globalData.nickName = res.returnMsg.nickName;
+									
 									if (res.returnMsg.status == '00') {
 										uni.setStorage({
 											key: 'USERINFO_ID',
 											data: res.returnMsg.USERINFO_ID
 										});
+										let obj = {
+											nickName: res.returnMsg.nickName,
+											PASSWORD: res.returnMsg.PASSWORD,
+											openId: loginRes.authResult.openid,
+											PHONE: that.PHONE
+										}
+										uni.setStorage({
+											key: 'name',
+											data: obj
+										});
+										
 										// 如果已绑定手机跳转至首页
 										uni.reLaunch({
 											url: '../index/index'

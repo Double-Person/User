@@ -271,11 +271,25 @@
 				}
 			},
 			// 获取输入登录密码
-			getPwd(val) {
+			getPwd(val) {				
 				uni.getStorage({
 					key: 'name',
 					success:res => {
-						let PASSWORD = JSON.parse(res.data).password;
+						let PASSWORD = '-1';
+						console.log(res.data)
+						try{
+							if(JSON.parse(res.data).password) {
+								PASSWORD = JSON.parse(res.data).password;
+							}else if(JSON.parse(res.data).PASSWORD) {
+								PASSWORD = JSON.parse(res.data).PASSWORD;
+							}
+						}catch(e){
+							if(res.data.password) {
+								PASSWORD = res.data.password;
+							}else if(res.data.PASSWORD) {
+								PASSWORD = res.data.PASSWORD
+							}
+						}
 						if (val == PASSWORD) {
 							this.hideBox = true;
 							if (this.type === 2 || this.type === 0) {
