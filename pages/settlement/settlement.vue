@@ -34,7 +34,7 @@
 				<view class="right">
 					<text>共计{{ shopNum }}商品</text>
 					<text>合计 ￥</text>
-					<text>{{ total }}</text>
+					<text>{{ total && (total*1).toFixed(2) || 0 }}</text>
 				</view>
 			</view>
 			<view class="setting-content-remarks">
@@ -78,7 +78,7 @@
 				<text class="total">合计:</text>
 				<view class="price">
 					￥
-					<text>{{ submitTotal }}</text>
+					<text>{{ submitTotal && (submitTotal*1).toFixed(2) || 0 }}</text>
 				</view>
 				<view class="tijiao" @tap="submitOrder">提交订单</view>
 			</view>

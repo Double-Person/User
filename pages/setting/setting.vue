@@ -302,6 +302,12 @@
 						} else {
 							this.hideTips = true;
 						}
+					},
+					fail(val) {
+						uni.clearStorageSync();
+						uni.reLaunch({
+							url: "../login/login"
+						})
 					}
 				})
 				

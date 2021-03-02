@@ -39,7 +39,7 @@
 
 			<!-- 付款方式  应付  实付 -->
 			<view class="payMode">
-				<text>应付：{{copeWith}}元</text>
+				<text>应付：{{copeWith && (copeWith*1).toFixed(2) || 0}}元</text>
 				<view class="right">
 					<!-- <text>实付：{{ActualPayment}}元</text> -->
 					<view @tap="submitPay">支付</view>
