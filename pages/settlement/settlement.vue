@@ -262,6 +262,8 @@ export default {
 	},
 	data() {
 		return {
+			NUMBER: '',
+			TIME: '',
 			BALANCE: '',
 			inputPwd: false,
 			tradePass: '',  // 交易密碼
@@ -594,9 +596,27 @@ export default {
 							mask: true
 						});
 						setTimeout(() => {
-							let order = res.returnMsg;
-							_self.paySuccess(order)
-						}, 1000);	
+							try{
+								let parmas = {
+									total: _self.total,
+									ORDERNO: res.returnMsg.ORDERNO,
+									TIME:  res.returnMsg.TIME,
+									TYPES: 1,
+								}
+								_self.paySuccess(parmas)
+							}catch(e){
+								let order = {
+									total: _self.total,
+									ORDERNO: res.returnMsg.ORDERNO,
+									TIME:  res.returnMsg.TIME,
+									TYPES: 1,
+								}
+								uni.navigateTo({
+									url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+								});
+							}
+							
+						}, 1000);
 					},
 					
 					fail :(err) =>{
@@ -612,7 +632,7 @@ export default {
 		aliPayment(obj) {
 			let _self = this;
 			alipay(obj).then(res1 => {
-			
+			console.log('-----', res1)
 				uni.requestPayment({
 					provider: 'alipay',
 					orderInfo: res1.returnMsg.zfb,
@@ -625,9 +645,27 @@ export default {
 							duration: 2000,
 							mask: true
 						});
-						setTimeout(() => {				
-							let order = res1.returnMsg;
-							_self.paySuccess(order)
+						setTimeout(() => {
+							try{
+								let parmas = {
+									total: _self.total,
+									ORDERNO: res1.returnMsg.ORDERNO,
+									TIME:  res1.returnMsg.TIME,
+									TYPES: 2,
+								}
+								_self.paySuccess(parmas)
+							}catch(e){
+								let order = {
+									total: _self.total,
+									ORDERNO: res1.returnMsg.ORDERNO,
+									TIME:  res1.returnMsg.TIME,
+									TYPES: 2,
+								}
+								uni.navigateTo({
+									url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+								});
+							}
+							
 						}, 1000);
 					},
 					fail: err => {

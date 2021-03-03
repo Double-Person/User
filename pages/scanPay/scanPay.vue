@@ -209,6 +209,8 @@
 		},
 		data() {
 			return {
+				NUMBER: '',
+				TIME: '',
 				ACTUALPRICE: -1, // 实际支付
 				BALANCE: 0, // 余额
 				disabled: false,
@@ -349,15 +351,20 @@
 				}
 				offlinetradingService(query).then(res => {
 					if (res.msgType == 0) {
+						
+						this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID;
+						this.TIME = res.returnMsg.CREATETIME
+						this.NUMBER = res.returnMsg.NUMBER
+						
 						let moneyTemp = Number(res.returnMsg.ACTUALPRICE)
 						this.ACTUALPRICE = moneyTemp < 0 ? 0 : moneyTemp
 						if(this.ACTUALPRICE == 0) {
 							this.payPwdMaskHide = false;
-							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
+							
 						}
 						if (this.payMode == 0) {
 							this.payPwdMaskHide = false;
-							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
+							
 						} else {
 							this.payPwdMaskHide = true;
 							this.finallyPay()
@@ -393,6 +400,7 @@
 						return false;
 					}
 					if(this.payMode == 2) {
+						
 						this.aliPayFn(res.returnMsg)
 						return false;
 					}
@@ -463,9 +471,27 @@
 						});
 						
 						setTimeout(() => {
-							let order = res.returnMsg;
-							self.paySuccess(order);
-						}, 2000);
+							try{
+								let parmas = {
+									
+									NUMBER: self.NUMBER,
+									TIME: self.TIME,
+									TYPES: 1,
+								}
+								self.paySuccess(parmas)
+							}catch(e){
+								let order = {
+									total: self.ActualPayment,
+									NUMBER: self.NUMBER,
+									TIME: self.TIME,
+									TYPES: 1,
+								}
+								uni.navigateTo({
+									url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+								});
+							}
+							
+						}, 1000);
 					},
 					fail: err => {
 						uni.showToast({
@@ -494,10 +520,28 @@
 							duration: 2000,
 							mask: true
 						});
+						
 						setTimeout(() => {
-							let order = res.returnMsg;
-							self.paySuccess(order);
-						}, 2000);
+							try{
+								let parmas = {
+									NUMBER: self.NUMBER,
+									TIME: self.TIME,
+									TYPES: 2,
+								}
+								self.paySuccess(parmas)
+							}catch(e){
+								let order = {
+									total: self.ActualPayment,
+									NUMBER: self.NUMBER,
+									TIME: self.TIME,
+									TYPES: 2,
+								}
+								uni.navigateTo({
+									url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+								});
+							}
+							
+						}, 1000);
 					},
 					fail: err => {
 						uni.showToast({

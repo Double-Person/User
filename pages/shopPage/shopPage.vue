@@ -77,7 +77,7 @@
 								<text class="title" @tap="goDetails(item1.goodsId)">{{item1.shopName}}</text>
 								<view class="text" @tap="goDetails(item1.goodsId)">
 									<text>月售{{item1.monthlySales}}</text>
-									<text>好评率{{item1.score * 100 }}%</text>
+									<text>好评率{{ (item1.score * 100).toFixed(2)}}%</text>
 								</view>
 								<view class="addGoods">
 									<view @tap="goDetails(item1.goodsId)" class="addGoods-left">
@@ -233,6 +233,7 @@
 		name: 'ShopPage',
 		data() {
 			return {
+				computedListData: [],
 				imgBaseUrl: imgBaseUrl,
 				scrollHeight: "100%",
 				vendor: {},
@@ -282,6 +283,7 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
+				this.computedList(res.returnMsg.list)
 			}).finally(() => uni.hideLoading())
 			// 获取userid
 			uni.getStorage({
@@ -297,40 +299,45 @@
 			// #endif
 		},
 		methods: {
+			// 获取列表
+			computedList(res) {
+				let mainArr = JSON.parse(JSON.stringify(res));
+				var arr = [];
+				mainArr.map((item, index) => {
+					item.list.map((item1, index1) => {
+						arr.push({ title: item.title, list: item.list });
+					});
+				});
+				
+				let list = arr.map(item => item.list);
+				let arrs = [].concat(...list);
+				let obj = {};
+				let newSetData = arrs.reduce((cur,next) => {
+				    obj[next.goodsId] ? "" : obj[next.goodsId] = true && cur.push(next);
+				    return cur;
+				},[])
+				this.computedListData = newSetData
+				return newSetData
+			},
 			// 添加到购物车
 			addToCard() {
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let arrJson = JSON.parse(JSON.stringify(arr));
-				let filterArr = arrJson.filter(item => item.num)
-				let obj = {};
-				let cardList = filterArr.map(ele => {
+				let list = this.addCartShow.map(ele => {
 					return {
 						GOODS_ID: ele.goodsId,
 						COUNTS: ele.num,
 						USERINFO_ID: uni.getStorageSync('USERINFO_ID')
 					}
-				}).reduce(function(item, next) {
-					obj[next.GOODS_ID] ? '' : obj[next.GOODS_ID] = true && item.push(next);
-					return item;
-				}, []).forEach(send => {
+				}).forEach(send => {
 					this.saveCard(send)
 				})
-
 			},
 			// 发送请求添加到购物车
 			saveCard(data) {
-				addCarts(data).then(({
-					msgType
-				}) => {
+				addCarts(data).then(({ msgType }) => {
 					if (msgType == 0) {
-						uni.showToast({
-							title: '添加购物车成功'
-						})
+						uni.showToast({ title: '添加购物车成功' })
 					} else {
-						uni.showToast({
-							title: '添加购物车失败'
-						})
+						uni.showToast({ title: '添加购物车失败' })
 					}
 				})
 			},
@@ -450,7 +457,6 @@
 			},
 			// 拨打电话
 			callPhone() {
-				console.log(this.vendor.PHONE)
 				uni.makePhoneCall({
 					phoneNumber: this.vendor.PHONE //仅为示例
 				});
@@ -511,22 +517,8 @@
 			},
 			// 前往地图
 			goMap() {
-				let {
-					LONGITUDE,
-					LATITUDE,
-					CELLPHONE,
-					CITY,
-					AREA,
-					FULLADD
-				} = this.vendor
-				let obj = {
-					LONGITUDE,
-					LATITUDE,
-					CELLPHONE,
-					CITY,
-					AREA,
-					FULLADD
-				};
+				let { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD } = this.vendor
+				let obj = { LONGITUDE, LATITUDE, CELLPHONE, CITY, AREA, FULLADD };
 				uni.navigateTo({
 					url: "../address/address?vendor=" + JSON.stringify(obj)
 				});
@@ -539,7 +531,6 @@
 						if (item.title == title) {
 							item.list.map(item1 => {
 								if (item1.goodsId == id) {
-
 									if (num == -1 && item1.num == 0) {
 										return false;
 									}
@@ -558,6 +549,12 @@
 						});
 					});
 				}
+				for(let i = 0; i <= this.computedListData.length; i++){
+					if(this.computedListData[i].goodsId == id){
+						this.computedListData[i].num += num;
+						return false
+					}
+				}
 			},
 			// 去结算
 			goSettlement() {
@@ -569,39 +566,11 @@
 						icon: "none"
 					});
 				}
-				this.selectArr.map(item => {
-					item.list.map(item1 => {
-						arr.push(item1);
-					});
-				});
-
-				let list = this.selectArr.map(item => item.list);
-
-				let temp = [].concat(...list);
-				temp = temp.filter(item => item.num != 0)
-				temp.forEach((addShopId, index) => {
-					addShopId.SHOP_ID = this.vendor.SHOP_ID
-				})
-
-				let obj = {};
-				let peon = temp.reduce((cur, next) => {
-					obj[next.goodsId] ? "" : obj[next.goodsId] = true && cur.push(next);
-					return cur;
-				}, [])
-				console.log(peon)
-				let stringifyArr = JSON.stringify(peon)
-
-
+				let stringifyArr = JSON.stringify(this.addCartShow)
 				uni.navigateTo({
 					url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
 						'&page=shopPage' + '&phone=' + this.vendor.PHONE
 				})
-				// uni.navigateTo({
-				// 	url: "../settlement/settlement?item=" +
-				// 		encodeURIComponent(JSON.stringify(arr)) +
-				// 		"&shopId=" +
-				// 		this.shopId
-				// });
 
 			},
 			// 清空购物车
@@ -613,6 +582,7 @@
 					});
 				});
 				this.hideCartMask = true;
+				this.computedListData.forEach(ele => ele.num =0);
 			},
 			// 进入消息
 			goNews() {
@@ -771,64 +741,24 @@
 				return arr;
 			},
 			addCartShow() {
-				var arr = [];
-				this.mainArray.map((item, index) => {
-					item.list.map((item1, index1) => {
-						if (item1.num > 0) {
-							arr.push({
-								title: item.title,
-								list: item.list
-							});
-						}
-					});
-				});
-				let list = arr.map(item => item.list);
-				let temp = [].concat(...list);
-				var obj = {};
-				temp = temp.reduce(function(item, next) {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []);
-
-				let showList = temp.filter(ele => ele.num)
-				return showList
-
+				let list = this.computedListData.filter(item => item.num);
+				return list;
 			},
 			// 计算总价
 			titleAll() {
-				var all = 0;
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let obj = {};
-				arr = arr.reduce(function(item, next) {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []).forEach(item => {
+				let all = 0;
+				this.computedListData.forEach(item => {
 					all += item.num * item.price;
 				})
 				return all.toFixed(2);
 			},
 			// 计算数量
 			goodNum() {
-				// var num = 0;
-				// // 筛选已选
-				// this.mainArray.map((item, index) => {
-				// 	item.list.map((item1, index1) => {
-				// 		num += item1.num;
-				// 	});
-				// });
-				// return num;
-				var all = 0;
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let obj = {};
-				arr = arr.reduce((item, next) => {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []).forEach(item => {
+				let all = 0;
+				this.computedListData.forEach(item => {
 					all += item.num * 1;
 				})
-				return all
+				return all;
 			}
 		}
 	};
