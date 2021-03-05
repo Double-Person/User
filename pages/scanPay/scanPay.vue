@@ -416,8 +416,13 @@
 						}, 1000)
 						
 					}else {
-						let order = res.returnMsg;
-						this.paySuccess(order);
+						let parmas = {
+							SHOP_NAME: this.shopName,
+							NUMBER: this.NUMBER,
+							TIME: this.TIME,
+							TYPES: 0,
+						}
+						this.paySuccess(parmas)
 						
 					}
 				})
@@ -473,7 +478,7 @@
 						setTimeout(() => {
 							try{
 								let parmas = {
-									
+									SHOP_NAME: self.shopName,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
 									TYPES: 1,
@@ -481,6 +486,7 @@
 								self.paySuccess(parmas)
 							}catch(e){
 								let order = {
+									SHOP_NAME: self.shopName,
 									total: self.ActualPayment,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
@@ -524,6 +530,7 @@
 						setTimeout(() => {
 							try{
 								let parmas = {
+									SHOP_NAME: self.shopName,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
 									TYPES: 2,
@@ -531,6 +538,7 @@
 								self.paySuccess(parmas)
 							}catch(e){
 								let order = {
+									SHOP_NAME: self.shopName,
 									total: self.ActualPayment,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,

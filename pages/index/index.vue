@@ -583,25 +583,30 @@
 
 		// 广告
 		.index-poster {
+			margin: -55rpx auto 0 auto;
+			width: 710rpx;
 			height: 330rpx;
-			width: 95%;
-			margin: -100rpx auto 0;
-			/* #ifdef APP-PLUS */
-			margin: -55rpx auto 0;
-			/* #endif */
-			/* #ifdef MP-WEIXIN */
-			margin: -55rpx auto 0;
-			/* #endif */
-			position: relative;
-			z-index: 800;
 			border-radius: 20rpx;
 			overflow: hidden;
-			box-shadow: 2rpx 4rpx 30rpx #4e4e4e;
+			// height: 310rpx;
+			// width: 95%;
+			// margin: -100rpx auto 0;
+			// /* #ifdef APP-PLUS */
+			// margin: -55rpx auto 0;
+			// /* #endif */
+			// /* #ifdef MP-WEIXIN */
+			// margin: -55rpx auto 0;
+			// /* #endif */
+			// position: relative;
+			// z-index: 800;
+			// border-radius: 20rpx;
+			// overflow: hidden;
+			// box-shadow: 2rpx 4rpx 30rpx #4e4e4e;
 
-			image {
-				width: 100%;
-				height: 100%;
-			}
+			// image {
+			// 	width: 100%;
+			// 	height: 100%;
+			// }
 		}
 
 		// 分类

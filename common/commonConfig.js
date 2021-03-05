@@ -14,7 +14,9 @@ export const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
 
 // 分享文件配置
 export const SHARE_CONFIG = {
-	href: "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI0ODY3NzQ3MQ==&scene=124#wechat_redirect",
+	
+	// href: "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI0ODY3NzQ3MQ==&scene=124#wechat_redirect",
+	href: "https://yflh.hkzhtech.com/qflwy/#/pages/index/index",
 	title: "趣分利",
 	summary: "我正在使用趣分利，赶紧跟我一起来体验！",
 	imageUrl: require('@/static/images/logo.png'),

@@ -1,15 +1,16 @@
 <template>
 	<div class="banner-container">
-		<swiper :style="{width: '100vw', height: '410rpx'}" :indicator-dots="swiperConfig.indicatorDots" :indicator-color="swiperConfig.indicatorColor"
+		<!-- <swiper :style="{width: '100vw', height: '410rpx'}" :indicator-dots="swiperConfig.indicatorDots" :indicator-color="swiperConfig.indicatorColor"
 		 :indicator-active-color="swiperConfig.indicatorActiveColor" :autoplay="swiperConfig.autoplay" :interval="swiperConfig.interval"
 		 :duration="swiperConfig.duration" :circular="swiperConfig.circular" :previous-margin="swiperConfig.previousMargin"
 		 :next-margin="swiperConfig.nextMargin" @change="swiperChange" @animationfinish="animationfinish">
-			<swiper-item v-for="(item, i) in bannerList" :key="i">
+			<swiper-item v-for="(item, i) in bannerList" :key="i"> -->
 				<!-- 1.当前展示为第1项时，bannerList最后一项和第二项的justifyContent值分别为flex-end和flex-start，其余项值为center -->
 				<!-- 2.当前展示为最后一项时，bannerList倒数第2项和第1项的justifyContent值分别为flex-end和flex-start，其余项值为center -->
 				<!-- 3.当前展示为其他项（非第1和最后1项）时，bannerList当前项的前1项和后1项的justifyContent值分别为flex-end和flex-start，其余项值为center -->
 				<!-- 4.padding值也需要根据不同项设定不同值，但理同justifyContent -->
-				<div class="image-container" :class="[curIndex===0?((i===listLen-1)?'item-left':(i===1?'item-right':'item-center')):(curIndex===listLen-1?(i===0?'item-right':(i===listLen-2?'item-left':'item-center')):(i===curIndex-1?'item-left':(i===curIndex+1?'item-right':'item-center')))]">
+			
+			<!-- 	<div class="image-container" :class="[curIndex===0?((i===listLen-1)?'item-left':(i===1?'item-right':'item-center')):(curIndex===listLen-1?(i===0?'item-right':(i===listLen-2?'item-left':'item-center')):(i===curIndex-1?'item-left':(i===curIndex+1?'item-right':'item-center')))]">
 					<image :src="imgBaseUrl + item.picture" class="slide-image" :style="{
               transform: curIndex===i?'scale(' + scaleX + ',' + scaleY + ')':'scale(1,1)',
               transitionDuration: '.3s',
@@ -18,11 +19,18 @@
 					 @click="getBannerDetail(item)" />
 				</div>
 			</swiper-item>
-		</swiper>
-		<!-- <div class="desc-wrap" :class="[isDescAnimating?'hideAndShowDesc':'']">
-      <div class="title">{{bannerList[descIndex].title}}</div>
-      <div class="desc">{{bannerList[descIndex].description}}</div>
-    </div> -->
+		</swiper> -->
+		
+		<view class="page-section-spacing">
+			<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="2000" :duration="500">
+				<swiper-item  v-for="(item, i) in bannerList" :key="i">
+					<image :src="imgBaseUrl + item.picture" class="slide-image-img" @click="getBannerDetail(item)"> </image>
+				</swiper-item>
+				
+			</swiper>
+		</view>
+		
+		
 	</div>
 </template>
 <script>
@@ -104,10 +112,18 @@
 	}
 </script>
 <style lang="scss" scoped>
+	.slide-image-img{
+		width: 710rpx;
+		height: 330rpx;
+		
+		border: none;
+		object-fit: cover;
+	}
 	.banner-container {
 		width: 100vw;
 		// height: 524rpx;
-		height: 426rpx;
+		// height: 426rpx;
+		height: 330rpx;
 
 		.image-container {
 			box-sizing: border-box;
