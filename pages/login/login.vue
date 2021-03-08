@@ -188,8 +188,10 @@
 							CITY: city,
 							AREA: district
 						}
+						console.log(this.point)
 					},
 					fail(err) {
+						console.log(err);
 						uni.showToast({ title: '定位失败', icon: 'none' })
 					}
 				});
@@ -395,7 +397,6 @@
 					WX: this.openIdBind,
 					...this.point
 				}).then(res => {
-					console.log(res)
 					if (res.returnMsg.status == '00') {
 						this.PHONE = '';
 						this.code = '';
@@ -493,8 +494,9 @@
 								}).finally(() => uni.hideLoading())
 							},
 							fail: (err) => {
+								console.log(err)
 								uni.showToast({
-									title: '您还未安装或登录！',
+									title: err.errCode == -2 ? '用户取消' : '您还未安装或登录！',
 									icon: 'none'
 								})
 							}

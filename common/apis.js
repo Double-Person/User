@@ -1,14 +1,11 @@
 // 引入封装的request   用户端
 // import request from './request.js';
 import request from './ajax.js';
-// const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
-// const COMMON_URL = 'http://192.168.0.108:8081';
+
 import { COMMON_URL } from './commonConfig.js'
 
 export const baseUrl = COMMON_URL;
 export const imgBaseUrl = COMMON_URL + '/'
-
-
 
 
 // 1.公众号签名   完成
@@ -17,7 +14,6 @@ export const autograph = params => request.post('/api/ordersummary/official/sign
 export const login = data => request.post('/api/ordersummary/login/account', data);
 // 3.微信登陆    完成
 export const wxLogin = params => request.post('/api/ordersummary/wx/login', params);
-
 
 //  绑定手机
 export const wxTel = data => request.post('/api/ordersummary/wx/tel', data);
@@ -88,7 +84,6 @@ export const passwordback = params => request.post('/api/ordersummary/retrieve',
 // 35.取消收藏
 export const delCollec = params => request.post('/api/ordersummary/collections/delete', params);
 
-
 //  32 绑定银行
 export const addShopBank = params => request.get('/api/merchant/addShopBank', {params});
 // 36.绑定支付宝
@@ -100,11 +95,8 @@ export const unbindWX = params => request.post('/api/ordersummary/wx/unbind', pa
 // 39.解绑支付宝
 export const unbindApliy = params => request.post('/api/ordersummary/ali/unbind', params);
 
-
 // 获取银行卡信息  参数 /api/merchant/backCardInfo
-export const backCardInfo = params => request.get('/api/merchant/backCardInfo', {
-	params
-})
+export const backCardInfo = params => request.get('/api/merchant/backCardInfo', { params })
 
 // 33 绑定收款微信账号
 export const wxAccount = params => request.post('/api/ordersummary/wx/account', params)
@@ -114,8 +106,6 @@ export const aliAccount = params => request.post('/api/ordersummary/ali/account'
 export const shopBank = params => request.get('/api/merchant/shopBank', {params});
 // 36 解绑银行卡
 export const updeteShopBank = params => request.get('/api/merchant/updeteShopBank', {params});
-
-
 
 // 40.首页商品分类
 export const getItem = params => request.post('/api/ordersummary/shop/category', params);
@@ -131,8 +121,6 @@ export const godaddy = params => request.post('/api/ordersummary/me/refund', par
 
 // 订单退款(不同意)
 export const orderAffirm = params => request.post('/api/ordersummary/order/affirm', params);
-
-
 
 // 45.删除收货地址
 export const delAddress = params => request.post('/api/ordersummary/address/delete', params);
@@ -166,8 +154,6 @@ export const getMessage = params => request.post('/api/user/message/myMessage', 
 export const getMessageDetail = params => request.post('/api/user/message/messageDetail', params)
 // 59 消息已读
 export const getMessageActive = params => request.post('/api/user/message/readMessage', params)
-
-
 
 // 60 商家入驻
 export const shopAuth = params => request.post('/api/merchant/shopAuth', params)
@@ -255,20 +241,3 @@ export const findById = params => request.post('/api/ordersummary/activity/findB
 
 export const evaluateSelect = params => request.post('/api/ordersummary/evaluate/select', params);
 
-
-
-
-
-
-// export const upload = (data) => {
-// 	const token = uni.getStorageSync('token')
-// 	uni.request({
-// 		url: 'https://yflh.hkzhtech.com/qufl/uploads/',
-// 		data: data,
-// 		header: {
-// 			'Authorization': 'Bearer ' + token,
-// 			"Content-Type": "application/x-www-form-urlencoded"
-// 		}
-
-// 	})
-// }
