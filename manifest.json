@@ -79,7 +79,7 @@
                 "maps" : {
                     "amap" : {
                         "appkey_ios" : "bb951af8f1d37fdb7dcc4f0de5ecee64",
-                        "appkey_android" : "318dfe4e09e51453d11d2c31cde26534"
+                        "appkey_android" : "148fb247ef74f3818a6ffb4a7ec7f40b"
                     }
                 },
                 "oauth" : {
@@ -103,7 +103,7 @@
                     "amap" : {
                         "__platform__" : [ "android" ],
                         "appkey_ios" : "bb951af8f1d37fdb7dcc4f0de5ecee64",
-                        "appkey_android" : "318dfe4e09e51453d11d2c31cde26534"
+                        "appkey_android" : "148fb247ef74f3818a6ffb4a7ec7f40b"
                     }
                 },
                 "speech" : {

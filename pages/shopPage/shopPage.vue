@@ -273,6 +273,7 @@
 			shopList({
 				SHOP_ID: e.shopId
 			}).then(res => {
+				console.log(res)
 				this.vendor = res.returnMsg.vendor;
 				this.status = res.returnMsg.isCollection == 'Y'
 				this.LONGITUDE = res.returnMsg.vendor.LONGITUDE;

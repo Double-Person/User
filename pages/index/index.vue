@@ -156,9 +156,7 @@
 			await this._homePage()
 			
 
-			// #ifdef H5
-			await this.getBannerList()
-			// #endif
+	
 			await this.hideLoad()
 			await this.$forceUpdate()
 		},
@@ -195,7 +193,9 @@
 								// addressList[0] +
 								this.newCity = addressList[1] + addressList[2]
 							},
-							function(e) {}
+							function(e) {
+								console.log(e)
+							}
 						);
 				
 				
@@ -227,7 +227,8 @@
 						})
 				
 					},
-					fail() {
+					fail(err) {
+						console.log(err)
 						uni.showModal({
 							title: '提示',
 							content: '请打开手机定位权限',
@@ -269,6 +270,7 @@
 						this.getPositonData(this.latitude, this.longitude, this.area)
 					},
 					fail: err => {
+						console.log(err)
 						uni.showToast({
 							title: "定位失败",
 							icon: 'none'
@@ -312,7 +314,6 @@
 			},
 			// 根据定位请求数据
 			getPositonData(LATITUDE, LONGITUDE, AREA, CATEGORY_ID) {
-				
 				this.cityShow = AREA;
 				uni.request({
 					url: baseUrl + '/api/ordersummary/push/newvendor',
@@ -328,18 +329,21 @@
 					},
 					method: 'POST',
 					success: (res) => {
-						if (res.data.status != '00') {
+						if(res && res.data && res.data.status == '00') {
+							let varList = res.data.varList;
+							varList.map(item => {
+								item.distance = Math.round(item.distance);
+							});
+							this.menuList = varList;
+						}else {
 							uni.showToast({
 								title: '请手动设置地区!',
 								icon: 'none',
 								duration: 2000
 							});
-						} else {
-							res.data.varList.map(item => {
-								item.distance = Math.round(item.distance);
-							});
-							this.menuList = res.data.varList;
 						}
+						
+					
 					},
 					fail: () => {
 						uni.showToast({
@@ -359,15 +363,13 @@
 				// 存入全局变量
 				getApp().globalData.city = data.data.slice(1);
 				// 地址转换为经纬度
-				// 
 				uni.request({
 					method: 'GET',
-					url: `http://restapi.amap.com/v3/geocode/geo?key=${this.CONVERSION_KEY}&s=rsv3&city=35&address=${this.newCity}`,
+					url: `http://restapi.amap.com/v3/geocode/geo?key=${ this.CONVERSION_KEY }&s=rsv3&city=35&address=${this.newCity}`,
 					success: res => {
 						var arr = res.data.geocodes[0].location.split(',');
 						getApp().globalData.longitude = arr[0];
 						getApp().globalData.latitude = arr[1];
-
 
 						this.longitude = arr[0];
 						this.latitude = arr[1];
@@ -380,7 +382,9 @@
 
 
 						this.getBannerList(city, district)
-						this.getPositonData(this.latitude,this.longitude,  this.area)
+					},
+					fail(err) {
+						console.log(err)
 					}
 				});
 			},
@@ -397,7 +401,6 @@
 					CATEGORY: 0, // 0 首页轮播 1 优惠活动
 				};
 				getBanner(data).then(res => {
-					console.log(res.returnMsg.banner)
 					this.bannerList = res.returnMsg.banner.map(item => {
 						return {
 							shopId: item.SHOP_ID,
