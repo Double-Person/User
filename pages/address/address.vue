@@ -34,7 +34,7 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
-	import { KEY } from '@/common/commonConfig.js'
+	import { CONVERSION_KEY } from '@/common/commonConfig.js'
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	export default {
@@ -42,11 +42,11 @@
 			return {
 				vendor: {},
 				title: 'map',
-				latitude: 39.909,
-				longitude: 116.39742,
+				latitude: '', // 39.909,
+				longitude: '', // 116.39742,
 				covers: [{
-					latitude: 39.909,
-					longitude: 116.39742,
+					latitude: '', // 39.909,
+					longitude: '', // 116.39742,
 					iconPath: '../../static/images/location.png',
 					width: 30,
 					height: 30
@@ -67,11 +67,16 @@
 				const address= CITY + AREA + FULLADD;
 				const that = this;
 				uni.request({
-					url: `http://restapi.amap.com/v3/geocode/geo?key=${KEY}&s=rsv3&city=35&address=${address}`,
-					success({ statusCode, data:{ geocodes }} ) {
+					url: `http://restapi.amap.com/v3/geocode/geo?key=${CONVERSION_KEY}&s=rsv3&city=35&address=${address}`,
+					success(res) {
+						console.log(res)
+						let { statusCode, data:{ geocodes }} = res
 						if(statusCode == 200 && geocodes.length > 0) {
 							let [{location}] = geocodes;
 							let [LONGITUDE, LATITUDE] = location.split(',')
+							that.setData({ LATITUDE, LONGITUDE })
+						}else {
+							let { LONGITUDE, LATITUDE } = that.vendor;
 							that.setData({ LATITUDE, LONGITUDE })
 						}
 					},

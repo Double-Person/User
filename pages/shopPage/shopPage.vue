@@ -37,7 +37,7 @@
 			</view>
 			<view class="shopPage-shopTitle-content">
 				<view class="address">
-					地址：{{(vendor.CITY || '')+ (vendor.FULLADD || '')}}
+					地址：{{(vendor.CITY || '') + (vendor.AREA || '')+ (vendor.FULLADD || '')}}
 					<text class="iconfont icon-yiliaohangyedeICON-" @tap="goMap"></text>
 				</view>
 
