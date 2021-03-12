@@ -310,7 +310,6 @@ export default {
 		tabbar
 	},
 	onLoad(e) {
-		console.log(e)
 		this.phone = e.phone
 			// this.Allprice=e.allTotal		
 		this.shopId = e.shopId;
@@ -540,7 +539,8 @@ export default {
 			// if(this.tradePass == '') {
 			// 	return uni.showToast({ title: '请输入交易密码', icon: 'none' })
 			// }
-			if(this.BALANCE == '0.00') {
+			// if(this.BALANCE == '0.00') {
+			if(this.BALANCE *1 < this.submitTotal*1) {
 				return uni.showToast({ title: '余额不足', icon: 'none' })
 			}
 			if(this.tradePass == '') {
@@ -648,6 +648,7 @@ export default {
 						setTimeout(() => {
 							try{
 								let parmas = {
+									
 									total: _self.total,
 									ORDERNO: res1.returnMsg.ORDERNO,
 									TIME:  res1.returnMsg.TIME,

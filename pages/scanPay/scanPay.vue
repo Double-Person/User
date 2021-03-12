@@ -431,7 +431,8 @@
 			// 支付成功
 			paySuccess(order) {
 				// order.total = this.ActualPayment; // money
-				order.total = this.money; // money
+
+				order.total = this.copeWith; // money
 				setTimeout(() => {
 					uni.redirectTo({
 						url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
@@ -487,7 +488,7 @@
 							}catch(e){
 								let order = {
 									SHOP_NAME: self.shopName,
-									total: self.ActualPayment,
+									total: self.copeWith,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
 									TYPES: 1,
@@ -530,6 +531,7 @@
 						setTimeout(() => {
 							try{
 								let parmas = {
+									
 									SHOP_NAME: self.shopName,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
@@ -539,7 +541,7 @@
 							}catch(e){
 								let order = {
 									SHOP_NAME: self.shopName,
-									total: self.ActualPayment,
+									total: self.copeWith,
 									NUMBER: self.NUMBER,
 									TIME: self.TIME,
 									TYPES: 2,

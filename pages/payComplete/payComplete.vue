@@ -7,7 +7,7 @@
 			<view class="payComplete-title">支付成功</view>
 		</view>
 		<view class="order-info">
-			<view class="money">￥{{info.total && (info.total*1).toFixed(2) || 0}}</view>
+			<view class="money" v-if="showMoney">￥{{info.total && (info.total*1).toFixed(2) || 0}}</view>
 
 			<view class="info-list" v-if="info.SHOP_NAME">
 				<text>商家名称</text>
@@ -44,6 +44,12 @@
 		},
 		components: {
 			commonHeader
+		},
+		computed:{
+			showMoney() {
+				let money = this.info.total && (this.info.total*1)
+				return money!==0
+			}
 		},
 		onLoad(opt) {
 			if (opt.orderInfo) {

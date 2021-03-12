@@ -186,6 +186,10 @@
 				if (this.money < 1) {
 					return uni.showToast({ title: '提现金额必须大于1元', icon: 'none' })
 				}
+				if(this.money !== parseInt(this.money)) {
+					// this.money = parseInt(this.money)
+					return uni.showToast({ title: '请输入整数', icon: 'none' })
+				}
 			
 				if (!this.cardNum) {
 					return uni.showToast({ title: '请选择提现位置', icon: 'none' })
